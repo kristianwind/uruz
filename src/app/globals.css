@@ -128,9 +128,15 @@ body {
   background-color: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
-  /* Safe-area padding for iPhone notch / home indicator in standalone PWA. */
   min-height: 100dvh;
   overscroll-behavior-y: none;
+  /*
+   * The app declares a translucent status bar so the background runs edge to
+   * edge on iPhone — but that means the viewport starts *behind* the clock and
+   * battery. Inset the content by the notch height so nothing hides under it.
+   * Resolves to 0 everywhere without a notch, so desktop is unaffected.
+   */
+  padding-top: env(safe-area-inset-top);
 }
 
 /* Subtle norse rune texture, applied only in the norse flavor. */

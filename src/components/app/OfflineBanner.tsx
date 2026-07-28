@@ -12,7 +12,7 @@ export function OfflineBanner() {
   return (
     <div
       role="status"
-      className="sticky top-0 z-30 flex items-center justify-center gap-2 bg-warning/15 px-4 py-1.5 text-xs font-medium text-warning"
+      className="sticky top-[env(safe-area-inset-top)] z-30 flex items-center justify-center gap-2 bg-warning/15 px-4 py-1.5 text-xs font-medium text-warning"
     >
       <CloudOffIcon size={14} />
       {t("common.offline")} — {t("errors.offlineSaved")}

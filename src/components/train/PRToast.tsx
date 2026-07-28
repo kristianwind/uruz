@@ -28,7 +28,7 @@ export function PRToast({
   return (
     <div
       role="status"
-      className="animate-spark fixed inset-x-4 top-4 z-50 mx-auto max-w-sm rounded-xl border border-success bg-success-soft px-4 py-3 shadow-[var(--shadow)]"
+      className="animate-spark fixed inset-x-4 top-[calc(env(safe-area-inset-top)+1rem)] z-50 mx-auto max-w-sm rounded-xl border border-success bg-success-soft px-4 py-3 shadow-[var(--shadow)]"
     >
       <p className="flex items-center gap-2 font-semibold text-success">
         <BoltIcon size={18} />
