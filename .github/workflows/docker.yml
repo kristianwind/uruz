@@ -3,8 +3,14 @@ name: Build og udgiv container-image
 # Bygger Uruz-imaget og skubber det til GitHub Container Registry, så
 # Yggdrasil-runen kan hente det med `ghcr.io/kristianwind/uruz:latest`.
 #
-# Multi-arch er ikke pynt: en Mac bygger arm64, mens de fleste servere kører
-# amd64. Uden begge dele fejler containeren med "exec format error".
+# Hver arkitektur bygges i sit eget job og skubbes som en digest; et sidste job
+# samler dem til én manifest-liste.
+#
+# Hvorfor ikke bare bygge begge i ét job: arm64 bygges under QEMU-emulering, og
+# Next.js' SWC-compiler crasher sporadisk der ("Illegal instruction"). Det
+# lykkedes to gange og fejlede den tredje. Med opdelingen kan et ustabilt
+# arm64-byg ikke længere forhindre amd64 i at blive udgivet — og amd64 bygges
+# nu natively, helt uden emulering.
 
 on:
   push:
@@ -21,7 +27,24 @@ env:
 
 jobs:
   build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            slug: amd64
+            emulated: false
+            # The architecture nearly every server runs. Must never be blocked.
+            required: true
+          - platform: linux/arm64
+            slug: arm64
+            emulated: true
+            # Nice to have (Raspberry Pi, Ampere). Allowed to fail.
+            required: false
+
     runs-on: ubuntu-latest
+    # A flaky emulated build must not fail the whole workflow.
+    continue-on-error: ${{ !matrix.required }}
     permissions:
       contents: read
       packages: write
@@ -29,7 +52,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Sæt QEMU op (til arm64-bygget)
+      - name: Sæt QEMU op
+        if: matrix.emulated
         uses: docker/setup-qemu-action@v3
 
       - name: Sæt Buildx op
@@ -42,7 +66,59 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Udled tags og labels
+      - name: Byg og skub som digest
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=${{ matrix.slug }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.slug }}
+
+      - name: Gem digest
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/digests
+          # The digest names the file; the merge job just globs the directory.
+          touch "/tmp/digests/${DIGEST#sha256:}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: digest-${{ matrix.slug }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    needs: build
+    # Runs even when arm64 failed, so amd64 still gets published.
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests
+          pattern: digest-*
+          merge-multiple: true
+
+      - name: Sæt Buildx op
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log ind på GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Udled tags
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -52,13 +128,22 @@ jobs:
             type=ref,event=tag
             type=sha,format=short
 
-      - name: Byg og skub
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Saml manifest-listen af de arkitekturer der lykkedes
+        working-directory: /tmp/digests
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          digests=(*)
+          if [ ${#digests[@]} -eq 0 ]; then
+            echo "::error::Ingen arkitekturer blev bygget."
+            exit 1
+          fi
+          echo "Samler ${#digests[@]} arkitektur(er): ${digests[*]}"
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< '${{ steps.meta.outputs.json }}') \
+            $(printf '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@sha256:%s ' "${digests[@]}")
+
+      - name: Vis resultatet
+        run: |
+          docker buildx imagetools inspect \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
