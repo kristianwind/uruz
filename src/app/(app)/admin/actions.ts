@@ -1,0 +1,141 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { requireContext } from "@/lib/auth/session";
+import { updateUser, getUser, countAdmins } from "@/lib/db/repo/users";
+import {
+  createInvitation,
+  setInvitationStatus,
+  listInvitations,
+} from "@/lib/db/repo/invitations";
+import { upsertExercise, getExerciseBySlug } from "@/lib/db/repo/exercises";
+import { writeAudit } from "@/lib/audit";
+import { sendEmail, inviteEmail } from "@/lib/notify/email";
+import type { AppContext } from "@/lib/auth/session";
+
+/**
+ * Admin actions.
+ *
+ * Every one of these re-checks the admin role server-side. Hiding a button in
+ * the UI is presentation, not security — the check has to live here.
+ */
+async function requireAdmin(): Promise<AppContext> {
+  const ctx = await requireContext();
+  if (ctx.user.role !== "admin") throw new Error("FORBIDDEN");
+  return ctx;
+}
+
+// ---- Invitations ---------------------------------------------------------
+
+const InviteSchema = z.object({
+  email: z.string().trim().email(),
+  role: z.enum(["admin", "member", "coach"]).default("member"),
+});
+
+/** Invite someone into the hall and e-mail them the link. */
+export async function inviteUserAction(
+  input: z.infer<typeof InviteSchema>,
+): Promise<{ code: string; link: string; emailed: boolean }> {
+  const ctx = await requireAdmin();
+  const parsed = InviteSchema.parse(input);
+
+  const invite = createInvitation({
+    hallId: ctx.hall.id,
+    email: parsed.email,
+    invitedBy: ctx.user.id,
+    role: parsed.role,
+  });
+
+  const base = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const link = `${base}/invite/${invite.code}`;
+  const mail = inviteEmail(link, ctx.hall.name);
+  const sent = await sendEmail({ to: parsed.email, ...mail });
+
+  writeAudit(ctx.hall.id, ctx.user.id, "invitation_created", invite.id, {
+    email: parsed.email,
+    role: parsed.role,
+  });
+  revalidatePath("/admin");
+  return { code: invite.code, link, emailed: sent.ok && !sent.dev };
+}
+
+export async function revokeInvitationAction(invitationId: string): Promise<void> {
+  const ctx = await requireAdmin();
+  const invite = listInvitations(ctx.hall.id).find((i) => i.id === invitationId);
+  if (!invite) throw new Error("NOT_FOUND");
+  setInvitationStatus(invitationId, "revoked");
+  writeAudit(ctx.hall.id, ctx.user.id, "invitation_revoked", invitationId);
+  revalidatePath("/admin");
+}
+
+// ---- Users ---------------------------------------------------------------
+
+/** Deactivate or reactivate a member. */
+export async function setUserActiveAction(userId: string, isActive: boolean): Promise<void> {
+  const ctx = await requireAdmin();
+  const target = getUser(userId);
+  if (!target || target.hallId !== ctx.hall.id) throw new Error("NOT_FOUND");
+
+  // Never let the hall lock itself out by deactivating its last admin.
+  if (!isActive && target.role === "admin" && countAdmins(ctx.hall.id) <= 1) {
+    throw new Error("LAST_ADMIN");
+  }
+  updateUser(userId, { isActive });
+  writeAudit(ctx.hall.id, ctx.user.id, isActive ? "user_activated" : "user_deactivated", userId);
+  revalidatePath("/admin");
+}
+
+const RoleSchema = z.enum(["admin", "member", "coach"]);
+
+export async function setUserRoleAction(userId: string, role: string): Promise<void> {
+  const ctx = await requireAdmin();
+  const parsed = RoleSchema.parse(role);
+  const target = getUser(userId);
+  if (!target || target.hallId !== ctx.hall.id) throw new Error("NOT_FOUND");
+
+  // Same protection: don't demote the only admin.
+  if (target.role === "admin" && parsed !== "admin" && countAdmins(ctx.hall.id) <= 1) {
+    throw new Error("LAST_ADMIN");
+  }
+  updateUser(userId, { role: parsed });
+  writeAudit(ctx.hall.id, ctx.user.id, "user_role_changed", userId, { role: parsed });
+  revalidatePath("/admin");
+}
+
+// ---- Shared exercise library --------------------------------------------
+
+const ExercisePatchSchema = z.object({
+  slug: z.string().min(1),
+  nameDa: z.string().trim().min(1).max(80).optional(),
+  nameEn: z.string().trim().max(80).nullable().optional(),
+  imageUrl: z.string().trim().url().max(500).nullable().optional(),
+  demoVideoUrl: z.string().trim().url().max(500).nullable().optional(),
+});
+
+/**
+ * Edit an entry in the shared library — currently names and media, which is
+ * what an admin realistically wants to correct (and how photos get attached).
+ */
+export async function updateExerciseAction(
+  input: z.infer<typeof ExercisePatchSchema>,
+): Promise<void> {
+  const ctx = await requireAdmin();
+  const parsed = ExercisePatchSchema.parse(input);
+
+  const existing = getExerciseBySlug(parsed.slug);
+  if (!existing) throw new Error("NOT_FOUND");
+
+  upsertExercise({
+    ...existing,
+    nameDa: parsed.nameDa ?? existing.nameDa,
+    nameEn: parsed.nameEn === undefined ? existing.nameEn : parsed.nameEn,
+    imageUrl: parsed.imageUrl === undefined ? existing.imageUrl : parsed.imageUrl,
+    demoVideoUrl:
+      parsed.demoVideoUrl === undefined ? existing.demoVideoUrl : parsed.demoVideoUrl,
+  });
+
+  writeAudit(ctx.hall.id, ctx.user.id, "exercise_updated", existing.id, { slug: parsed.slug });
+  revalidatePath("/admin/library");
+  revalidatePath("/library");
+}

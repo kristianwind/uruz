@@ -1,0 +1,170 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { PageHeader } from "@/components/app/PageHeader";
+import { Card, CardMuted } from "@/components/ui/Card";
+import { AdminInviteForm } from "@/components/admin/InviteForm";
+import { UserRow, type AdminUserView } from "@/components/admin/UserRow";
+import { AIStatus } from "@/components/admin/AIStatus";
+import { RevokeInviteButton } from "@/components/admin/RevokeInviteButton";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/icons";
+import { requireContext } from "@/lib/auth/session";
+import { listHallUsers } from "@/lib/db/repo/users";
+import { listInvitations } from "@/lib/db/repo/invitations";
+import { listAudit } from "@/lib/audit";
+import { rankForLevel, rankLevelFromPoints } from "@/lib/domain/ranks";
+import { rankPoints } from "@/lib/domain/gamification";
+import { loadUserData } from "@/lib/domain/gamification-service";
+import { getAIConfig, isAIConfigured } from "@/lib/ai/provider";
+import { isPushConfigured } from "@/lib/notify/push";
+import { getT } from "@/lib/i18n/server";
+import {
+  inviteUserAction,
+  revokeInvitationAction,
+  setUserActiveAction,
+  setUserRoleAction,
+} from "./actions";
+
+export const dynamic = "force-dynamic";
+export const metadata = { title: "Administration" };
+
+export default async function AdminPage() {
+  const ctx = await requireContext();
+  // Server-side gate: hiding the link in the UI is not access control.
+  if (ctx.user.role !== "admin") redirect("/me");
+  const t = await getT(ctx.user.localePref);
+
+  const users: AdminUserView[] = listHallUsers(ctx.hall.id).map((u) => {
+    const rank = rankForLevel(rankLevelFromPoints(rankPoints(loadUserData(u.id))), t.locale);
+    return {
+      id: u.id,
+      displayName: u.displayName,
+      email: u.email,
+      role: u.role,
+      isActive: u.isActive,
+      rankName: rank.name,
+      rankColor: rank.color,
+      isSelf: u.id === ctx.user.id,
+    };
+  });
+
+  const invitations = listInvitations(ctx.hall.id);
+  const audit = listAudit(ctx.hall.id, 25);
+  const ai = getAIConfig();
+
+  const emailConfigured = !!process.env.RESEND_API_KEY;
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <Link href="/me" className="mb-1 inline-flex items-center gap-1 text-sm text-muted">
+          <ChevronLeftIcon size={16} /> {t("nav.me")}
+        </Link>
+        <PageHeader title={t("admin.title")} subtitle={`${t("admin.hall")}: ${ctx.hall.name}`} />
+      </div>
+
+      {/* System status */}
+      <section className="flex flex-col gap-2">
+        <AIStatus provider={ai.provider} model={ai.model} configured={isAIConfigured()} />
+        <Card className="flex items-center justify-between py-3">
+          <span className="text-sm font-medium text-text">{t("admin.pushStatus")}</span>
+          <span className={isPushConfigured() ? "text-xs text-success" : "text-xs text-faint"}>
+            {isPushConfigured() ? t("admin.configured") : t("admin.notConfigured")}
+          </span>
+        </Card>
+        <Card className="flex items-center justify-between py-3">
+          <span className="text-sm font-medium text-text">{t("admin.emailStatus")}</span>
+          <span className={emailConfigured ? "text-xs text-success" : "text-xs text-warning"}>
+            {emailConfigured ? t("admin.configured") : t("admin.devMode")}
+          </span>
+        </Card>
+      </section>
+
+      {/* Members */}
+      <section>
+        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-faint">
+          {t("admin.users")} ({users.length})
+        </h2>
+        <ul className="flex flex-col gap-2">
+          {users.map((u) => (
+            <UserRow
+              key={u.id}
+              user={u}
+              onSetActive={setUserActiveAction}
+              onSetRole={setUserRoleAction}
+            />
+          ))}
+        </ul>
+      </section>
+
+      {/* Invitations */}
+      <section>
+        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-faint">
+          {t("admin.invitations")}
+        </h2>
+        <Card className="mb-2">
+          <AdminInviteForm onInvite={inviteUserAction} />
+        </Card>
+        {invitations.length === 0 ? (
+          <CardMuted>{t("admin.noInvitations")}</CardMuted>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {invitations.map((inv) => (
+              <li
+                key={inv.id}
+                className="flex items-center gap-2 rounded-xl border border-border bg-elev p-3"
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm text-text">{inv.email}</span>
+                  <span className="block text-xs text-faint">
+                    {inv.status === "pending"
+                      ? t("admin.pending")
+                      : inv.status === "accepted"
+                        ? t("admin.accepted")
+                        : t("admin.revoke")}
+                    {" · "}
+                    <span className="tabnum">{inv.code}</span>
+                  </span>
+                </span>
+                {inv.status === "pending" && (
+                  <RevokeInviteButton id={inv.id} onRevoke={revokeInvitationAction} />
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* Shared library */}
+      <Link href="/admin/library">
+        <Card interactive className="flex items-center justify-between py-3">
+          <span className="font-medium">{t("admin.library")}</span>
+          <ChevronRightIcon className="text-muted" />
+        </Card>
+      </Link>
+
+      {/* Audit log */}
+      <section>
+        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-faint">
+          {t("admin.auditLog")}
+        </h2>
+        {audit.length === 0 ? (
+          <CardMuted>{t("admin.auditEmpty")}</CardMuted>
+        ) : (
+          <ul className="flex flex-col gap-1.5">
+            {audit.map((entry) => (
+              <li key={entry.id} className="rounded-lg border border-border bg-elev px-3 py-2">
+                <p className="text-sm text-text">{t(`admin.actions.${entry.action}`)}</p>
+                <p className="text-[11px] text-faint">
+                  {new Date(entry.createdAt).toLocaleString(
+                    t.locale === "en" ? "en-GB" : "da-DK",
+                    { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" },
+                  )}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
+  );
+}
