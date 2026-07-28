@@ -62,6 +62,17 @@ cp docs/screenshots/*.png website/img/
 - **Responsivt og tilgængeligt.** Ét kolonnelayout på telefon, respekterer
   `prefers-reduced-motion`, og teksten har kontrast nok til WCAG AA.
 
+## Husk at bumpe CSS-versionen
+
+Begge sider linker til `styles.css?v=ÅÅÅÅMMDD`. **Ret datoen hver gang du ændrer
+`styles.css`.**
+
+Grunden: siden ligger bag Cloudflare, som cacher statiske filer i fire timer.
+HTML'en slipper igennem med det samme, men en ny CSS gør ikke — så siden bliver
+serveret med ny opbygning og gammelt udseende, hvilket ser ud som en fejl i
+layoutet frem for en cache. En ny query-streng er en ny URL for cachen, og så
+hentes filen forfra.
+
 ## Læg det på nettet
 
 Alt er statisk, så det kan hostes hvor som helst — GitHub Pages, Netlify,
