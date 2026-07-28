@@ -4,6 +4,59 @@ En løbende log over ikke-oplagte valg og antagelser truffet under bygningen af
 Uruz, jf. instruktionen i afsnit 0 ("notér antagelsen i `DECISIONS.md`").
 Nyeste øverst inden for hver fase.
 
+## Tilføjelse — e-mail, hallens navn og et offentligt repo
+
+- **SMTP før Resend.** En selvhostet opsætning har som regel allerede en
+  mailserver; at kræve en konto hos en tredjepart for at kunne sende et
+  login-link er en unødig forhindring. Er begge sat, vinder SMTP: at taste en
+  mailserver ind er bevidst arbejde, en glemt API-nøgle er det ikke. Uden nogen
+  af delene skrives beskeden i loggen, hvilket er nok til at komme i gang og
+  udtrykkeligt ikke nok til at blive ved med.
+
+- **`nodemailer` er den ene nye afhængighed.** SMTP er en protokol med TLS,
+  STARTTLS og autentificering; at skrive den selv for at undgå en afhængighed
+  ville være dyrere end afhængigheden. Den har ingen egne runtime-afhængigheder
+  og intet native build, hvilket er den linje projektet har holdt.
+
+- **Hallen navngives af den der bygger den.** Standarden var to bestemte
+  personers navne, hvilket mødte enhver anden installation med to fremmede. Nu
+  spørges der ved første kørsel, med et neutralt fald-tilbage-navn, og en admin
+  kan rette det bagefter — et navn valgt i en fart klokken seks om morgenen skal
+  ikke være permanent.
+
+- **Repoet er offentligt, og `CLAUDE.md` er ikke.** Arbejdsnoterne om
+  produktions-værten indeholder server-id'er, interne adresser og ssh-detaljer.
+  De ligger nu i `.gitignore`, så de ikke kan committes ved et uheld. HANDOFF.md
+  er samtidig renset for den interne adresse og for opskriften på at logge ind
+  via containerens log.
+
+## Tilføjelse — skærmen skal blive tændt, og sitet skal kunne fylde en skærm
+
+- **Wake lock lever præcis så længe logge-skærmen er åben.** Et hvil på halvfems
+  sekunder er rigeligt til at telefonen låser, og at låse op med kalk på
+  fingrene for at taste to tal er det mest irriterende ved at bruge en telefon i
+  et center. Låsen tages når skærmen åbnes og slippes når man forlader den — en
+  lås der overlevede træningen ville være et fladt batteri. Browseren dropper
+  den selv når fanen skjules, så den tages igen ved `visibilitychange`; uden det
+  holder den op med at virke efter første afbrydelse, uden at nogen opdager det.
+  Ingen indstilling: det er den opførsel man vil have midt i en træning, og
+  browsere der ikke kan det, gør ingenting.
+
+- **Sitet var mobil-først og bare centreret.** På en stor skærm læste det som en
+  smal spalte med to tomme marginer. Bredden, typografien og luften vokser nu
+  med skærmen via `clamp()` frem for spring ved et breakpoint, så der ikke
+  findes en bredde hvor layoutet synligt hopper.
+
+- **Seks skærmbilleder på én række blev valgt fra.** De kan være der på en bred
+  skærm, men hver telefon bliver så lille at tallene i den — hele pointen med at
+  vise rigtige skærmbilleder — ikke kan læses. Tre store slår seks dekorative.
+
+- **Websitet er to dokumenter, ikke en sprogknap.** `index.html` er dansk,
+  `en.html` engelsk, hver med sit eget `lang`, sin `canonical` og et
+  `hreflang`-link til den anden. Det er hvad en skærmlæser og en søgemaskine har
+  brug for, og siden virker helt uden JavaScript. Prisen er at de to filer skal
+  holdes ens — det står i `website/README.md`.
+
 ## Tilføjelse — kodeord som alternativ til passkey
 
 *(Ønsket undervejs: "ikke alle kan bruge passkey".)*

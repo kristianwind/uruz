@@ -78,6 +78,11 @@ kørende container, men ikke alt kan testes uden rigtig hardware.
   konfigurationen stadig står på localhost.
 - **Password-login** hele vejen rundt: sæt, skift, log ind, throttling,
   nulstilling via e-mail. Se afsnittet nedenfor.
+- **E-mail via SMTP** mod en rigtig SMTP-samtale: beskeden kom frem med korrekt
+  afsender, modtager og emne.
+- **Hold skærmen tændt.** Låsen tages på logge-skærmen og slippes igen når man
+  navigerer væk — også ved navigation inde i appen, som er det virkelige
+  tilfælde.
 - **Reminders.** Cron springer korrekt over når man allerede har trænet i dag,
   og vælger rivalise-teksten når en hal-kammerat har trænet.
 - **Sikkerhed.** Sidste admin kan ikke deaktiveres. Magic-links er engangs.
@@ -187,6 +192,7 @@ Skrevet ned fordi jeg gjorde dem forkert først.
 | Importere en *mappe* fra en klientkomponent | `@/lib/i18n` gav en ubrugelig runtime-fejl. Brug fuld sti (`@/lib/i18n/core`). |
 | Glemme `env(safe-area-inset-top)` | Indhold lander oven i iPhonens ur, fordi status-bjælken er gennemsigtig. |
 | Antage at en model kun foreslår ét | Modellen udtrykker "erstat X" som *både* en bytning og en fjernelse. Bytning vinder. |
+| Lade en flex-container indeholde både tekst og et link | Teksten og linket bliver hver sit flex-element og lander på hver sin linje med et hul imellem, når det wrapper. |
 | Tro at en rune-opdatering ændrer en eksisterende server | Yggdrasil sår rune-defaults først og lægger serverens **gemte** env ovenpå. En gammel default bliver siddende på serveren. |
 | Læse `window` under render i en klientkomponent | Serveren siger falsk, browseren sandt, og React smider hele træet væk. Afgør det i en `useEffect` — se `usePasskeySupported`. |
 | Tilføje en kolonne til en tabel der allerede findes | `CREATE TABLE IF NOT EXISTS` springer hele sætningen over, så kolonnen når aldrig en kørende database. En ny *tabel* klarer sig selv; en ny *kolonne* kræver `ALTER TABLE`. |

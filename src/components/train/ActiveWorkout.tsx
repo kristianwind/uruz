@@ -8,6 +8,7 @@ import { RestTimer } from "./RestTimer";
 import { PRToast } from "./PRToast";
 import { SetRow } from "./SetRow";
 import { useSync } from "@/lib/offline/useSync";
+import { useWakeLock } from "@/lib/hooks/useWakeLock";
 import { cn } from "@/lib/utils";
 import { useT } from "@/components/app/I18nProvider";
 import {
@@ -63,6 +64,9 @@ export function ActiveWorkout({
   const t = useT();
   const router = useRouter();
   const { online, pending, syncing, push } = useSync();
+  // Ninety seconds of rest is long enough for the phone to lock. Keep the
+  // screen on for as long as this screen is open, and not a moment longer.
+  useWakeLock();
 
   const [index, setIndex] = useState(0);
   const [sets, setSets] = useState<LoggedSet[]>(initialSets);

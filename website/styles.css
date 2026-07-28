@@ -103,7 +103,10 @@ header.nav {
 @media (max-width: 940px) { .hero-grid { grid-template-columns: 1fr; gap: 40px; } }
 
 .eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
+  /* inline-block, not flex: the label now contains a link, and as flex items
+     the text and the link land on separate lines with a gap between them when
+     the pill wraps on a phone. As inline text it simply wraps. */
+  display: inline-block;
   font-size: .78rem; letter-spacing: .09em; text-transform: uppercase;
   color: var(--accent); background: var(--accent-soft);
   border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
@@ -388,3 +391,49 @@ footer {
   }
   .shots figure { flex: 0 0 72%; scroll-snap-align: center; }
 }
+
+/* ============================================================== desktop ====
+ * The page was laid out mobile-first and then simply centred, so on a large
+ * screen it read as a narrow column with two empty margins. These rules give
+ * a wide screen something to do: the container grows with the viewport, the
+ * type grows a step with it, and the sections breathe.
+ *
+ * Everything is a floor-and-ceiling clamp rather than a breakpoint jump, so
+ * there is no width at which the layout visibly snaps.
+ * ========================================================================= */
+@media (min-width: 1280px) {
+  :root {
+    /* Grows from 1120 at 1280px wide to 1400 at roughly 1900px, then stops —
+       past that, line lengths get harder to read rather than better. */
+    --maxw: clamp(1120px, 78vw, 1400px);
+  }
+
+  .wrap { padding-inline: 40px; }
+  section { padding: clamp(84px, 7vw, 116px) 0; }
+  .hero { padding: clamp(88px, 8vw, 132px) 0 clamp(72px, 6vw, 104px); }
+
+  /* The headline can afford to be bigger when there is room for it — but not
+     so big that "én rune ad gangen." breaks across three lines, which reads
+     as an accident rather than a design. */
+  h1 { font-size: clamp(3.6rem, 3.5vw, 4.2rem); }
+  /* Give the words a little more of the width than the phone beside them. */
+  .hero-grid { grid-template-columns: 1.15fr .85fr; }
+  h2 { font-size: clamp(2.4rem, 2.9vw, 3rem); }
+  .lede { font-size: 1.22rem; max-width: 56ch; }
+  .section-head { max-width: 68ch; }
+  .section-head p { font-size: 1.1rem; }
+
+  /* More air between the columns, and a little more between the cards. */
+  .hero-grid { gap: clamp(56px, 5vw, 88px); }
+  .showcase { gap: clamp(60px, 6vw, 100px); }
+  .cards { gap: 24px; }
+  .shots { gap: clamp(26px, 2.6vw, 40px); }
+
+  /* The phone mockups are fixed-width; let them scale up slightly so they do
+     not look lost beside the larger type. */
+  .phone { transform: scale(1.06); transform-origin: center; }
+}
+
+/* Six in a row fits on a wide screen, but each phone then gets so small that
+   the numbers inside it — the entire point of showing real screenshots —
+   cannot be read. Three large ones beat six decorative ones. */
