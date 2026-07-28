@@ -257,7 +257,11 @@
     "inviteDesc": "Opret din adgang med en passkey (Face ID / Touch ID).",
     "createPasskey": "Opret passkey",
     "inviteInvalid": "Invitationen er ugyldig eller udløbet.",
-    "signedOut": "Du er logget ud."
+    "signedOut": "Du er logget ud.",
+    "passkeyFailed": "Kunne ikke oprette passkey.",
+    "passkeyCancelled": "Passkey blev afbrudt. Prøv igen, eller fortsæt uden.",
+    "passkeyDomainError": "Passkey afvist af browseren — domænet i appens indstillinger passer ikke til den adresse du er på.",
+    "passkeyCanSkip": "Du er allerede logget ind. Du kan trygt trykke Fortsæt og tilføje en passkey senere under Mig."
   },
   "coach": {
     "name": "Mimir",
@@ -349,7 +353,14 @@
       "user_deactivated": "Bruger deaktiveret",
       "user_role_changed": "Rolle ændret",
       "exercise_updated": "Øvelse redigeret"
-    }
+    },
+    "webauthnStatus": "Passkey-opsætning",
+    "webauthnOrigin": "Adresse",
+    "webauthnRpId": "Passkey-domæne",
+    "webauthnOk": "Passer sammen",
+    "webauthnMismatch": "Passkey-domænet passer ikke til adressen — Face ID vil fejle.",
+    "webauthnInsecure": "Adressen er ikke HTTPS — passkeys virker ikke.",
+    "webauthnBadUrl": "Adressen er ikke en gyldig URL."
   },
   "install": {
     "title": "Føj Uruz til hjemmeskærmen",

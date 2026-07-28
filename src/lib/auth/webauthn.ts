@@ -29,11 +29,67 @@ import {
  * flow subject (email for login, userId for registration).
  */
 
-function rpConfig() {
-  const rpID = process.env.WEBAUTHN_RP_ID || "localhost";
-  const rpName = process.env.WEBAUTHN_RP_NAME || "Uruz";
+/**
+ * Relying-party configuration for passkeys.
+ *
+ * The RP ID must be the origin's registrable domain — a browser refuses to
+ * create a credential when it isn't, which surfaces to the user as a bare
+ * "something went wrong". So it is *derived* from the app URL by default and
+ * only overridden when WEBAUTHN_RP_ID is set deliberately (for instance to a
+ * parent domain, so one credential covers several subdomains).
+ *
+ * Defaulting it to "localhost" — as this once did — meant every real
+ * deployment was broken until someone happened to set the right variable.
+ */
+export function rpConfig() {
   const origin = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const rpName = process.env.WEBAUTHN_RP_NAME || "Uruz";
+
+  let derivedHost = "localhost";
+  try {
+    derivedHost = new URL(origin).hostname;
+  } catch {
+    // Malformed NEXT_PUBLIC_APP_URL — fall through to the default and let the
+    // health/diagnostic surface report it rather than crashing a sign-in.
+  }
+
+  const rpID = process.env.WEBAUTHN_RP_ID?.trim() || derivedHost;
   return { rpID, rpName, origin };
+}
+
+export interface WebAuthnDiagnostics {
+  origin: string;
+  rpID: string;
+  /** True when the RP ID can actually work for this origin. */
+  valid: boolean;
+  problem: string | null;
+}
+
+/**
+ * Explain whether the current configuration can work, for the admin panel.
+ * A passkey failure is otherwise invisible: the browser rejects it locally and
+ * the server never hears about it.
+ */
+export function checkWebAuthnConfig(): WebAuthnDiagnostics {
+  const { origin, rpID } = rpConfig();
+
+  let host: string | null = null;
+  let secure = false;
+  try {
+    const url = new URL(origin);
+    host = url.hostname;
+    // WebAuthn requires a secure context; localhost is the sanctioned exception.
+    secure = url.protocol === "https:" || host === "localhost" || host === "127.0.0.1";
+  } catch {
+    return { origin, rpID, valid: false, problem: "app_url_invalid" };
+  }
+
+  // The RP ID must equal the host or be a registrable parent of it.
+  const matches = host === rpID || host.endsWith(`.${rpID}`);
+  if (!matches) return { origin, rpID, valid: false, problem: "rp_id_mismatch" };
+  if (!secure) return { origin, rpID, valid: false, problem: "not_secure_context" };
+
+  return { origin, rpID, valid: true, problem: null };
 }
 
 // ---- Registration --------------------------------------------------------

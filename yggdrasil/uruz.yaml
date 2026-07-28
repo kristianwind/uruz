@@ -17,7 +17,7 @@ gameskill:
   category: "Apps"
   description: "Styrketræning med offline-logning, statistik og AI-coach (Mimir). PWA til iPhone og web."
   author: "kristianwind"
-  version: 1
+  version: 2
   icon: "app"
 
   docker:
@@ -35,10 +35,12 @@ gameskill:
       # det subdomæne du giver serveren, fx https://uruz.dit-domæne.dk
 
     - key: WEBAUTHN_RP_ID
-      name: "Passkey-domæne (uden https:// og port)"
+      name: "Passkey-domæne (lad stå tom)"
       type: string
-      default: "localhost"
-      # Skal matche værtsnavnet i adressen ovenfor, fx uruz.dit-domæne.dk
+      default: ""
+      # Udledes automatisk af adressen ovenfor. Sæt den kun hvis du bevidst vil
+      # dele én passkey på tværs af underdomæner (fx "dit-domæne.dk"), og husk
+      # at den så skal være et ægte overdomæne til adressen.
 
     # ---- Mimir (AI-coach) — helt valgfrit --------------------------------
     - key: AI_PROVIDER

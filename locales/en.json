@@ -257,7 +257,11 @@
     "inviteDesc": "Create your access with a passkey (Face ID / Touch ID).",
     "createPasskey": "Create passkey",
     "inviteInvalid": "The invitation is invalid or has expired.",
-    "signedOut": "You are signed out."
+    "signedOut": "You are signed out.",
+    "passkeyFailed": "Could not create a passkey.",
+    "passkeyCancelled": "Passkey was cancelled. Try again, or continue without one.",
+    "passkeyDomainError": "The browser refused the passkey — the domain in the app's settings doesn't match the address you're on.",
+    "passkeyCanSkip": "You are already signed in. It's safe to press Continue and add a passkey later under Me."
   },
   "coach": {
     "name": "Mimir",
@@ -349,7 +353,14 @@
       "user_deactivated": "User deactivated",
       "user_role_changed": "Role changed",
       "exercise_updated": "Exercise edited"
-    }
+    },
+    "webauthnStatus": "Passkey setup",
+    "webauthnOrigin": "Address",
+    "webauthnRpId": "Passkey domain",
+    "webauthnOk": "Consistent",
+    "webauthnMismatch": "The passkey domain doesn't match the address — Face ID will fail.",
+    "webauthnInsecure": "The address is not HTTPS — passkeys will not work.",
+    "webauthnBadUrl": "The address is not a valid URL."
   },
   "install": {
     "title": "Add Uruz to your home screen",

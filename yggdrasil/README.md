@@ -35,15 +35,14 @@ server og på en ARM-maskine.
 
 ### 2. Giv Yggdrasil adgang til imaget
 
-Pakken arver repoets synlighed og er altså **privat**. Serveren der kører
-Yggdrasil skal derfor kunne logge på GHCR:
+Pakken er **offentlig**, så Yggdrasil kan hente den uden login. Koden i repoet
+er stadig privat — det er to adskilte ting på GitHub.
+
+Skulle du senere gøre pakken privat igen, skal serveren logge på først:
 
 ```bash
 docker login ghcr.io -u kristianwind
 ```
-
-Alternativt kan du gøre netop pakken offentlig under
-**GitHub → Packages → uruz → Package settings**. Koden forbliver privat.
 
 ### 3. Læg runen ind i panelet
 
@@ -61,10 +60,13 @@ Opret en server ud fra Uruz-runen. Sæt som minimum:
 | Felt | Værdi |
 |---|---|
 | **Offentlig adresse** | `https://uruz.dit-domæne.dk` |
-| **Passkey-domæne** | `uruz.dit-domæne.dk` |
+| **Passkey-domæne** | *lad stå tom* |
 
-De to skal passe sammen — ellers virker Face ID-login ikke, fordi passkeys er
-bundet til værtsnavnet.
+Passkey-domænet udledes af adressen. Sæt det kun hvis du bevidst vil dele én
+passkey på tværs af underdomæner — og så skal det være et ægte overdomæne til
+adressen (`dit-domæne.dk` til `uruz.dit-domæne.dk`).
+
+Du kan altid se om det passer sammen under **Mig → Admin → Passkey-opsætning**.
 
 ### 5. Giv den et subdomæne
 
@@ -133,7 +135,6 @@ Runen er bekvemmelighed, ikke en forudsætning:
 ```bash
 docker run -d --name uruz -p 3000:3000 -v uruz-data:/data \
   -e NEXT_PUBLIC_APP_URL=https://uruz.dit-domæne.dk \
-  -e WEBAUTHN_RP_ID=uruz.dit-domæne.dk \
   ghcr.io/kristianwind/uruz:latest
 ```
 

@@ -15,6 +15,7 @@ import { rankForLevel, rankLevelFromPoints } from "@/lib/domain/ranks";
 import { rankPoints } from "@/lib/domain/gamification";
 import { loadUserData } from "@/lib/domain/gamification-service";
 import { getAIConfig, isAIConfigured } from "@/lib/ai/provider";
+import { checkWebAuthnConfig } from "@/lib/auth/webauthn";
 import { isPushConfigured } from "@/lib/notify/push";
 import { getT } from "@/lib/i18n/server";
 import {
@@ -50,6 +51,7 @@ export default async function AdminPage() {
   const invitations = listInvitations(ctx.hall.id);
   const audit = listAudit(ctx.hall.id, 25);
   const ai = getAIConfig();
+  const webauthn = checkWebAuthnConfig();
 
   const emailConfigured = !!process.env.RESEND_API_KEY;
 
@@ -65,6 +67,37 @@ export default async function AdminPage() {
       {/* System status */}
       <section className="flex flex-col gap-2">
         <AIStatus provider={ai.provider} model={ai.model} configured={isAIConfigured()} />
+        {/* Passkey config is invisible when wrong: the browser rejects it
+            locally and the server never hears about it. So show it. */}
+        <Card className="flex flex-col gap-1.5 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm font-medium text-text">{t("admin.webauthnStatus")}</span>
+            <span
+              className={
+                webauthn.valid
+                  ? "rounded-full bg-success-soft px-2 py-0.5 text-[11px] font-semibold text-success"
+                  : "rounded-full bg-danger-soft px-2 py-0.5 text-[11px] font-semibold text-danger"
+              }
+            >
+              {webauthn.valid ? t("admin.webauthnOk") : "!"}
+            </span>
+          </div>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-3 text-xs">
+            <dt className="text-faint">{t("admin.webauthnOrigin")}</dt>
+            <dd className="truncate text-muted">{webauthn.origin}</dd>
+            <dt className="text-faint">{t("admin.webauthnRpId")}</dt>
+            <dd className="truncate text-muted">{webauthn.rpID}</dd>
+          </dl>
+          {!webauthn.valid && (
+            <p className="text-xs text-danger">
+              {webauthn.problem === "rp_id_mismatch"
+                ? t("admin.webauthnMismatch")
+                : webauthn.problem === "not_secure_context"
+                  ? t("admin.webauthnInsecure")
+                  : t("admin.webauthnBadUrl")}
+            </p>
+          )}
+        </Card>
         <Card className="flex items-center justify-between py-3">
           <span className="text-sm font-medium text-text">{t("admin.pushStatus")}</span>
           <span className={isPushConfigured() ? "text-xs text-success" : "text-xs text-faint"}>
