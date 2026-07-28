@@ -360,7 +360,8 @@
     "webauthnOk": "Passer sammen",
     "webauthnMismatch": "Passkey-domænet passer ikke til adressen — Face ID vil fejle.",
     "webauthnInsecure": "Adressen er ikke HTTPS — passkeys virker ikke.",
-    "webauthnBadUrl": "Adressen er ikke en gyldig URL."
+    "webauthnBadUrl": "Adressen er ikke en gyldig URL.",
+    "webauthnOverridden": "Passkey-domænet på serveren kunne ikke bruges og blev ignoreret. Ryd feltet for at fjerne forvirringen."
   },
   "install": {
     "title": "Føj Uruz til hjemmeskærmen",

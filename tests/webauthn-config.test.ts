@@ -41,6 +41,16 @@ describe("rpConfig", () => {
     expect(rpConfig().rpID).toBe("example.dk");
   });
 
+  it("discards a stale override that cannot work for this origin", async () => {
+    // Exactly the state a server created from rune v1 ends up in: the old
+    // default "localhost" is stored in the server's env and would otherwise
+    // survive both a new image and a new rune.
+    process.env.NEXT_PUBLIC_APP_URL = "https://uruz.yggdrasilpanel.com";
+    process.env.WEBAUTHN_RP_ID = "localhost";
+    const { rpConfig } = await load();
+    expect(rpConfig().rpID).toBe("uruz.yggdrasilpanel.com");
+  });
+
   it("ignores an RP ID that is only whitespace", async () => {
     process.env.NEXT_PUBLIC_APP_URL = "https://uruz.example.dk";
     process.env.WEBAUTHN_RP_ID = "   ";
@@ -71,23 +81,27 @@ describe("checkWebAuthnConfig", () => {
     expect(checkWebAuthnConfig().valid).toBe(true);
   });
 
-  it("flags an RP ID that is not a suffix of the host", async () => {
+  it("ignores an unusable RP ID rather than guaranteeing a failure", async () => {
+    // A stale "localhost" from an older default is the common case. Honouring
+    // it could only ever fail in the browser, so the derived host wins and the
+    // panel says the override was ignored.
     process.env.NEXT_PUBLIC_APP_URL = "https://uruz.example.dk";
     process.env.WEBAUTHN_RP_ID = "localhost";
     const { checkWebAuthnConfig } = await load();
     expect(checkWebAuthnConfig()).toMatchObject({
-      valid: false,
-      problem: "rp_id_mismatch",
+      valid: true,
+      rpID: "uruz.example.dk",
+      problem: "rp_id_override_ignored",
     });
   });
 
-  it("rejects a lookalike domain rather than matching on substring", async () => {
+  it("ignores a lookalike domain rather than matching on substring", async () => {
     // "notexample.dk" ends with "example.dk" as a *string* but is a different
     // registrable domain; only a dot-boundary match is legitimate.
     process.env.NEXT_PUBLIC_APP_URL = "https://notexample.dk";
     process.env.WEBAUTHN_RP_ID = "example.dk";
     const { checkWebAuthnConfig } = await load();
-    expect(checkWebAuthnConfig().valid).toBe(false);
+    expect(checkWebAuthnConfig().rpID).toBe("notexample.dk");
   });
 
   it("flags plain http on a real domain", async () => {

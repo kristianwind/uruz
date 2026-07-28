@@ -125,6 +125,7 @@ Skrevet ned fordi jeg gjorde dem forkert først.
 | Importere en *mappe* fra en klientkomponent | `@/lib/i18n` gav en ubrugelig runtime-fejl. Brug fuld sti (`@/lib/i18n/core`). |
 | Glemme `env(safe-area-inset-top)` | Indhold lander oven i iPhonens ur, fordi status-bjælken er gennemsigtig. |
 | Antage at en model kun foreslår ét | Modellen udtrykker "erstat X" som *både* en bytning og en fjernelse. Bytning vinder. |
+| Tro at en rune-opdatering ændrer en eksisterende server | Yggdrasil sår rune-defaults først og lægger serverens **gemte** env ovenpå. En gammel default bliver siddende på serveren. |
 
 Alle er dokumenteret med begrundelse i [DECISIONS.md](DECISIONS.md).
 

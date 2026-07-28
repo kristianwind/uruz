@@ -97,6 +97,9 @@ export default async function AdminPage() {
                   : t("admin.webauthnBadUrl")}
             </p>
           )}
+          {webauthn.valid && webauthn.problem === "rp_id_override_ignored" && (
+            <p className="text-xs text-warning">{t("admin.webauthnOverridden")}</p>
+          )}
         </Card>
         <Card className="flex items-center justify-between py-3">
           <span className="text-sm font-medium text-text">{t("admin.pushStatus")}</span>

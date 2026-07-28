@@ -53,8 +53,24 @@ export function rpConfig() {
     // health/diagnostic surface report it rather than crashing a sign-in.
   }
 
-  const rpID = process.env.WEBAUTHN_RP_ID?.trim() || derivedHost;
-  return { rpID, rpName, origin };
+  const configured = process.env.WEBAUTHN_RP_ID?.trim();
+
+  // An RP ID that isn't the origin's host — or a registrable parent of it — is
+  // rejected by every browser, so honouring it would only produce a guaranteed
+  // failure. A stale "localhost" left behind by an old default is the common
+  // case. Prefer the value that can actually work, and let the admin panel
+  // report that the override was ignored.
+  const usable =
+    !!configured && (configured === derivedHost || derivedHost.endsWith(`.${configured}`));
+
+  return { rpID: usable ? configured : derivedHost, rpName, origin };
+}
+
+/** True when WEBAUTHN_RP_ID is set to something unusable and is being ignored. */
+export function rpIdOverrideIgnored(): boolean {
+  const configured = process.env.WEBAUTHN_RP_ID?.trim();
+  if (!configured) return false;
+  return configured !== rpConfig().rpID;
 }
 
 export interface WebAuthnDiagnostics {
@@ -84,10 +100,17 @@ export function checkWebAuthnConfig(): WebAuthnDiagnostics {
     return { origin, rpID, valid: false, problem: "app_url_invalid" };
   }
 
-  // The RP ID must equal the host or be a registrable parent of it.
+  // rpConfig() already discards an unusable override, so a mismatch here would
+  // mean a bug rather than misconfiguration — check anyway, cheaply.
   const matches = host === rpID || host.endsWith(`.${rpID}`);
   if (!matches) return { origin, rpID, valid: false, problem: "rp_id_mismatch" };
   if (!secure) return { origin, rpID, valid: false, problem: "not_secure_context" };
+
+  // Works, but the operator set something that could not be used. Say so, so a
+  // stale value gets cleaned up instead of quietly lingering.
+  if (rpIdOverrideIgnored()) {
+    return { origin, rpID, valid: true, problem: "rp_id_override_ignored" };
+  }
 
   return { origin, rpID, valid: true, problem: null };
 }

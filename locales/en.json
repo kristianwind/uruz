@@ -360,7 +360,8 @@
     "webauthnOk": "Consistent",
     "webauthnMismatch": "The passkey domain doesn't match the address — Face ID will fail.",
     "webauthnInsecure": "The address is not HTTPS — passkeys will not work.",
-    "webauthnBadUrl": "The address is not a valid URL."
+    "webauthnBadUrl": "The address is not a valid URL.",
+    "webauthnOverridden": "The server's passkey domain was unusable and has been ignored. Clear the field to avoid confusion."
   },
   "install": {
     "title": "Add Uruz to your home screen",
