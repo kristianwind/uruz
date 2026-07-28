@@ -19,7 +19,7 @@ i Yggdrasil Panel.
 | **Kode** | https://github.com/kristianwind/uruz (privat) |
 | **Image** | `ghcr.io/kristianwind/uruz:latest` (offentligt) |
 | **I drift** | https://uruz.yggdrasilpanel.com |
-| **Tests** | 116, alle grønne |
+| **Tests** | 131, alle grønne |
 | **Website** | `website/index.html` — åbn i en browser |
 
 ---
@@ -95,6 +95,84 @@ kørende container, men ikke alt kan testes uden rigtig hardware.
   kørt mod en rigtig Supabase-instans. Lokalt kører alt på SQLite.
 - **En rigtig træning i centret.** Ingen har brugt appen til det den er lavet
   til endnu. Det er den vigtigste test der mangler.
+
+---
+
+## ⚠️ AKUT: sæt `NEXT_PUBLIC_APP_URL` på serveren
+
+**Det er årsagen til at både passkey og login-links er brudt lige nu.**
+
+Serveren blev oprettet med rune-defaulten `http://localhost:3000`, og den værdi
+bruges to steder:
+
+- login-links i e-mails peger på `localhost` (ubrugelige)
+- passkey-domænet (RP ID) udledes af den → browseren afviser Face ID
+
+**Fix:** sæt variablen på Uruz-serveren i Yggdrasil til
+`https://uruz.yggdrasilpanel.com` og genstart. Det løser begge dele.
+
+### Kom ind uden passkey imens
+
+Uden `RESEND_API_KEY` skriver appen login-linket i containerens log:
+
+1. `/login` → skriv e-mail → "Send mig et login-link"
+2. Yggdrasil → Uruz-serveren → **Console/Logs**
+3. Find `📧 [dev email — no RESEND_API_KEY]` og åbn URL'en
+   (ret `localhost:3000` til `uruz.yggdrasilpanel.com` indtil variablen er sat)
+
+Verificeret i en container. Ingen data går tabt — server skal ikke genskabes.
+
+> **Sikkerhedsnote:** login-links i klartekst i containerloggen betyder at
+> enhver med adgang til panelets logs kan logge ind som en hvilken som helst
+> bruger. Acceptabelt som engangs-redning, ikke som permanent tilstand. Sæt
+> `RESEND_API_KEY`, eller gør password-login færdigt (se nedenfor).
+
+---
+
+## 🚧 Uafsluttet arbejde
+
+To ting er påbegyndt og **ikke** gjort færdige. Begge er commitet, testet og
+bryder ingenting — de er bare ikke koblet på appen endnu.
+
+### 1. Password-login (efterspurgt: "ikke alle kan bruge passkey")
+
+**Færdigt:**
+- `src/lib/auth/password.ts` — scrypt via Nodes `node:crypto`. Ingen ny
+  afhængighed, intet native build. Salt pr. kodeord, parametre gemt i hashen så
+  de kan hæves senere, `timingSafeEqual`, korrupt hash læses som forkert
+  kodeord frem for at kaste.
+- `tests/password.test.ts` — 14 tests, alle grønne.
+
+**Mangler:**
+- `password_hash TEXT` på `users` (både `schema.sqlite.ts` og
+  `supabase/migrations/`)
+- `POST /api/auth/password/login` og `/api/auth/password/set`
+- **Rate limiting** på login-forsøg — vigtigt, findes ikke endnu nogen steder
+- Password-felt i `LoginForm`, og "sæt/skift kodeord" under **Mig**
+- Tilbud om at sætte kodeord i onboarding (`FirstRunForm`, `InviteForm`)
+- Nulstilling af kodeord via magic-link
+
+Passkey bør forblive den anbefalede vej; kodeord er alternativet.
+
+### 2. Selv-udledning af appens adresse
+
+`src/lib/auth/origin.ts` er skrevet men **ikke taget i brug**. Den løser
+rodårsagen ovenfor: i stedet for at stole på en håndskrevet variabel der
+defaulter til localhost, læser den `x-forwarded-host` / `x-forwarded-proto`
+fra requesten, som en reverse proxy sætter.
+
+Rækkefølge: konfiguration først, request dernæst, localhost sidst.
+
+**Mangler:** at kalde `getAppOrigin()` / `getAppHost()` i stedet for at læse
+`process.env.NEXT_PUBLIC_APP_URL` direkte i:
+- `src/lib/auth/webauthn.ts` (`rpConfig` — skal blive async)
+- `src/app/api/auth/magic/request/route.ts`
+- `src/app/api/auth/magic/callback/route.ts`
+- `src/app/(app)/admin/actions.ts` (invitationslinks)
+
+Bemærk afvejningen dokumenteret i filen: at stole på forwarded-headere er
+bevidst, fordi det får en selvhostet opsætning bag en proxy til at virke uden
+håndkonfiguration — og en eksplicit sat adresse vinder altid.
 
 ---
 
