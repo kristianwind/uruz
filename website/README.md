@@ -62,6 +62,19 @@ cp docs/screenshots/*.png website/img/
 - **Responsivt og tilgængeligt.** Ét kolonnelayout på telefon, respekterer
   `prefers-reduced-motion`, og teksten har kontrast nok til WCAG AA.
 
+## Menuen på telefon
+
+Navigationslinkene ligger i et `<details>` der **sendes åbent**. På en bred
+skærm er `<summary>` skjult, og det åbne panel er bare den række det altid har
+været — så desktop-navigationen hviler ikke på at kunne overstyre hvordan et
+lukket `<details>` skjuler sit indhold. Det trick virker i Chrome, men det er
+ikke værd at satse en Safari-gæsts navigation på.
+
+På en telefon lukker et script menuen ved indlæsning og gør `<summary>` til en
+burger. Uden JavaScript bliver menuen stående åben, og linkene lægger sig under
+headeren: mere at rulle, men hvert link kan stadig nås. Det er den rigtige måde
+for det her at fejle på.
+
 ## Husk at bumpe CSS-versionen
 
 Begge sider linker til `styles.css?v=ÅÅÅÅMMDD`. **Ret datoen hver gang du ændrer

@@ -89,7 +89,63 @@ header.nav {
 .btn:hover { background: var(--accent-strong); color: var(--on-accent); transform: translateY(-1px); }
 .btn.ghost { background: transparent; color: var(--text); border-color: var(--border-strong); }
 .btn.ghost:hover { border-color: var(--accent); background: transparent; }
-@media (max-width: 800px) { .nav-links { display: none; } }
+
+/* ------------------------------------------------------- mobile menu ----
+ * The links live in a <details> that ships open. On a wide screen the
+ * summary is hidden and the open panel is simply the row it always was, so
+ * the desktop nav needs no override of how a <details> hides its content —
+ * a trick that is not worth betting a Safari visitor's navigation on.
+ *
+ * On a phone a script closes it on load and turns the summary into a burger.
+ * With no script the menu is left open and the links stack below the header:
+ * more scrolling, but every link still reachable. That is the right way for
+ * this to fail.
+ * ------------------------------------------------------------------------ */
+.nav-menu { display: contents; }
+.nav-burger { display: none; }
+
+@media (max-width: 800px) {
+  .nav-menu { display: block; order: 3; position: relative; }
+
+  .nav-burger {
+    display: flex; flex-direction: column; justify-content: center; gap: 5px;
+    width: 42px; height: 42px; padding: 0 10px; cursor: pointer;
+    border: 1px solid var(--border-strong); border-radius: 11px;
+    list-style: none;               /* the default disclosure triangle */
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-burger::-webkit-details-marker { display: none; }
+  .nav-burger > span {
+    display: block; height: 2px; background: var(--text); border-radius: 2px;
+    transition: transform .18s ease, opacity .18s ease;
+  }
+  .nav-menu[open] .nav-burger { border-color: var(--accent); }
+  /* Open: the bars become a cross, so the button says what it will do next. */
+  .nav-menu[open] .nav-burger > span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-menu[open] .nav-burger > span:nth-child(2) { opacity: 0; }
+  .nav-menu[open] .nav-burger > span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nav-menu .nav-links {
+    display: flex; flex-direction: column; align-items: stretch; gap: 0;
+    position: absolute; right: 0; top: calc(100% + 12px);
+    min-width: 220px; padding: 6px;
+    background: var(--bg-elev); border: 1px solid var(--border);
+    border-radius: 14px; box-shadow: 0 18px 40px rgba(0, 0, 0, .5);
+    font-size: 1rem;
+  }
+  /* Full-width, thumb-sized rows rather than a column of small text links. */
+  .nav-menu .nav-links a { padding: 13px 14px; border-radius: 10px; color: var(--text); }
+  .nav-menu .nav-links a:hover { background: var(--bg-elev-2); }
+
+  /* No script: the panel is part of the header instead of floating over it,
+     so it cannot cover the page content it is sitting on top of. */
+  .no-js .nav-menu .nav-links { position: static; box-shadow: none; margin-top: 10px; }
+  .no-js .nav-burger { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-burger > span { transition: none; }
+}
 
 /* --------------------------------------------------------------- hero ---- */
 .hero { padding: 88px 0 72px; position: relative; }

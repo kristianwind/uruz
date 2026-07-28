@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,7 +14,8 @@
 <link rel="canonical" href="https://uruz-training.com/en.html">
 <link rel="alternate" hreflang="da" href="https://uruz-training.com/">
 <link rel="alternate" hreflang="en" href="https://uruz-training.com/en.html">
-<link rel="stylesheet" href="styles.css?v=20260728">
+<link rel="stylesheet" href="styles.css?v=20260728b">
+<script>document.documentElement.classList.remove("no-js")</script>
 </head>
 <body>
 
@@ -22,13 +23,16 @@
 <header class="nav">
   <div class="wrap nav-inner">
     <a class="brand" href="#top"><span class="rune">ᚢ</span> Uruz</a>
-    <nav class="nav-links">
-      <a href="#skaerme">Screens</a>
-      <a href="#funktioner">Features</a>
-      <a href="#mimir">Mimir</a>
-      <a href="#yggdrasil">Yggdrasil</a>
-      <a href="#kom-i-gang">Get started</a>
-    </nav>
+    <details class="nav-menu" open>
+      <summary class="nav-burger" aria-label="Menu"><span></span><span></span><span></span></summary>
+      <nav class="nav-links">
+        <a href="#skaerme">Screens</a>
+        <a href="#funktioner">Features</a>
+        <a href="#mimir">Mimir</a>
+        <a href="#yggdrasil">Yggdrasil</a>
+        <a href="#kom-i-gang">Get started</a>
+      </nav>
+    </details>
     <div class="nav-end">
       <span class="lang" aria-label="Language">
         <a href="index.html" hreflang="da">DA</a><b aria-current="true">EN</b>
@@ -744,6 +748,38 @@ npm test</pre>
       { rootMargin: "0px 0px -8% 0px", threshold: 0.05 },
     );
     items.forEach((el) => io.observe(el));
+  }
+
+  /* ---- Mobile menu ------------------------------------------------------
+   * The <details> ships open so that a browser with no JavaScript shows every
+   * link. Here it is closed on a narrow screen and kept open on a wide one,
+   * which is also what has to happen when the window is resized across the
+   * breakpoint — otherwise a menu closed on a phone stays closed when the same
+   * page is opened wide, and the desktop nav silently disappears.
+   */
+  const menu = document.querySelector(".nav-menu");
+  if (menu) {
+    const narrow = window.matchMedia("(max-width: 800px)");
+    const sync = () => { menu.open = !narrow.matches; };
+    sync();
+    narrow.addEventListener("change", sync);
+
+    // Choosing a destination is the end of using the menu.
+    menu.querySelectorAll("a").forEach((a) =>
+      a.addEventListener("click", () => { if (narrow.matches) menu.open = false; }),
+    );
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menu.open && narrow.matches) {
+        menu.open = false;
+        menu.querySelector("summary").focus();
+      }
+    });
+
+    // A tap anywhere else closes it, the way every other menu behaves.
+    document.addEventListener("click", (e) => {
+      if (narrow.matches && menu.open && !menu.contains(e.target)) menu.open = false;
+    });
   }
 </script>
 </body>
