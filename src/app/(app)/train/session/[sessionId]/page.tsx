@@ -7,7 +7,7 @@ import { FreeWorkout } from "@/components/train/FreeWorkout";
 import { buildActiveExercises, loadSessionSets } from "@/lib/domain/active-workout";
 import { listExercises } from "@/lib/db/repo/exercises";
 import { getT } from "@/lib/i18n/server";
-import { workoutName, exerciseName } from "@/lib/domain/localize";
+import { workoutName, localizeExercise } from "@/lib/domain/localize";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Træning" };
@@ -30,14 +30,28 @@ export default async function SessionPage({
 
   // Free training: no template, pick exercises as you go.
   if (!session.workoutId) {
-    const library = listExercises().map((e) => ({
-      id: e.id,
-      name: exerciseName(e, t.locale),
-      unit: e.unit,
-      isBodyweight: e.isBodyweight,
-      category: e.category,
-    }));
-    return <FreeWorkout sessionId={session.id} library={library} initialSets={sets} />;
+    const library = listExercises().map((e) => {
+      const loc = localizeExercise(e, t.locale);
+      return {
+        id: e.id,
+        name: loc.name,
+        unit: e.unit,
+        isBodyweight: e.isBodyweight,
+        category: e.category,
+        svgKey: loc.svgKey,
+        imageUrl: loc.imageUrl,
+        steps: loc.steps,
+        cues: loc.cues,
+      };
+    });
+    return (
+      <FreeWorkout
+        sessionId={session.id}
+        library={library}
+        initialSets={sets}
+        mediaPref={ctx.user.mediaPref}
+      />
+    );
   }
 
   const workout = getWorkout(session.workoutId);
@@ -49,6 +63,7 @@ export default async function SessionPage({
       workoutName={workout ? workoutName(workout, t.locale) : t("train.freeWorkout")}
       exercises={exercises}
       initialSets={sets}
+      mediaPref={ctx.user.mediaPref}
     />
   );
 }

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { PlusIcon } from "@/components/ui/icons";
 import { useT } from "@/components/app/I18nProvider";
+import type { MediaPref } from "@/lib/domain/types";
 
 export interface LibraryEntry {
   id: string;
@@ -13,6 +14,10 @@ export interface LibraryEntry {
   unit: "kg" | "sek" | "reps" | "km";
   isBodyweight: boolean;
   category: string;
+  svgKey: string | null;
+  imageUrl: string | null;
+  steps: string[];
+  cues: string[];
 }
 
 /**
@@ -23,10 +28,12 @@ export function FreeWorkout({
   sessionId,
   library,
   initialSets,
+  mediaPref = "illustration",
 }: {
   sessionId: string;
   library: LibraryEntry[];
   initialSets: LoggedSet[];
+  mediaPref?: MediaPref;
 }) {
   const t = useT();
   const [chosen, setChosen] = useState<ActiveExercise[]>(() =>
@@ -89,6 +96,7 @@ export function FreeWorkout({
         workoutName={t("train.freeWorkout")}
         exercises={chosen}
         initialSets={initialSets}
+        mediaPref={mediaPref}
       />
       <Button variant="secondary" onClick={() => setPicking(true)}>
         <PlusIcon size={18} /> {t("train.addExercise")}
@@ -110,6 +118,10 @@ function toActive(entry: LibraryEntry): ActiveExercise {
     targetRepsMax: 12,
     targetSeconds: entry.unit === "sek" ? 30 : null,
     restSeconds: 90,
+    svgKey: entry.svgKey,
+    imageUrl: entry.imageUrl,
+    steps: entry.steps,
+    cues: entry.cues,
     lastWeight: null,
     lastReps: [],
     lastSeconds: null,

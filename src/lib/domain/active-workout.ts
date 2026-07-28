@@ -55,6 +55,14 @@ export function buildActiveExercises(
         targetRepsMax: item.targetRepsMax,
         targetSeconds: item.targetSeconds,
         restSeconds: item.restSeconds,
+        // Carried along so the logging screen can show what the exercise is,
+        // without a round trip to the library in the middle of a workout.
+        svgKey: ex.svgKey,
+        imageUrl: ex.imageUrl,
+        steps: locale === "en" && ex.instructionsStepsEn.length
+          ? ex.instructionsStepsEn
+          : ex.instructionsSteps,
+        cues: locale === "en" && ex.cuesEn.length ? ex.cuesEn : ex.cues,
         lastWeight: last?.weight ?? null,
         lastReps: last?.reps ?? [],
         lastSeconds: last?.seconds ?? null,

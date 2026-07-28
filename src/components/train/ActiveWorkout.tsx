@@ -7,10 +7,12 @@ import { Stepper } from "./Stepper";
 import { RestTimer } from "./RestTimer";
 import { PRToast } from "./PRToast";
 import { SetRow } from "./SetRow";
+import { ExerciseGuide } from "./ExerciseGuide";
 import { useSync } from "@/lib/offline/useSync";
 import { useWakeLock } from "@/lib/hooks/useWakeLock";
 import { cn } from "@/lib/utils";
 import { useT } from "@/components/app/I18nProvider";
+import type { MediaPref } from "@/lib/domain/types";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -30,6 +32,11 @@ export interface ActiveExercise {
   targetRepsMax: number | null;
   targetSeconds: number | null;
   restSeconds: number;
+  /** What the exercise looks like, and how it is done — shown in place. */
+  svgKey: string | null;
+  imageUrl: string | null;
+  steps: string[];
+  cues: string[];
   /** Prefill from the last time this exercise was trained. */
   lastWeight: number | null;
   lastReps: number[];
@@ -55,11 +62,13 @@ export function ActiveWorkout({
   workoutName,
   exercises,
   initialSets,
+  mediaPref = "illustration",
 }: {
   sessionId: string;
   workoutName: string;
   exercises: ActiveExercise[];
   initialSets: LoggedSet[];
+  mediaPref?: MediaPref;
 }) {
   const t = useT();
   const router = useRouter();
@@ -231,6 +240,15 @@ export function ActiveWorkout({
       <section className="rounded-xl border border-border bg-elev p-4">
         <h2 className="text-xl font-bold text-text">{current.name}</h2>
         {targetLabel && <p className="mt-0.5 text-sm text-muted">{targetLabel}</p>}
+
+        <ExerciseGuide
+          name={current.name}
+          svgKey={current.svgKey}
+          imageUrl={current.imageUrl}
+          steps={current.steps}
+          cues={current.cues}
+          mediaPref={mediaPref}
+        />
         {current.suggestion && current.suggestion.reason === "increase" && (
           <p className="mt-2 rounded-lg bg-success-soft px-3 py-2 text-sm text-success">
             {t("train.suggestUp", { weight: current.suggestion.weight })}

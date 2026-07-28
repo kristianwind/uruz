@@ -4,6 +4,30 @@ En løbende log over ikke-oplagte valg og antagelser truffet under bygningen af
 Uruz, jf. instruktionen i afsnit 0 ("notér antagelsen i `DECISIONS.md`").
 Nyeste øverst inden for hver fase.
 
+## Tilføjelse — øvelsen skal kunne ses, og skærmen skal blive ved med at være tændt
+
+- **Tegningen hører hjemme der hvor øvelsen laves.** At kende navnet på en
+  bevægelse er ikke det samme som at kende bevægelsen, og at slå den op betød at
+  forlade træningen, finde den i biblioteket og navigere tilbage — med
+  hviletimeren kørende. Tegningen står nu ved siden af navnet, og trin og cues
+  er ét tryk væk uden at gå nogen steder.
+
+- **Guiden er foldet sammen som udgangspunkt.** Midt i en træning er vægten og
+  reps det tommelfingeren rækker efter. En mur af instruktioner mellem dem og
+  toppen af skærmen ville skubbe hele pointen med appen længere ned. Målt på
+  390 px: "Log sæt" er stadig synlig med guiden åben.
+
+- **Wake lock prøver igen ved første berøring.** Nogle browsere giver kun en
+  lås under en brugerhandling. At komme hertil ved at trykke på en træning
+  tæller med, men effekten kører et øjeblik senere, og det vindue er kort. Gik
+  det galt, er næste tryk på skærmen en gratis chance til — og at logge et sæt
+  *er* et tryk, så det koster brugeren ingenting. Låsen lyttes der desuden efter
+  `release` på, for browseren slipper den på egne betingelser (et opkald, en
+  notifikation), og uden det kom den aldrig igen.
+
+- **iOS' strømbesparingstilstand nægter helt.** Det er dens ret, og der er intet
+  at gøre ved det fra appens side. Værd at vide når skærmen alligevel slukker.
+
 ## Tilføjelse — e-mail, hallens navn og et offentligt repo
 
 - **SMTP før Resend.** En selvhostet opsætning har som regel allerede en
