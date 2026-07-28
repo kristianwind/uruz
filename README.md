@@ -171,6 +171,8 @@ Lokalt kører Uruz på en indbygget SQLite-fil — nul opsætning. Til produktio
 
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** — hvordan det hænger sammen, og hvorfor.
 - **[DECISIONS.md](DECISIONS.md)** — hver ikke-oplagt beslutning og dens begrundelse.
+- **[website/](website/)** — præsentationssite med rundvisning i appen. Åbn
+  `website/index.html` i en browser.
 
 ---
 
