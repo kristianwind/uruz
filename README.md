@@ -183,6 +183,7 @@ Lokalt kører Uruz på en indbygget SQLite-fil — nul opsætning. Til produktio
 
 ## Dokumentation
 
+- **[HANDOFF.md](HANDOFF.md)** — status, hvad der er verificeret, og hvad der ikke er.
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** — hvordan det hænger sammen, og hvorfor.
 - **[DECISIONS.md](DECISIONS.md)** — hver ikke-oplagt beslutning og dens begrundelse.
 - **[website/](website/)** — præsentationssite med rundvisning i appen. Åbn
