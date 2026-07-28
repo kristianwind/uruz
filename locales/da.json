@@ -204,7 +204,9 @@
       "ship": "et skib",
       "whale": "en blåhval",
       "spaceship": "et rumskib"
-    }
+    },
+    "sessionsCount_one": "{{count}} træning",
+    "sessionsCount_other": "{{count}} træninger"
   },
   "me": {
     "title": "Mig",
@@ -239,7 +241,16 @@
     "deleteData": "Slet mine data",
     "logout": "Log ud",
     "logoutAll": "Log ud på alle enheder",
-    "admin": "Admin"
+    "admin": "Admin",
+    "password": "Kodeord",
+    "passwordDesc": "Passkey er den nemmeste vej ind. Et kodeord er alternativet, hvis Face ID ikke kan bruges.",
+    "passwordSet": "Der er sat et kodeord.",
+    "passwordNotSet": "Der er ikke sat et kodeord.",
+    "setPassword": "Sæt kodeord",
+    "changePassword": "Skift kodeord",
+    "removePassword": "Fjern kodeord",
+    "passwordSaved": "Kodeordet er gemt. Du er logget ud på dine andre enheder.",
+    "passwordRemoved": "Kodeordet er fjernet."
   },
   "auth": {
     "welcome": "Velkommen til Uruz",
@@ -261,7 +272,28 @@
     "passkeyFailed": "Kunne ikke oprette passkey.",
     "passkeyCancelled": "Passkey blev afbrudt. Prøv igen, eller fortsæt uden.",
     "passkeyDomainError": "Passkey afvist af browseren — domænet i appens indstillinger passer ikke til den adresse du er på.",
-    "passkeyCanSkip": "Du er allerede logget ind. Du kan trygt trykke Fortsæt og tilføje en passkey senere under Mig."
+    "passkeyCanSkip": "Du er allerede logget ind. Du kan trygt trykke Fortsæt og tilføje en passkey senere under Mig.",
+    "signInPassword": "Log ind med kodeord",
+    "password": "Kodeord",
+    "usePassword": "Brug kodeord i stedet",
+    "usePasskey": "Tilbage til passkey",
+    "forgotPassword": "Glemt kodeord?",
+    "resetSent": "Tjek din indbakke — vi har sendt et link til at vælge et nyt kodeord.",
+    "resetTitle": "Vælg nyt kodeord",
+    "resetDesc": "Linket gælder én gang og i 30 minutter.",
+    "newPassword": "Nyt kodeord",
+    "repeatPassword": "Gentag kodeord",
+    "currentPassword": "Nuværende kodeord",
+    "passwordMismatch": "De to kodeord er ikke ens.",
+    "passwordWrong": "Forkert e-mail eller kodeord.",
+    "passwordTooShort": "Kodeordet skal være mindst {{min}} tegn.",
+    "passwordTooCommon": "Det kodeord er for almindeligt — vælg et andet.",
+    "passwordTooSimple": "Kodeordet er for ensformigt — brug flere forskellige tegn.",
+    "passwordRateLimited": "For mange forsøg. Prøv igen om {{minutes}} min.",
+    "linkExpired": "Linket er brugt eller udløbet. Bed om et nyt.",
+    "hallName": "Hallens navn",
+    "hallNameHint": "Kan ændres senere. Fx et centernavn eller jeres eget.",
+    "defaultHallName": "Min hal"
   },
   "coach": {
     "name": "Mimir",
@@ -361,7 +393,10 @@
     "webauthnMismatch": "Passkey-domænet passer ikke til adressen — Face ID vil fejle.",
     "webauthnInsecure": "Adressen er ikke HTTPS — passkeys virker ikke.",
     "webauthnBadUrl": "Adressen er ikke en gyldig URL.",
-    "webauthnOverridden": "Passkey-domænet på serveren kunne ikke bruges og blev ignoreret. Ryd feltet for at fjerne forvirringen."
+    "webauthnOverridden": "Passkey-domænet på serveren kunne ikke bruges og blev ignoreret. Ryd feltet for at fjerne forvirringen.",
+    "webauthnInferred": "Adressen er udledt af forespørgslen, ikke sat i opsætningen. Det virker — sæt NEXT_PUBLIC_APP_URL hvis du vil låse den fast.",
+    "emailSmtp": "SMTP",
+    "emailResend": "Resend"
   },
   "install": {
     "title": "Føj Uruz til hjemmeskærmen",

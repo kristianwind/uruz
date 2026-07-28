@@ -5,6 +5,7 @@ import { createUser } from "@/lib/db/repo/users";
 import { signIn } from "@/lib/auth/cookies";
 import { writeAudit } from "@/lib/audit";
 import { seed } from "@/lib/db/seed";
+import { t } from "@/lib/i18n/core";
 
 export const runtime = "nodejs";
 
@@ -28,7 +29,9 @@ export async function POST(req: Request) {
   }
   const { displayName, email, hallName } = parsed.data;
 
-  const hall = getAnyHall() ?? createHall(hallName || "Kristians & Ibs hal");
+  // The hall is named by whoever builds it. A default with somebody's name in
+  // it would greet every other installation with two strangers' names.
+  const hall = getAnyHall() ?? createHall(hallName || t("auth.defaultHallName"));
   const admin = createUser({ hallId: hall.id, email, displayName, role: "admin" });
   // Populate the shared library so the app is usable from the first login.
   seed({ demo: false });

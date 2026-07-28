@@ -46,6 +46,19 @@ CREATE TABLE IF NOT EXISTS users (
   created_at   TEXT NOT NULL
 );
 
+-- Passwords live apart from the user row, not as a column on it.
+-- In Postgres every hall member may SELECT every other member's user row (that
+-- is what makes Valhalla work), so a hash stored there would be readable by
+-- one's own training partner. A separate table gets no policies at all, which
+-- makes it unreachable from a client and server-only by construction.
+-- A password is the fallback for whoever cannot use a passkey; no row here
+-- simply means that person has no password.
+CREATE TABLE IF NOT EXISTS user_passwords (
+  user_id    TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  hash       TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS credentials (
   id            TEXT PRIMARY KEY,
   user_id       TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

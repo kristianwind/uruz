@@ -16,11 +16,11 @@ i Yggdrasil Panel.
 
 | | |
 |---|---|
-| **Kode** | https://github.com/kristianwind/uruz (privat) |
+| **Kode** | https://github.com/kristianwind/uruz |
 | **Image** | `ghcr.io/kristianwind/uruz:latest` (offentligt) |
-| **I drift** | https://uruz.yggdrasilpanel.com |
-| **Tests** | 131, alle grønne |
-| **Website** | `website/index.html` — åbn i en browser |
+| **Website** | https://uruz-training.com |
+| **Tests** | 168, alle grønne |
+| **Site-kilde** | `website/` — dansk og engelsk, åbn `index.html` |
 
 ---
 
@@ -74,7 +74,10 @@ kørende container, men ikke alt kan testes uden rigtig hardware.
   (7 s) mod `gemma-4-26b-qat`. Tilpasning af træning til en øm skulder, inkl.
   at skavanken huskes til en senere, urelateret forespørgsel.
 - **Passkey-domænet** udledes korrekt af adressen (testet i container med
-  `uruz.yggdrasilpanel.com`).
+  et rigtigt domæne), og adressen udledes nu af selve forespørgslen når
+  konfigurationen stadig står på localhost.
+- **Password-login** hele vejen rundt: sæt, skift, log ind, throttling,
+  nulstilling via e-mail. Se afsnittet nedenfor.
 - **Reminders.** Cron springer korrekt over når man allerede har trænet i dag,
   og vælger rivalise-teksten når en hal-kammerat har trænet.
 - **Sikkerhed.** Sidste admin kan ikke deaktiveres. Magic-links er engangs.
@@ -98,81 +101,62 @@ kørende container, men ikke alt kan testes uden rigtig hardware.
 
 ---
 
-## ⚠️ AKUT: sæt `NEXT_PUBLIC_APP_URL` på serveren
+## Adressen: `NEXT_PUBLIC_APP_URL` behøver ikke længere at være sat
 
-**Det er årsagen til at både passkey og login-links er brudt lige nu.**
+Det var årsagen til at både passkey og login-links var brudt: serveren blev
+oprettet med rune-defaulten `http://localhost:3000`, og den værdi drev både
+login-links i e-mails og passkey-domænet (RP ID).
 
-Serveren blev oprettet med rune-defaulten `http://localhost:3000`, og den værdi
-bruges to steder:
+**Det er nu løst i koden.** `src/lib/auth/origin.ts` er taget i brug: siger
+konfigurationen stadig `localhost`, mens forespørgslen tydeligvis kommer et
+andet sted fra, læses `x-forwarded-host` / `x-forwarded-proto` i stedet — dem
+sætter proxyen foran. Rækkefølge: konfiguration, forespørgsel, localhost.
 
-- login-links i e-mails peger på `localhost` (ubrugelige)
-- passkey-domænet (RP ID) udledes af den → browseren afviser Face ID
+Sæt gerne alligevel variablen til appens rigtige adresse. En eksplicit adresse
+vinder altid, og så afhænger intet af proxyens headere. **Mig → Admin →
+Passkey-opsætning** siger nu hvilken af de to der er i brug.
 
-**Fix:** sæt variablen på Uruz-serveren i Yggdrasil til
-`https://uruz.yggdrasilpanel.com` og genstart. Det løser begge dele.
+### Kom ind uden passkey
 
-### Kom ind uden passkey imens
+Der er tre veje ind: passkey, kodeord og login-link på e-mail.
 
-Uden `RESEND_API_KEY` skriver appen login-linket i containerens log:
-
-1. `/login` → skriv e-mail → "Send mig et login-link"
-2. Yggdrasil → Uruz-serveren → **Console/Logs**
-3. Find `📧 [dev email — no RESEND_API_KEY]` og åbn URL'en
-   (ret `localhost:3000` til `uruz.yggdrasilpanel.com` indtil variablen er sat)
-
-Verificeret i en container. Ingen data går tabt — server skal ikke genskabes.
-
-> **Sikkerhedsnote:** login-links i klartekst i containerloggen betyder at
-> enhver med adgang til panelets logs kan logge ind som en hvilken som helst
-> bruger. Acceptabelt som engangs-redning, ikke som permanent tilstand. Sæt
-> `RESEND_API_KEY`, eller gør password-login færdigt (se nedenfor).
+Er der hverken SMTP eller Resend sat op, skriver appen i stedet login-linket i
+serverens log — nok til at komme ind første gang, men **det bør ikke være en
+permanent tilstand**: alle der kan læse loggen, kan dermed logge ind som en
+hvilken som helst bruger. Sæt en mailserver op (se README), eller sæt et
+kodeord under **Mig → Kodeord** så snart du er inde.
 
 ---
 
-## 🚧 Uafsluttet arbejde
+## Password-login
 
-To ting er påbegyndt og **ikke** gjort færdige. Begge er commitet, testet og
-bryder ingenting — de er bare ikke koblet på appen endnu.
+Efterspurgt fordi "ikke alle kan bruge passkey". Passkey er stadig den
+anbefalede vej; kodeord er alternativet, ét tryk væk på login-skærmen.
 
-### 1. Password-login (efterspurgt: "ikke alle kan bruge passkey")
+| Hvor | Hvad |
+|---|---|
+| `/login` | "Brug kodeord i stedet", og "Glemt kodeord?" derunder |
+| **Mig → Kodeord** | sæt, skift eller fjern sit kodeord |
+| Onboarding | tilbydes sammen med passkey, efter kontoen er oprettet |
+| E-mail | et engangslink til at vælge nyt kodeord, gyldigt 30 min |
 
-**Færdigt:**
-- `src/lib/auth/password.ts` — scrypt via Nodes `node:crypto`. Ingen ny
-  afhængighed, intet native build. Salt pr. kodeord, parametre gemt i hashen så
-  de kan hæves senere, `timingSafeEqual`, korrupt hash læses som forkert
-  kodeord frem for at kaste.
-- `tests/password.test.ts` — 14 tests, alle grønne.
+Værd at vide om opførslen:
 
-**Mangler:**
-- `password_hash TEXT` på `users` (både `schema.sqlite.ts` og
-  `supabase/migrations/`)
-- `POST /api/auth/password/login` og `/api/auth/password/set`
-- **Rate limiting** på login-forsøg — vigtigt, findes ikke endnu nogen steder
-- Password-felt i `LoginForm`, og "sæt/skift kodeord" under **Mig**
-- Tilbud om at sætte kodeord i onboarding (`FirstRunForm`, `InviteForm`)
-- Nulstilling af kodeord via magic-link
+- **Fem fejl pr. kvarter**, talt både pr. e-mail og pr. kalder-adresse. Et
+  vellykket login nulstiller tælleren. Tælleren lever i hukommelsen — det
+  virker fordi der er én container; skaleres der ud, skal den i databasen.
+- **Alle login-fejl ser ens ud** (samme 401), og der hashes også for en ukendt
+  e-mail, så svartiden ikke røber om kontoen findes.
+- **Skift kræver det nuværende kodeord** og lukker alle andre sessioner.
+- **Hashen ligger i `user_passwords`**, ikke som kolonne på `users` — i
+  Postgres kan ethvert hal-medlem læse andres `users`-række.
 
-Passkey bør forblive den anbefalede vej; kodeord er alternativet.
+Verificeret lokalt: kodeord sat gennem UI'et, forkert kodeord afvist, rigtigt
+kodeord logger ind, throttling slår til på sjette forsøg, nulstillingslinket
+virker én gang, et for kort kodeord bruger ikke linket op, og et
+nulstillings-link kan ikke bruges som login-link.
 
-### 2. Selv-udledning af appens adresse
-
-`src/lib/auth/origin.ts` er skrevet men **ikke taget i brug**. Den løser
-rodårsagen ovenfor: i stedet for at stole på en håndskrevet variabel der
-defaulter til localhost, læser den `x-forwarded-host` / `x-forwarded-proto`
-fra requesten, som en reverse proxy sætter.
-
-Rækkefølge: konfiguration først, request dernæst, localhost sidst.
-
-**Mangler:** at kalde `getAppOrigin()` / `getAppHost()` i stedet for at læse
-`process.env.NEXT_PUBLIC_APP_URL` direkte i:
-- `src/lib/auth/webauthn.ts` (`rpConfig` — skal blive async)
-- `src/app/api/auth/magic/request/route.ts`
-- `src/app/api/auth/magic/callback/route.ts`
-- `src/app/(app)/admin/actions.ts` (invitationslinks)
-
-Bemærk afvejningen dokumenteret i filen: at stole på forwarded-headere er
-bevidst, fordi det får en selvhostet opsætning bag en proxy til at virke uden
-håndkonfiguration — og en eksplicit sat adresse vinder altid.
+**Ikke verificeret:** ingen har brugt det på en rigtig telefon endnu.
 
 ---
 
@@ -204,6 +188,8 @@ Skrevet ned fordi jeg gjorde dem forkert først.
 | Glemme `env(safe-area-inset-top)` | Indhold lander oven i iPhonens ur, fordi status-bjælken er gennemsigtig. |
 | Antage at en model kun foreslår ét | Modellen udtrykker "erstat X" som *både* en bytning og en fjernelse. Bytning vinder. |
 | Tro at en rune-opdatering ændrer en eksisterende server | Yggdrasil sår rune-defaults først og lægger serverens **gemte** env ovenpå. En gammel default bliver siddende på serveren. |
+| Læse `window` under render i en klientkomponent | Serveren siger falsk, browseren sandt, og React smider hele træet væk. Afgør det i en `useEffect` — se `usePasskeySupported`. |
+| Tilføje en kolonne til en tabel der allerede findes | `CREATE TABLE IF NOT EXISTS` springer hele sætningen over, så kolonnen når aldrig en kørende database. En ny *tabel* klarer sig selv; en ny *kolonne* kræver `ALTER TABLE`. |
 
 Alle er dokumenteret med begrundelse i [DECISIONS.md](DECISIONS.md).
 
@@ -246,7 +232,7 @@ fanger det hele. En backup af kun `.sqlite` kan mangle de nyeste skrivninger.
 | Passkey fejler | **Mig → Admin → Passkey-opsætning**. Adresse og domæne skal passe sammen, og der skal være HTTPS. |
 | Mimir svarer ikke | **Mig → Admin → AI-status → Tjek forbindelse**. Uden model falder appen tilbage til regelbaserede forslag — det er meningen. |
 | Reminders kommer ikke | Er `CRON_SECRET` sat, og bliver `/api/cron` faktisk kaldt? |
-| Containeren starter ikke | `curl https://uruz.yggdrasilpanel.com/api/health` — den rører databasen, så den fanger også et lager-problem. |
+| Containeren starter ikke | `curl https://din-adresse/api/health` — den rører databasen, så den fanger også et lager-problem. |
 | Gamle skærme på telefonen | Service worker-cache. Geninstallér fra hjemmeskærmen. |
 
 ---
@@ -255,7 +241,9 @@ fanger det hele. En backup af kun `.sqlite` kan mangle de nyeste skrivninger.
 
 I den rækkefølge:
 
-1. **Bekræft Face ID på en rigtig iPhone.** Det eneste ubekræftede i login-flowet.
+1. **Bekræft Face ID på en rigtig iPhone.** Det eneste ubekræftede i
+   login-flowet — og nu ikke længere det eneste der kan lukke dig ind, for
+   kodeord virker. Prøv gerne begge dele på telefonen.
 2. **Log en rigtig træning i centret.** Alt er bygget ud fra en formodning om
    hvordan det føles med svedige fingre mellem sæt. Den formodning skal testes.
 3. **Invitér Ib.** Så bliver Valhal og ranglisten meningsfuld, og

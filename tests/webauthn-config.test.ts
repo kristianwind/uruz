@@ -20,10 +20,10 @@ afterEach(() => {
 
 describe("rpConfig", () => {
   it("derives the RP ID from the app URL when none is set", async () => {
-    process.env.NEXT_PUBLIC_APP_URL = "https://uruz.yggdrasilpanel.com";
+    process.env.NEXT_PUBLIC_APP_URL = "https://uruz.example.dk";
     delete process.env.WEBAUTHN_RP_ID;
     const { rpConfig } = await load();
-    expect(rpConfig().rpID).toBe("uruz.yggdrasilpanel.com");
+    expect((await rpConfig()).rpID).toBe("uruz.example.dk");
   });
 
   it("does not fall back to localhost on a real domain", async () => {
@@ -31,38 +31,38 @@ describe("rpConfig", () => {
     process.env.NEXT_PUBLIC_APP_URL = "https://uruz.example.dk";
     delete process.env.WEBAUTHN_RP_ID;
     const { rpConfig } = await load();
-    expect(rpConfig().rpID).not.toBe("localhost");
+    expect((await rpConfig()).rpID).not.toBe("localhost");
   });
 
   it("honours an explicit RP ID, for sharing across subdomains", async () => {
     process.env.NEXT_PUBLIC_APP_URL = "https://uruz.example.dk";
     process.env.WEBAUTHN_RP_ID = "example.dk";
     const { rpConfig } = await load();
-    expect(rpConfig().rpID).toBe("example.dk");
+    expect((await rpConfig()).rpID).toBe("example.dk");
   });
 
   it("discards a stale override that cannot work for this origin", async () => {
     // Exactly the state a server created from rune v1 ends up in: the old
     // default "localhost" is stored in the server's env and would otherwise
     // survive both a new image and a new rune.
-    process.env.NEXT_PUBLIC_APP_URL = "https://uruz.yggdrasilpanel.com";
+    process.env.NEXT_PUBLIC_APP_URL = "https://uruz.example.dk";
     process.env.WEBAUTHN_RP_ID = "localhost";
     const { rpConfig } = await load();
-    expect(rpConfig().rpID).toBe("uruz.yggdrasilpanel.com");
+    expect((await rpConfig()).rpID).toBe("uruz.example.dk");
   });
 
   it("ignores an RP ID that is only whitespace", async () => {
     process.env.NEXT_PUBLIC_APP_URL = "https://uruz.example.dk";
     process.env.WEBAUTHN_RP_ID = "   ";
     const { rpConfig } = await load();
-    expect(rpConfig().rpID).toBe("uruz.example.dk");
+    expect((await rpConfig()).rpID).toBe("uruz.example.dk");
   });
 
   it("still works for local development", async () => {
     process.env.NEXT_PUBLIC_APP_URL = "http://localhost:3000";
     delete process.env.WEBAUTHN_RP_ID;
     const { rpConfig } = await load();
-    expect(rpConfig().rpID).toBe("localhost");
+    expect((await rpConfig()).rpID).toBe("localhost");
   });
 });
 
@@ -71,14 +71,14 @@ describe("checkWebAuthnConfig", () => {
     process.env.NEXT_PUBLIC_APP_URL = "https://uruz.example.dk";
     delete process.env.WEBAUTHN_RP_ID;
     const { checkWebAuthnConfig } = await load();
-    expect(checkWebAuthnConfig()).toMatchObject({ valid: true, problem: null });
+    expect(await checkWebAuthnConfig()).toMatchObject({ valid: true, problem: null });
   });
 
   it("accepts a registrable parent domain as the RP ID", async () => {
     process.env.NEXT_PUBLIC_APP_URL = "https://uruz.example.dk";
     process.env.WEBAUTHN_RP_ID = "example.dk";
     const { checkWebAuthnConfig } = await load();
-    expect(checkWebAuthnConfig().valid).toBe(true);
+    expect((await checkWebAuthnConfig()).valid).toBe(true);
   });
 
   it("ignores an unusable RP ID rather than guaranteeing a failure", async () => {
@@ -88,7 +88,7 @@ describe("checkWebAuthnConfig", () => {
     process.env.NEXT_PUBLIC_APP_URL = "https://uruz.example.dk";
     process.env.WEBAUTHN_RP_ID = "localhost";
     const { checkWebAuthnConfig } = await load();
-    expect(checkWebAuthnConfig()).toMatchObject({
+    expect(await checkWebAuthnConfig()).toMatchObject({
       valid: true,
       rpID: "uruz.example.dk",
       problem: "rp_id_override_ignored",
@@ -101,14 +101,14 @@ describe("checkWebAuthnConfig", () => {
     process.env.NEXT_PUBLIC_APP_URL = "https://notexample.dk";
     process.env.WEBAUTHN_RP_ID = "example.dk";
     const { checkWebAuthnConfig } = await load();
-    expect(checkWebAuthnConfig().rpID).toBe("notexample.dk");
+    expect((await checkWebAuthnConfig()).rpID).toBe("notexample.dk");
   });
 
   it("flags plain http on a real domain", async () => {
     process.env.NEXT_PUBLIC_APP_URL = "http://uruz.example.dk";
     delete process.env.WEBAUTHN_RP_ID;
     const { checkWebAuthnConfig } = await load();
-    expect(checkWebAuthnConfig()).toMatchObject({
+    expect(await checkWebAuthnConfig()).toMatchObject({
       valid: false,
       problem: "not_secure_context",
     });
@@ -118,13 +118,13 @@ describe("checkWebAuthnConfig", () => {
     process.env.NEXT_PUBLIC_APP_URL = "http://localhost:3000";
     delete process.env.WEBAUTHN_RP_ID;
     const { checkWebAuthnConfig } = await load();
-    expect(checkWebAuthnConfig().valid).toBe(true);
+    expect((await checkWebAuthnConfig()).valid).toBe(true);
   });
 
   it("reports a malformed app URL instead of throwing", async () => {
     process.env.NEXT_PUBLIC_APP_URL = "uruz.example.dk";
     const { checkWebAuthnConfig } = await load();
-    expect(checkWebAuthnConfig()).toMatchObject({
+    expect(await checkWebAuthnConfig()).toMatchObject({
       valid: false,
       problem: "app_url_invalid",
     });

@@ -22,6 +22,10 @@ next-env.d.ts
 .env
 .env*.local
 
+# Working notes about the production host — server ids, internal
+# addresses, ssh. Never belongs in a public repository.
+CLAUDE.md
+
 # misc
 .DS_Store
 *.pem
@@ -33,6 +37,8 @@ yarn-error.log*
 .idea
 .vscode
 .next-check/
+.next-verify/
+.next-shots/
 
 # TypeScript incremental build cache
 *.tsbuildinfo

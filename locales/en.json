@@ -204,7 +204,9 @@
       "ship": "a ship",
       "whale": "a blue whale",
       "spaceship": "a spaceship"
-    }
+    },
+    "sessionsCount_one": "{{count}} workout",
+    "sessionsCount_other": "{{count}} workouts"
   },
   "me": {
     "title": "Me",
@@ -239,7 +241,16 @@
     "deleteData": "Delete my data",
     "logout": "Log out",
     "logoutAll": "Log out on all devices",
-    "admin": "Admin"
+    "admin": "Admin",
+    "password": "Password",
+    "passwordDesc": "A passkey is the easiest way in. A password is the alternative when Face ID can't be used.",
+    "passwordSet": "A password is set.",
+    "passwordNotSet": "No password is set.",
+    "setPassword": "Set a password",
+    "changePassword": "Change password",
+    "removePassword": "Remove password",
+    "passwordSaved": "Password saved. You've been signed out on your other devices.",
+    "passwordRemoved": "Password removed."
   },
   "auth": {
     "welcome": "Welcome to Uruz",
@@ -261,7 +272,28 @@
     "passkeyFailed": "Could not create a passkey.",
     "passkeyCancelled": "Passkey was cancelled. Try again, or continue without one.",
     "passkeyDomainError": "The browser refused the passkey — the domain in the app's settings doesn't match the address you're on.",
-    "passkeyCanSkip": "You are already signed in. It's safe to press Continue and add a passkey later under Me."
+    "passkeyCanSkip": "You are already signed in. It's safe to press Continue and add a passkey later under Me.",
+    "signInPassword": "Sign in with password",
+    "password": "Password",
+    "usePassword": "Use a password instead",
+    "usePasskey": "Back to passkey",
+    "forgotPassword": "Forgotten your password?",
+    "resetSent": "Check your inbox — we've sent a link to choose a new password.",
+    "resetTitle": "Choose a new password",
+    "resetDesc": "The link works once, for 30 minutes.",
+    "newPassword": "New password",
+    "repeatPassword": "Repeat password",
+    "currentPassword": "Current password",
+    "passwordMismatch": "The two passwords don't match.",
+    "passwordWrong": "Wrong email or password.",
+    "passwordTooShort": "The password must be at least {{min}} characters.",
+    "passwordTooCommon": "That password is too common — pick another.",
+    "passwordTooSimple": "The password is too repetitive — use more different characters.",
+    "passwordRateLimited": "Too many attempts. Try again in {{minutes}} min.",
+    "linkExpired": "The link has been used or has expired. Ask for a new one.",
+    "hallName": "Name of the hall",
+    "hallNameHint": "Can be changed later. A gym's name, or your own.",
+    "defaultHallName": "My hall"
   },
   "coach": {
     "name": "Mimir",
@@ -361,7 +393,10 @@
     "webauthnMismatch": "The passkey domain doesn't match the address — Face ID will fail.",
     "webauthnInsecure": "The address is not HTTPS — passkeys will not work.",
     "webauthnBadUrl": "The address is not a valid URL.",
-    "webauthnOverridden": "The server's passkey domain was unusable and has been ignored. Clear the field to avoid confusion."
+    "webauthnOverridden": "The server's passkey domain was unusable and has been ignored. Clear the field to avoid confusion.",
+    "webauthnInferred": "The address is inferred from the request, not set in configuration. That works — set NEXT_PUBLIC_APP_URL to pin it.",
+    "emailSmtp": "SMTP",
+    "emailResend": "Resend"
   },
   "install": {
     "title": "Add Uruz to your home screen",

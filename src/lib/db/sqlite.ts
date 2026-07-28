@@ -30,6 +30,10 @@ export function getDb(): DatabaseSync {
   db.exec("PRAGMA journal_mode = WAL;");
   db.exec("PRAGMA foreign_keys = ON;");
 
+  // Every statement is CREATE ... IF NOT EXISTS, so this both creates a fresh
+  // database and picks up new *tables* on one that has been running. A new
+  // *column* on an existing table does not arrive this way — SQLite skips the
+  // whole CREATE — and needs an explicit `ALTER TABLE ... ADD COLUMN` here.
   db.exec(SCHEMA_SQL);
 
   instance = db;

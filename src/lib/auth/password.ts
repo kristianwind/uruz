@@ -28,36 +28,15 @@ const SALT_BYTES = 16;
 // scrypt needs headroom above N*r*128; the default 32MB cap is too low for N=2^16.
 const MAXMEM = 256 * 1024 * 1024;
 
-export const MIN_PASSWORD_LENGTH = 10;
-
-export interface PasswordCheck {
-  ok: boolean;
-  problem?: "too_short" | "too_common" | "too_simple";
-}
-
-/**
- * Reject the passwords that actually get broken, without theatre.
- *
- * Length does far more work than character-class rules, so the bar is a
- * reasonable minimum length plus a check against the handful of passwords that
- * appear in every breach list. No forced symbols — those push people toward
- * `Password1!` and a sticky note.
- */
-const COMMON = new Set([
-  "password", "password1", "password12", "password123", "passwordpassword",
-  "12345678", "123456789", "1234567890", "qwertyuiop", "qwerty123",
-  "iloveyou", "adminadmin", "letmein123", "welcome123", "administrator",
-  "kodeord123", "adgangskode", "hemmelighed",
-]);
-
-export function checkPasswordStrength(password: string): PasswordCheck {
-  const value = password.trim();
-  if (value.length < MIN_PASSWORD_LENGTH) return { ok: false, problem: "too_short" };
-  if (COMMON.has(value.toLowerCase())) return { ok: false, problem: "too_common" };
-  // A single repeated character is long but worthless.
-  if (new Set(value).size < 4) return { ok: false, problem: "too_simple" };
-  return { ok: true };
-}
+// The strength rule lives in ./password-rules so the sign-up form can apply
+// the identical check before posting. Re-exported here so callers that hash
+// and callers that validate need only one import.
+export {
+  MIN_PASSWORD_LENGTH,
+  checkPasswordStrength,
+  type PasswordCheck,
+  type PasswordProblem,
+} from "./password-rules";
 
 export async function hashPassword(password: string): Promise<string> {
   const salt = randomBytes(SALT_BYTES);

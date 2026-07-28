@@ -331,3 +331,60 @@ footer {
    stay readable rather than being clipped. */
 .code-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 @media (max-width: 820px) { .code-pair { grid-template-columns: 1fr; } }
+
+/* ------------------------------------------------------- language ------- */
+/* Two documents rather than a toggle: each language is a real page with the
+   right `lang`, which is what a screen reader and a search engine need. */
+.nav-end { display: flex; align-items: center; gap: 14px; }
+.lang {
+  display: inline-flex; align-items: center; gap: 2px;
+  border: 1px solid var(--border-strong); border-radius: 9px; overflow: hidden;
+  font-size: .78rem; font-weight: 650; letter-spacing: .04em;
+}
+.lang > b, .lang > a { padding: 5px 9px; line-height: 1; }
+.lang > b { background: var(--accent-soft); color: var(--accent); }
+.lang > a { color: var(--muted); }
+.lang > a:hover { color: var(--text); background: var(--bg-elev-2); }
+
+/* ------------------------------------------------------ disclaimer ------ */
+/* Deliberately plain and early: someone deciding whether to trust this with
+   their training log should meet the warning before the feature list. */
+.disclaimer {
+  border: 1px solid color-mix(in srgb, #d98a4a 40%, transparent);
+  background: color-mix(in srgb, #d98a4a 9%, transparent);
+  color: var(--muted);
+  border-radius: 13px; padding: 14px 18px; font-size: .92rem; line-height: 1.6;
+  margin: 8px 0 32px;
+}
+.disclaimer b { color: #e0a166; font-weight: 650; }
+
+.foot-note {
+  margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border);
+  color: var(--faint); font-size: .82rem; line-height: 1.6; max-width: 78ch;
+}
+
+/* -------------------------------------------------------- screenshots --- */
+/* Real captures of the running app. They carry their intrinsic size so the
+   page does not jump as they load, and they scroll sideways on a phone
+   instead of shrinking to something nobody can read. */
+.shots {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px;
+}
+.shots figure { margin: 0; }
+.shots img {
+  width: 100%; height: auto; display: block;
+  border-radius: 20px; border: 1px solid var(--border);
+  background: var(--bg-elev);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .45);
+}
+.shots figcaption {
+  margin-top: 12px; color: var(--muted); font-size: .88rem; text-align: center;
+}
+@media (max-width: 900px) { .shots { grid-template-columns: repeat(2, 1fr); gap: 18px; } }
+@media (max-width: 560px) {
+  .shots {
+    display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding-bottom: 10px; margin-inline: -24px; padding-inline: 24px;
+  }
+  .shots figure { flex: 0 0 72%; scroll-snap-align: center; }
+}

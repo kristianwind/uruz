@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { consumeMagicToken } from "@/lib/db/repo/auth";
 import { getUserByEmail } from "@/lib/db/repo/users";
 import { signIn } from "@/lib/auth/cookies";
+import { getAppOrigin } from "@/lib/auth/origin";
 
 export const runtime = "nodejs";
 
@@ -9,9 +10,9 @@ export const runtime = "nodejs";
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const token = url.searchParams.get("token") ?? "";
-  const base = process.env.NEXT_PUBLIC_APP_URL || url.origin;
+  const base = await getAppOrigin();
 
-  const mt = token ? consumeMagicToken(token) : null;
+  const mt = token ? consumeMagicToken(token, "login") : null;
   if (!mt) {
     return NextResponse.redirect(`${base}/login?error=link_expired`);
   }

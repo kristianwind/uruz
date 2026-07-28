@@ -4,6 +4,76 @@ En løbende log over ikke-oplagte valg og antagelser truffet under bygningen af
 Uruz, jf. instruktionen i afsnit 0 ("notér antagelsen i `DECISIONS.md`").
 Nyeste øverst inden for hver fase.
 
+## Tilføjelse — kodeord som alternativ til passkey
+
+*(Ønsket undervejs: "ikke alle kan bruge passkey".)*
+
+- **Passkey forbliver anbefalingen; kodeord er alternativet.** Login-skærmen
+  åbner stadig på passkey. Kodeord ligger ét tryk væk, fordi det er den
+  eneste vej ind for en enhed eller browser der slet ikke kan passkeys — ikke
+  fordi det er lige så godt.
+
+- **Hashen ligger i sin egen tabel, ikke som kolonne på `users`.** Postgres-
+  policyen "hall members visible" lader ethvert medlem læse hele *rækken* for
+  alle andre i hallen — det er den der driver Valhal. En kodeords-hash på den
+  række ville dermed være læsbar for ens egen træningsmakker. `user_passwords`
+  har RLS slået til og *ingen* policies, hvilket gør den uopnåelig for
+  `anon`/`authenticated` uanset hvad; kun serveren kan røre den. Afviger
+  bevidst fra handoff-notens "password_hash på users".
+
+- **Rate limiting fandtes ikke før nu.** En passkey kan ikke gættes; et kodeord
+  kan. Grænsen er fem fejl pr. kvarter, talt både pr. e-mail og pr.
+  kalder-adresse, så hverken én konto eller én maskine kan bruges til at male
+  sig igennem. Et vellykket login nulstiller begge tællere, så almindelig brug
+  aldrig nærmer sig loftet. Tilstanden ligger i hukommelsen — Uruz kører som
+  én container mod én SQLite-fil, så der er præcis én proces at tælle i. Skal
+  det skaleres vandret, skal tælleren i databasen.
+
+- **Alle fejl ved login ser ens ud.** Ukendt e-mail, intet kodeord sat, forkert
+  kodeord og deaktiveret konto giver samme 401. Der hashes også når der intet
+  er at sammenligne med, så "findes ikke" ikke er målbart hurtigere end
+  "forkert kodeord" — ellers ville de ens fejlbeskeder være til grin.
+
+- **Et skift af kodeord kræver det gamle, og lukker alle andre sessioner.** En
+  levende session er ikke bevis nok: en telefon der ligger ulåst på en bænk
+  skal ikke være vejen til at låse ejeren ude. Og skifter man kodeord fordi en
+  anden kender det, ville det være meningsløst at lade den andens session leve.
+
+- **Glemt kodeord går gennem et engangslink med sit eget formål.** Linket
+  erstatter det gamle kodeord som bevis, så det må ikke kunne bruges til noget
+  andet: `consumeMagicToken` kræver nu et matchende formål, og et
+  nulstillings-link afvises derfor af login-callbacket. Styrken tjekkes *før*
+  linket bruges op — et afvist kodeord må ikke koste brugeren linket.
+
+- **Samme styrkeregel i browser og server.** `checkPasswordStrength` er flyttet
+  til `password-rules.ts` uden `server-only`, så formularen kan sige "for kort"
+  med det samme. Serveren afgør stadig; klient-tjekket er en høflighed.
+
+## Tilføjelse — appen udleder sin egen adresse
+
+- **Forespørgslen slår en konfiguration der stadig siger localhost.**
+  `NEXT_PUBLIC_APP_URL` vinder når den peger et rigtigt sted hen, men
+  defaulten `http://localhost:3000` er ikke et svar — det er fraværet af et.
+  Kom forespørgslen tydeligvis ikke fra localhost, læses `x-forwarded-host` /
+  `x-forwarded-proto` i stedet. Det er dét der gør, at en selvhostet opsætning
+  bag en proxy virker uden håndkonfiguration. Rækkefølge: konfiguration,
+  forespørgsel, localhost.
+
+- **At stole på forwarded-headere er et bevidst valg.** Operatøren ejer sin
+  egen proxy, og en eksplicit sat adresse vinder altid, så en installation der
+  bekymrer sig kan låse den fast. Admin-panelet siger nu når adressen er
+  udledt frem for sat.
+
+- **`rpConfig()` blev asynkron.** Adressen kommer nu fra forespørgslen, og
+  `headers()` er async i Next 15. Det smitter af på `checkWebAuthnConfig()` og
+  admin-siden, men holder passkey-domænet og login-links på én sandhed.
+
+- **Passkey-understøttelse afgøres efter mount.** `passkeySupported()` kigger
+  på `window` og var derfor falsk på serveren og sand i browseren — første
+  paint var uenig med serveren, og React smed hele træet væk og byggede det
+  igen. Fejlen var der før kodeords-arbejdet; den er rettet nu, fordi den nye
+  knap arvede den.
+
 ## Tilføjelse — skavanker & ønsker (Mimir tilpasser træningen)
 
 *(Ønsket undervejs: "man skal kunne skrive til AI og fortælle en skavank eller

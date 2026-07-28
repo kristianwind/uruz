@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/app/PageHeader";
 import { Card, CardMuted } from "@/components/ui/Card";
 import { AdminInviteForm } from "@/components/admin/InviteForm";
+import { HallNameForm } from "@/components/admin/HallNameForm";
 import { UserRow, type AdminUserView } from "@/components/admin/UserRow";
 import { AIStatus } from "@/components/admin/AIStatus";
 import { RevokeInviteButton } from "@/components/admin/RevokeInviteButton";
@@ -17,9 +18,11 @@ import { loadUserData } from "@/lib/domain/gamification-service";
 import { getAIConfig, isAIConfigured } from "@/lib/ai/provider";
 import { checkWebAuthnConfig } from "@/lib/auth/webauthn";
 import { isPushConfigured } from "@/lib/notify/push";
+import { emailProvider } from "@/lib/notify/email";
 import { getT } from "@/lib/i18n/server";
 import {
   inviteUserAction,
+  renameHallAction,
   revokeInvitationAction,
   setUserActiveAction,
   setUserRoleAction,
@@ -51,9 +54,9 @@ export default async function AdminPage() {
   const invitations = listInvitations(ctx.hall.id);
   const audit = listAudit(ctx.hall.id, 25);
   const ai = getAIConfig();
-  const webauthn = checkWebAuthnConfig();
+  const webauthn = await checkWebAuthnConfig();
 
-  const emailConfigured = !!process.env.RESEND_API_KEY;
+  const email = emailProvider();
 
   return (
     <div className="flex flex-col gap-6">
@@ -100,6 +103,11 @@ export default async function AdminPage() {
           {webauthn.valid && webauthn.problem === "rp_id_override_ignored" && (
             <p className="text-xs text-warning">{t("admin.webauthnOverridden")}</p>
           )}
+          {/* The address works, but it came from the request. Worth saying: it
+              silently follows whatever host the app is reached on. */}
+          {webauthn.inferred && (
+            <p className="text-xs text-faint">{t("admin.webauthnInferred")}</p>
+          )}
         </Card>
         <Card className="flex items-center justify-between py-3">
           <span className="text-sm font-medium text-text">{t("admin.pushStatus")}</span>
@@ -109,9 +117,25 @@ export default async function AdminPage() {
         </Card>
         <Card className="flex items-center justify-between py-3">
           <span className="text-sm font-medium text-text">{t("admin.emailStatus")}</span>
-          <span className={emailConfigured ? "text-xs text-success" : "text-xs text-warning"}>
-            {emailConfigured ? t("admin.configured") : t("admin.devMode")}
+          {/* Name the route out, not just "configured": which one is sending
+              is the first thing you need when mail is not arriving. */}
+          <span className={email === "dev" ? "text-xs text-warning" : "text-xs text-success"}>
+            {email === "smtp"
+              ? t("admin.emailSmtp")
+              : email === "resend"
+                ? t("admin.emailResend")
+                : t("admin.devMode")}
           </span>
+        </Card>
+      </section>
+
+      {/* The hall */}
+      <section>
+        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-faint">
+          {t("admin.hall")}
+        </h2>
+        <Card>
+          <HallNameForm initialName={ctx.hall.name} onRename={renameHallAction} />
         </Card>
       </section>
 

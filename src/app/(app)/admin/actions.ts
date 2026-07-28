@@ -10,8 +10,10 @@ import {
   listInvitations,
 } from "@/lib/db/repo/invitations";
 import { upsertExercise, getExerciseBySlug } from "@/lib/db/repo/exercises";
+import { renameHall } from "@/lib/db/repo/halls";
 import { writeAudit } from "@/lib/audit";
 import { sendEmail, inviteEmail } from "@/lib/notify/email";
+import { getAppOrigin } from "@/lib/auth/origin";
 import type { AppContext } from "@/lib/auth/session";
 
 /**
@@ -47,7 +49,7 @@ export async function inviteUserAction(
     role: parsed.role,
   });
 
-  const base = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const base = await getAppOrigin();
   const link = `${base}/invite/${invite.code}`;
   const mail = inviteEmail(link, ctx.hall.name);
   const sent = await sendEmail({ to: parsed.email, ...mail });
@@ -67,6 +69,20 @@ export async function revokeInvitationAction(invitationId: string): Promise<void
   setInvitationStatus(invitationId, "revoked");
   writeAudit(ctx.hall.id, ctx.user.id, "invitation_revoked", invitationId);
   revalidatePath("/admin");
+}
+
+// ---- The hall itself -----------------------------------------------------
+
+const HallNameSchema = z.string().trim().min(1).max(80);
+
+/** Rename the hall. It is named in a hurry at first run; this undoes that. */
+export async function renameHallAction(name: string): Promise<void> {
+  const ctx = await requireAdmin();
+  const parsed = HallNameSchema.parse(name);
+  renameHall(ctx.hall.id, parsed);
+  writeAudit(ctx.hall.id, ctx.user.id, "hall_renamed", ctx.hall.id, { name: parsed });
+  revalidatePath("/admin");
+  revalidatePath("/valhal");
 }
 
 // ---- Users ---------------------------------------------------------------

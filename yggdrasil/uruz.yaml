@@ -27,12 +27,18 @@ gameskill:
   variables:
     # ---- Adressen appen kender sig selv på -------------------------------
     - key: NEXT_PUBLIC_APP_URL
-      name: "Offentlig adresse"
+      name: "Offentlig adresse (valgfri)"
       type: string
-      default: "http://localhost:3000"
-      required: true
-      # Bruges til login-links i e-mails og som WebAuthn origin. Sæt den til
-      # det subdomæne du giver serveren, fx https://uruz.dit-domæne.dk
+      default: ""
+      required: false
+      # Bruges til login-links i e-mails og som WebAuthn origin. Lades den tom,
+      # udleder appen adressen af forespørgslen (x-forwarded-host), hvilket er
+      # rigtigt bag panelets proxy. Sæt den kun hvis du vil låse den fast, fx
+      # https://uruz.dit-domæne.dk — en sat adresse vinder altid.
+      #
+      # Defaulten var før "http://localhost:3000", og den værdi blev siddende
+      # på servere oprettet dengang: den gjorde både login-links og Face ID
+      # ubrugelige. Tom er nu det ærlige svar.
 
     - key: WEBAUTHN_RP_ID
       name: "Passkey-domæne (lad stå tom)"
@@ -91,9 +97,41 @@ gameskill:
       type: string
       default: "mailto:admin@uruz.local"
 
-    # ---- E-mail (invitationer og reminders) -----------------------------
+    # ---- E-mail (login-links, invitationer og reminders) -----------------
+    # Udfyld enten SMTP eller Resend. SMTP vinder hvis begge er sat. Er ingen
+    # af dem sat, skrives beskederne i serverens log — nok til at komme i gang,
+    # men husk at alle med adgang til loggen så kan læse login-links.
+    - key: SMTP_HOST
+      name: "SMTP-server"
+      type: string
+      default: ""
+      # Fx smtp.dit-domæne.dk eller smtp.gmail.com
+
+    - key: SMTP_PORT
+      name: "SMTP-port"
+      type: string
+      default: "587"
+      # 587 (STARTTLS) er det almindelige. 465 er implicit TLS.
+
+    - key: SMTP_USER
+      name: "SMTP-brugernavn"
+      type: string
+      default: ""
+
+    - key: SMTP_PASSWORD
+      name: "SMTP-kodeord"
+      type: string
+      default: ""
+      secret: true
+
+    - key: SMTP_SECURE
+      name: "Tving TLS (lad stå tom)"
+      type: string
+      default: ""
+      # Udledes af porten. Sæt kun true/false hvis din server er speciel.
+
     - key: RESEND_API_KEY
-      name: "Resend API-nøgle"
+      name: "Resend API-nøgle (alternativ til SMTP)"
       type: string
       default: ""
       secret: true
@@ -102,6 +140,8 @@ gameskill:
       name: "Afsender-adresse"
       type: string
       default: "Uruz <ravne@uruz.local>"
+      # Mange udbydere afviser en afsender de ikke mener er din — sæt den til
+      # en adresse på det domæne du sender fra.
 
     # ---- Baggrundsjob ----------------------------------------------------
     - key: CRON_SECRET

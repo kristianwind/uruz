@@ -9,7 +9,11 @@
 <meta property="og:title" content="Uruz ᚢ — byg styrke, én rune ad gangen">
 <meta property="og:description" content="Træningsapp med offline-logning, ærlig statistik og en AI-coach der forstår en øm skulder.">
 <meta property="og:type" content="website">
-<link rel="icon" href="../public/icons/favicon-32.png">
+<meta property="og:url" content="https://uruz-training.com/">
+<link rel="icon" href="img/favicon-32.png">
+<link rel="canonical" href="https://uruz-training.com/">
+<link rel="alternate" hreflang="da" href="https://uruz-training.com/">
+<link rel="alternate" hreflang="en" href="https://uruz-training.com/en.html">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -19,12 +23,18 @@
   <div class="wrap nav-inner">
     <a class="brand" href="#top"><span class="rune">ᚢ</span> Uruz</a>
     <nav class="nav-links">
+      <a href="#skaerme">Skærme</a>
       <a href="#funktioner">Funktioner</a>
       <a href="#mimir">Mimir</a>
-      <a href="#arkitektur">Arkitektur</a>
+      <a href="#yggdrasil">Yggdrasil</a>
       <a href="#kom-i-gang">Kom i gang</a>
     </nav>
-    <a class="btn ghost" href="https://github.com/kristianwind/uruz">GitHub</a>
+    <div class="nav-end">
+      <span class="lang" aria-label="Sprog">
+        <b aria-current="true">DA</b><a href="en.html" hreflang="en">EN</a>
+      </span>
+      <a class="btn ghost" href="https://github.com/kristianwind/uruz">GitHub</a>
+    </div>
   </div>
 </header>
 
@@ -32,7 +42,7 @@
 <div id="top" class="hero">
   <div class="wrap hero-grid">
     <div>
-      <span class="eyebrow">ᚢ Styrkerunen · Yggdrasil Panel</span>
+      <span class="eyebrow">ᚢ Styrkerunen · en rune i <a href="https://yggdrasilpanel.com">Yggdrasil Panel</a></span>
       <h1>Byg styrke,<br><span class="gold">én rune</span> ad gangen.</h1>
       <p class="lede">
         En træningsapp til iPhone og web, bygget til at bruges med én hånd og
@@ -47,7 +57,7 @@
       <div class="stat-strip">
         <div><b>&lt;2s</b><span>pr. sæt</span></div>
         <div><b>100%</b><span>offline-klar</span></div>
-        <div><b>104</b><span>tests</span></div>
+        <div><b>168</b><span>tests</span></div>
         <div><b>0</b><span>opsætning</span></div>
       </div>
     </div>
@@ -113,6 +123,42 @@
     </div>
   </div>
 </div>
+
+
+<!-- ======================================================= ansvar -->
+<div class="wrap">
+  <p class="disclaimer">
+    <b>⚠️ Tidlig udvikling, bygget med Claude Code.</b>
+    Uruz stilles til rådighed som den er — uden nogen form for garanti og uden
+    noget ansvar overhovedet. Du bruger den udelukkende på eget ansvar.
+  </p>
+</div>
+
+<div class="wrap"><div class="divider"></div></div>
+
+
+<!-- ========================================================== skærme -->
+<section id="skaerme" style="padding-top:8px">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Sådan ser den ud</div>
+      <h2>Rigtige skærme, <span class="gold">rigtige tal.</span></h2>
+      <p>
+        Billederne herunder er taget af appen selv med tolv ugers demo-træning i
+        databasen — ikke tegnet, ikke pyntet, og ikke nogens rigtige træningslog.
+      </p>
+    </div>
+
+    <div class="shots reveal">
+      <figure><img src="img/train.png" alt="Træn-skærmen med dagens træning og en liste af programmer" loading="lazy" width="1170" height="2532"><figcaption>Træn — dagens træning, eller vælg frit</figcaption></figure>
+      <figure><img src="img/session.png" alt="Sæt-logning med vægt, reps og en fejret rekord" loading="lazy" width="1170" height="2532"><figcaption>Log et sæt — forudfyldt, ét tryk</figcaption></figure>
+      <figure><img src="img/stats.png" alt="Statistik med tonnage, konsistens-score og sjove indsigter" loading="lazy" width="1170" height="2532"><figcaption>Statistik — tonnage, fremgang, indsigter</figcaption></figure>
+      <figure><img src="img/valhal.png" alt="Valhal med rangliste, milepæle og runer" loading="lazy" width="1170" height="2532"><figcaption>Valhal — rangliste, runer og milepæle</figcaption></figure>
+      <figure><img src="img/coach.png" alt="Mimir med ugens analyse og forslag til spørgsmål" loading="lazy" width="1170" height="2532"><figcaption>Mimir — ugens analyse og "spørg om alt"</figcaption></figure>
+      <figure><img src="img/library.png" alt="Øvelsesbiblioteket med tegninger og filtre" loading="lazy" width="1170" height="2532"><figcaption>Bibliotek — øvelser med trin og cues</figcaption></figure>
+    </div>
+  </div>
+</section>
 
 <div class="wrap"><div class="divider"></div></div>
 
@@ -526,6 +572,54 @@
 
 <div class="wrap"><div class="divider"></div></div>
 
+
+<!-- ======================================================== yggdrasil -->
+<section id="yggdrasil">
+  <div class="wrap showcase">
+    <div class="copy reveal">
+      <div class="kicker">Drift</div>
+      <h3>En rune i Yggdrasil Panel</h3>
+      <p>
+        Uruz er først og fremmest bygget til at køre som en <b>Rune</b> i
+        <a href="https://yggdrasilpanel.com">Yggdrasil Panel</a> — panelet der
+        gør en server til noget man kan pege og klikke på. En rune er en app
+        panelet kan så: du vælger den, udfylder et par felter, og så står den og
+        kører med sit eget subdomæne, sin egen datamappe og sin egen backup.
+      </p>
+      <p>
+        Appen udleder selv den adresse den bliver kaldt på, så login-links og
+        Face ID virker bag panelets proxy uden at nogen skal skrive et domæne
+        ind et sted. Alt andet — AI, e-mail, notifikationer — er felter du kan
+        lade stå tomme.
+      </p>
+      <ul class="tick">
+        <li>Runes → Carve a rune → importér <code>yggdrasil/uruz.yaml</code></li>
+        <li>Så en server, giv den et subdomæne, og den kører</li>
+        <li>Backup fanger hele databasen, WAL-filer og det hele</li>
+      </ul>
+      <div class="hero-cta" style="margin-top:22px">
+        <a class="btn" href="https://yggdrasilpanel.com">Se Yggdrasil Panel</a>
+        <a class="btn ghost" href="#kom-i-gang">…eller kør den selv</a>
+      </div>
+    </div>
+
+    <div class="code" style="max-width:440px;width:100%">
+      <div class="code-head"><i></i><i></i><i></i><span>uden panel</span></div>
+<pre><span class="c"># Ét kald, og den kører</span>
+docker run -d \
+  -p 3000:3000 \
+  -v uruz-data:/data \
+  <span class="s">ghcr.io/kristianwind/uruz:latest</span>
+
+<span class="c"># Eller helt lokalt</span>
+npm install &amp;&amp; npm run setup
+npm run dev</pre>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
 <!-- ======================================================= arkitektur -->
 <section id="arkitektur">
   <div class="wrap">
@@ -545,7 +639,7 @@
       </div>
       <div class="arrow">↓</div>
       <div class="layer accent">
-        <h4>Domæne <em>rene funktioner · 104 tests</em></h4>
+        <h4>Domæne <em>rene funktioner · 168 tests</em></h4>
         <p>1RM og progression · statistik · badges og rang · coach-indsigter og tilpasning. Ingen fetch, ingen database, ingen React.</p>
       </div>
       <div class="arrow">↓</div>
@@ -567,7 +661,7 @@
           <tr><td>Framework</td><td>Next.js 15 · TypeScript · React 19</td><td>Én kodebase til web og PWA; kan mountes under et større panel</td></tr>
           <tr><td>Database</td><td>node:sqlite → Supabase/Postgres</td><td>Nul opsætning lokalt, RLS i produktion</td></tr>
           <tr><td>Privatliv</td><td>Row Level Security</td><td>Adgang håndhæves i databasen, ikke kun i UI'et</td></tr>
-          <tr><td>Login</td><td>Passkeys · magic-link</td><td>Face ID på iPhone; ingen adgangskoder at glemme</td></tr>
+          <tr><td>Login</td><td>Passkeys · kodeord · login-link</td><td>Face ID hvor det kan lade sig gøre, kodeord hvor det ikke kan</td></tr>
           <tr><td>Offline</td><td>IndexedDB-kø + service worker</td><td>iOS mangler Background Sync — køen styres af appen</td></tr>
           <tr><td>AI</td><td>Egen provider-flade</td><td>Enhver udbyder, også en nøglefri model på eget net</td></tr>
           <tr><td>Sprog</td><td>Dansk · engelsk</td><td>Også øvelsesindholdet, ikke bare knapperne</td></tr>
@@ -652,10 +746,19 @@ npm test</pre>
     </div>
     <div style="text-align:right">
       <a href="https://github.com/kristianwind/uruz">GitHub</a> ·
-      <a href="#kom-i-gang">Kom i gang</a> ·
-      <a href="#arkitektur">Arkitektur</a>
-      <div style="margin-top:6px">En rune i Yggdrasil Panel.</div>
+      <a href="https://yggdrasilpanel.com">Yggdrasil Panel</a> ·
+      <a href="en.html" hreflang="en">English</a>
+      <div style="margin-top:6px">
+        <a href="https://uruz-training.com">uruz-training.com</a> — en rune i Yggdrasil Panel.
+      </div>
     </div>
+  </div>
+  <div class="wrap">
+    <p class="foot-note">
+      ⚠️ Tidlig udvikling, bygget med Claude Code. Stilles til rådighed som den
+      er — uden nogen form for garanti og uden noget ansvar overhovedet. Du
+      bruger den udelukkende på eget ansvar.
+    </p>
   </div>
 </footer>
 

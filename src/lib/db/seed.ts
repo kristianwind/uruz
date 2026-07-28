@@ -11,6 +11,7 @@ import { createUser, getUserByEmail } from "./repo/users";
 import { createInvitation, getInvitationByCode } from "./repo/invitations";
 import { SEED_EXERCISES, SEED_TEMPLATES, SEED_BADGES } from "./seed-data";
 import type { Hall } from "@/lib/domain/types";
+import { t } from "@/lib/i18n/core";
 
 export interface SeedResult {
   hall: Hall;
@@ -28,7 +29,7 @@ export interface SeedResult {
  * @param opts.demo  When true, create the demo admin + pending invite.
  */
 export function seed(opts: { demo?: boolean } = {}): SeedResult {
-  const hall = getAnyHall() ?? createHall("Kristians & Ibs hal");
+  const hall = getAnyHall() ?? createHall(t("auth.defaultHallName"));
 
   // Exercises (upsert by slug — safe to re-run).
   for (const ex of SEED_EXERCISES) {

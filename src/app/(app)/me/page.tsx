@@ -4,6 +4,8 @@ import { Card, CardTitle, CardMuted } from "@/components/ui/Card";
 import { PreferenceControls } from "@/components/app/PreferenceControls";
 import { ChevronRightIcon, CogIcon } from "@/components/ui/icons";
 import { LogoutButtons } from "@/components/auth/LogoutButtons";
+import { PasswordSection } from "@/components/auth/PasswordSection";
+import { hasPassword } from "@/lib/db/repo/auth";
 import { DataSection } from "@/components/app/DataSection";
 import { getContext } from "@/lib/auth/session";
 import { rankForLevel } from "@/lib/domain/ranks";
@@ -103,6 +105,10 @@ export default async function MePage() {
           </Link>
         )}
       </nav>
+
+      <section className="mt-6">
+        <PasswordSection hasPassword={hasPassword(user.id)} />
+      </section>
 
       <section className="mt-6">
         <DataSection displayName={user.displayName} />

@@ -21,6 +21,12 @@ export function createHall(name: string, id: string = newId()): Hall {
   return getHall(id)!;
 }
 
+/** Rename the hall. Named once at first run, so it has to be correctable. */
+export function renameHall(id: string, name: string): Hall | null {
+  getDb().prepare("UPDATE halls SET name = ? WHERE id = ?").run(name, id);
+  return getHall(id);
+}
+
 /** True when no users exist yet — drives the admin-first first-run flow. */
 export function isFirstRun(): boolean {
   const row = getDb().prepare("SELECT COUNT(*) AS n FROM users").get() as Row;

@@ -77,7 +77,15 @@ export default async function ValhalPage() {
           <div>
             <p className="text-sm font-semibold text-text">{t("valhal.travelerOfWeek")}</p>
             <CardMuted>
-              {traveller.displayName} — {traveller.sessionsThisWeek} {t("valhal.sessions").toLowerCase()}
+              {/* "1 træninger" reads like a bug to anyone who speaks the
+                  language, and this line is the first thing on the page. */}
+              {traveller.displayName} —{" "}
+              {t(
+                traveller.sessionsThisWeek === 1
+                  ? "valhal.sessionsCount_one"
+                  : "valhal.sessionsCount_other",
+                { count: traveller.sessionsThisWeek },
+              )}
             </CardMuted>
           </div>
         </Card>

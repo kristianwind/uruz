@@ -3,19 +3,24 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { registerPasskey, passkeySupported } from "@/lib/auth/passkey-client";
+import { registerPasskey } from "@/lib/auth/passkey-client";
+import { usePasskeySupported } from "./usePasskeySupported";
+import { PasswordFields } from "./PasswordFields";
 import { useT } from "@/components/app/I18nProvider";
 
 /**
  * Shown right after a user is created + signed in. Offers to add a passkey
- * (Face ID / Touch ID). Skippable — the user is already signed in via session.
+ * (Face ID / Touch ID), or a password for whoever cannot use one. Skippable —
+ * the user is already signed in via session, and both can be added later.
  */
 export function PasskeyPrompt({ redirectTo = "/train" }: { redirectTo?: string }) {
   const t = useT();
   const router = useRouter();
+  const canPasskey = usePasskeySupported();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [detail, setDetail] = useState<string | null>(null);
+  const [choosingPassword, setChoosingPassword] = useState(false);
 
   async function add() {
     setBusy(true);
@@ -45,16 +50,45 @@ export function PasskeyPrompt({ redirectTo = "/train" }: { redirectTo?: string }
     }
   }
 
+  if (choosingPassword) {
+    // The account exists and is signed in by now, so this only adds a second
+    // way back in later — nothing is lost by skipping it.
+    return (
+      <div className="flex flex-col gap-3">
+        <p className="text-center text-sm text-muted">{t("me.passwordDesc")}</p>
+        <PasswordFields
+          endpoint="/api/auth/password/set"
+          submitLabel={t("me.setPassword")}
+          onDone={() => {
+            router.push(redirectTo);
+            router.refresh();
+          }}
+        />
+        <Button variant="ghost" fullWidth onClick={() => setChoosingPassword(false)}>
+          {t("common.back")}
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-3">
       <p className="text-center text-sm text-muted">{t("auth.inviteDesc")}</p>
-      {passkeySupported() ? (
+      {canPasskey ? (
         <Button size="lg" fullWidth onClick={add} disabled={busy}>
           {busy ? t("common.loading") : t("auth.createPasskey")}
         </Button>
       ) : (
         <p className="text-center text-xs text-faint">{t("auth.signInMagic")}</p>
       )}
+      <Button
+        variant="secondary"
+        fullWidth
+        onClick={() => setChoosingPassword(true)}
+        disabled={busy}
+      >
+        {t("me.setPassword")}
+      </Button>
       <Button variant="ghost" fullWidth onClick={() => router.push(redirectTo)} disabled={busy}>
         {t("common.continue")}
       </Button>

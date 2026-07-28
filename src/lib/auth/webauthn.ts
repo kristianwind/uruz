@@ -20,6 +20,7 @@ import {
   takeChallenge,
   updateCredentialCounter,
 } from "@/lib/db/repo/auth";
+import { getAppOrigin, originIsInferred } from "./origin";
 
 /**
  * Passkey (WebAuthn) ceremony helpers, wrapping @simplewebauthn v13.
@@ -40,9 +41,11 @@ import {
  *
  * Defaulting it to "localhost" — as this once did — meant every real
  * deployment was broken until someone happened to set the right variable.
+ * The origin now comes from `getAppOrigin()`, which falls back to the request
+ * itself, so a deployment behind a proxy works even unconfigured.
  */
-export function rpConfig() {
-  const origin = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+export async function rpConfig() {
+  const origin = await getAppOrigin();
   const rpName = process.env.WEBAUTHN_RP_NAME || "Uruz";
 
   let derivedHost = "localhost";
@@ -67,10 +70,10 @@ export function rpConfig() {
 }
 
 /** True when WEBAUTHN_RP_ID is set to something unusable and is being ignored. */
-export function rpIdOverrideIgnored(): boolean {
+export async function rpIdOverrideIgnored(): Promise<boolean> {
   const configured = process.env.WEBAUTHN_RP_ID?.trim();
   if (!configured) return false;
-  return configured !== rpConfig().rpID;
+  return configured !== (await rpConfig()).rpID;
 }
 
 export interface WebAuthnDiagnostics {
@@ -79,6 +82,8 @@ export interface WebAuthnDiagnostics {
   /** True when the RP ID can actually work for this origin. */
   valid: boolean;
   problem: string | null;
+  /** True when the origin came from the request rather than configuration. */
+  inferred: boolean;
 }
 
 /**
@@ -86,8 +91,9 @@ export interface WebAuthnDiagnostics {
  * A passkey failure is otherwise invisible: the browser rejects it locally and
  * the server never hears about it.
  */
-export function checkWebAuthnConfig(): WebAuthnDiagnostics {
-  const { origin, rpID } = rpConfig();
+export async function checkWebAuthnConfig(): Promise<WebAuthnDiagnostics> {
+  const { origin, rpID } = await rpConfig();
+  const inferred = originIsInferred();
 
   let host: string | null = null;
   let secure = false;
@@ -97,28 +103,28 @@ export function checkWebAuthnConfig(): WebAuthnDiagnostics {
     // WebAuthn requires a secure context; localhost is the sanctioned exception.
     secure = url.protocol === "https:" || host === "localhost" || host === "127.0.0.1";
   } catch {
-    return { origin, rpID, valid: false, problem: "app_url_invalid" };
+    return { origin, rpID, valid: false, problem: "app_url_invalid", inferred };
   }
 
   // rpConfig() already discards an unusable override, so a mismatch here would
   // mean a bug rather than misconfiguration — check anyway, cheaply.
   const matches = host === rpID || host.endsWith(`.${rpID}`);
-  if (!matches) return { origin, rpID, valid: false, problem: "rp_id_mismatch" };
-  if (!secure) return { origin, rpID, valid: false, problem: "not_secure_context" };
+  if (!matches) return { origin, rpID, valid: false, problem: "rp_id_mismatch", inferred };
+  if (!secure) return { origin, rpID, valid: false, problem: "not_secure_context", inferred };
 
   // Works, but the operator set something that could not be used. Say so, so a
   // stale value gets cleaned up instead of quietly lingering.
-  if (rpIdOverrideIgnored()) {
-    return { origin, rpID, valid: true, problem: "rp_id_override_ignored" };
+  if (await rpIdOverrideIgnored()) {
+    return { origin, rpID, valid: true, problem: "rp_id_override_ignored", inferred };
   }
 
-  return { origin, rpID, valid: true, problem: null };
+  return { origin, rpID, valid: true, problem: null, inferred };
 }
 
 // ---- Registration --------------------------------------------------------
 
 export async function registrationOptions(userId: string, email: string) {
-  const { rpID, rpName } = rpConfig();
+  const { rpID, rpName } = await rpConfig();
   const existing = listUserCredentials(userId);
   const options = await generateRegistrationOptions({
     rpName,
@@ -143,7 +149,7 @@ export async function verifyRegistration(
   userId: string,
   response: RegistrationResponseJSON,
 ): Promise<boolean> {
-  const { rpID, origin } = rpConfig();
+  const { rpID, origin } = await rpConfig();
   const expectedChallenge = takeChallenge(`reg:${userId}`);
   if (!expectedChallenge) return false;
 
@@ -174,7 +180,7 @@ export async function verifyRegistration(
 // ---- Authentication ------------------------------------------------------
 
 export async function authenticationOptions(subjectKey: string, userId: string | null) {
-  const { rpID } = rpConfig();
+  const { rpID } = await rpConfig();
   const creds = userId ? listUserCredentials(userId) : [];
   const options = await generateAuthenticationOptions({
     rpID,
@@ -193,7 +199,7 @@ export async function verifyAuthentication(
   subjectKey: string,
   response: AuthenticationResponseJSON,
 ): Promise<string | null> {
-  const { rpID, origin } = rpConfig();
+  const { rpID, origin } = await rpConfig();
   const expectedChallenge = takeChallenge(`auth:${subjectKey}`);
   if (!expectedChallenge) return null;
 

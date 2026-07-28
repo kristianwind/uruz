@@ -102,6 +102,34 @@ export function deleteAllUserSessions(userId: string): void {
   getDb().prepare("DELETE FROM auth_sessions WHERE user_id = ?").run(userId);
 }
 
+// ---- Passwords -----------------------------------------------------------
+// Stored apart from the user row on purpose — see the note in schema.sqlite.ts.
+// Nothing here hashes or compares; that is @/lib/auth/password.
+
+export function setPasswordHash(userId: string, hash: string): void {
+  getDb()
+    .prepare(
+      `INSERT INTO user_passwords (user_id, hash, updated_at) VALUES (?,?,?)
+       ON CONFLICT(user_id) DO UPDATE SET hash = excluded.hash, updated_at = excluded.updated_at`,
+    )
+    .run(userId, hash, nowIso());
+}
+
+export function getPasswordHash(userId: string): string | null {
+  const row = getDb()
+    .prepare("SELECT hash FROM user_passwords WHERE user_id = ?")
+    .get(userId) as Row | undefined;
+  return row ? String(row.hash) : null;
+}
+
+export function hasPassword(userId: string): boolean {
+  return getPasswordHash(userId) !== null;
+}
+
+export function clearPassword(userId: string): void {
+  getDb().prepare("DELETE FROM user_passwords WHERE user_id = ?").run(userId);
+}
+
 // ---- Magic tokens --------------------------------------------------------
 
 const MAGIC_TTL_MIN = 30;
@@ -125,7 +153,15 @@ export interface MagicToken {
   usedAt: string | null;
 }
 
-export function consumeMagicToken(token: string): MagicToken | null {
+/**
+ * Spend a one-time token, if it is still spendable.
+ *
+ * `expectedPurpose` keeps the flows apart: a link e-mailed for choosing a new
+ * password must not also work as a sign-in link, or the more careful flow
+ * could always be traded for the looser one. A mismatch leaves the token
+ * untouched rather than burning it.
+ */
+export function consumeMagicToken(token: string, expectedPurpose?: string): MagicToken | null {
   const db = getDb();
   const row = db.prepare("SELECT * FROM magic_tokens WHERE token = ?").get(token) as Row | undefined;
   if (!row) return null;
@@ -136,6 +172,7 @@ export function consumeMagicToken(token: string): MagicToken | null {
     expiresAt: String(row.expires_at),
     usedAt: row.used_at ? String(row.used_at) : null,
   };
+  if (expectedPurpose && mt.purpose !== expectedPurpose) return null;
   if (mt.usedAt || new Date(mt.expiresAt).getTime() < Date.now()) return null;
   db.prepare("UPDATE magic_tokens SET used_at = ? WHERE token = ?").run(nowIso(), token);
   return mt;
