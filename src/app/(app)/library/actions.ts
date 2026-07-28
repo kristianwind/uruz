@@ -14,6 +14,7 @@ import {
 import { workoutName } from "@/lib/domain/localize";
 import { applyProposal } from "@/lib/coach/adapt";
 import { getLocale } from "@/lib/i18n/server";
+import { createT } from "@/lib/i18n/core";
 
 /**
  * Library mutations. Everything here is hall-scoped and checked server-side:
@@ -91,10 +92,12 @@ export async function duplicateWorkoutAction(workoutId: string): Promise<string>
   if (!source || source.hallId !== ctx.hall.id) throw new Error("NOT_FOUND");
 
   const locale = await getLocale(ctx.user.localePref);
-  const baseName = workoutName(source, locale);
+  const t = createT(locale);
+  // Suffix follows the same language as the name it is appended to, so we
+  // never end up with "Starter Programme – Full Body (tilpasset)".
   const copy = createWorkout({
     hallId: ctx.hall.id,
-    name: `${baseName} (kopi)`,
+    name: `${workoutName(source, locale)} (${t("library.copySuffix")})`,
     description: source.description,
     goal: source.goal,
     level: source.level,
@@ -199,9 +202,12 @@ export async function applyAdaptationAction(input: {
   if (next.length === 0) throw new Error("EMPTY_WORKOUT");
 
   const locale = await getLocale(ctx.user.localePref);
+  const t = createT(locale);
   const copy = createWorkout({
     hallId: ctx.hall.id,
-    name: input.name?.trim() || `${workoutName(source, locale)} (tilpasset)`,
+    name:
+      input.name?.trim() ||
+      `${workoutName(source, locale)} (${t("library.adaptedSuffix")})`,
     description: source.description,
     goal: source.goal,
     level: source.level,

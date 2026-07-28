@@ -106,7 +106,9 @@
     "steps": "Sådan gør du",
     "cues": "Husk",
     "saferVariant": "Sikker variant",
-    "empty": "Ingen øvelser matcher filtrene."
+    "empty": "Ingen øvelser matcher filtrene.",
+    "copySuffix": "kopi",
+    "adaptedSuffix": "tilpasset"
   },
   "stats": {
     "title": "Statistik",

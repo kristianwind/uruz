@@ -106,7 +106,9 @@
     "steps": "How to do it",
     "cues": "Remember",
     "saferVariant": "Safer variant",
-    "empty": "No exercises match the filters."
+    "empty": "No exercises match the filters.",
+    "copySuffix": "copy",
+    "adaptedSuffix": "adapted"
   },
   "stats": {
     "title": "Stats",
