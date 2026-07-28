@@ -1,3 +1,15 @@
+/**
+ * Local development schema (node:sqlite dialect), as a module rather than a
+ * file on disk.
+ *
+ * It must be importable, not read with `fs`: a Next standalone build traces
+ * imports and would not copy a stray .sql file into the container image. The
+ * canonical Postgres schema lives in supabase/migrations/.
+ *
+ * Conventions: ids are TEXT uuids, booleans are INTEGER 0/1, string arrays and
+ * json blobs are stored as TEXT (JSON-encoded), timestamps are ISO-8601 TEXT.
+ */
+export const SCHEMA_SQL = `
 -- Uruz local development schema (node:sqlite dialect).
 --
 -- This mirrors the canonical Postgres schema in supabase/migrations, minus
@@ -266,3 +278,4 @@ CREATE INDEX IF NOT EXISTS idx_setlogs_exercise ON set_logs(exercise_id);
 CREATE INDEX IF NOT EXISTS idx_we_workout ON workout_exercises(workout_id, ord);
 CREATE INDEX IF NOT EXISTS idx_pr_user_ex ON personal_records(user_id, exercise_id);
 CREATE INDEX IF NOT EXISTS idx_coach_user ON coach_messages(user_id, created_at);
+`;

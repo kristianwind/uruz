@@ -136,6 +136,20 @@ curl -H "Authorization: Bearer $CRON_SECRET" https://din-app.dk/api/cron
 
 ---
 
+## Drift som Rune i Yggdrasil Panel (Docker)
+
+Uruz er pakket som et container-image og kan køre som en **Rune** i
+[Yggdrasil Panel](https://github.com/kristianwind/yggdrasil):
+
+```bash
+docker run -d -p 3000:3000 -v uruz-data:/data ghcr.io/kristianwind/uruz:latest
+```
+
+Rune-manifestet og hele opsætningen står i **[yggdrasil/](yggdrasil/)**.
+Imaget bygges multi-arch (amd64 + arm64) af GitHub Actions ved hvert push.
+
+---
+
 ## Drift i skyen (Supabase + Vercel)
 
 Lokalt kører Uruz på en indbygget SQLite-fil — nul opsætning. Til produktion:

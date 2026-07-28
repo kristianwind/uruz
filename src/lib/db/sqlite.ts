@@ -1,7 +1,7 @@
 import { DatabaseSync } from "node:sqlite";
-import { readFileSync, mkdirSync, existsSync } from "node:fs";
+import { mkdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { SCHEMA_SQL } from "./schema.sqlite";
 
 /**
  * Local development data backend built on Node's built-in `node:sqlite`.
@@ -14,13 +14,9 @@ import { fileURLToPath } from "node:url";
  * All access goes through the singleton returned by `getDb()`.
  */
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 const DB_PATH =
   process.env.URUZ_SQLITE_PATH ||
   join(process.cwd(), ".data", "uruz.sqlite");
-
-const SCHEMA_PATH = join(__dirname, "schema.sqlite.sql");
 
 let instance: DatabaseSync | null = null;
 
@@ -34,8 +30,7 @@ export function getDb(): DatabaseSync {
   db.exec("PRAGMA journal_mode = WAL;");
   db.exec("PRAGMA foreign_keys = ON;");
 
-  const schema = readFileSync(SCHEMA_PATH, "utf8");
-  db.exec(schema);
+  db.exec(SCHEMA_SQL);
 
   instance = db;
   return db;

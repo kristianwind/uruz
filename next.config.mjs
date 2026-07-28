@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Emit a self-contained server bundle so the Docker image can be small and
+  // does not need node_modules at runtime (see Dockerfile).
+  output: "standalone",
   // Allow a verification build to write somewhere else, so running `npm run
   // build:check` never clobbers a running dev server's .next directory.
   distDir: process.env.NEXT_DIST_DIR || ".next",

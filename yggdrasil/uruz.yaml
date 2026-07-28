@@ -1,0 +1,128 @@
+# Uruz ᚢ — a Rune for Yggdrasil Panel
+#
+# Carve it into the panel with Runes → Carve a rune (upload), or point
+# Runes → Browse GitHub at this folder.
+#
+# Container pattern A: Uruz owns the command. Yggdrasil clears the entrypoint
+# and runs the app as the panel's uid:gid, so everything the app writes stays
+# editable from the Files tab.
+#
+# `data_path: /data` is deliberate even though /data is already the default —
+# setting it makes Yggdrasil leave the working directory alone, so the image's
+# own WORKDIR (/app) applies and `node server.js` resolves correctly.
+
+gameskill:
+  id: uruz
+  name: "Uruz"
+  category: "Apps"
+  description: "Styrketræning med offline-logning, statistik og AI-coach (Mimir). PWA til iPhone og web."
+  author: "kristianwind"
+  version: 1
+  icon: "app"
+
+  docker:
+    image: "ghcr.io/kristianwind/uruz:latest"
+    data_path: /data
+
+  variables:
+    # ---- Adressen appen kender sig selv på -------------------------------
+    - key: NEXT_PUBLIC_APP_URL
+      name: "Offentlig adresse"
+      type: string
+      default: "http://localhost:3000"
+      required: true
+      # Bruges til login-links i e-mails og som WebAuthn origin. Sæt den til
+      # det subdomæne du giver serveren, fx https://uruz.dit-domæne.dk
+
+    - key: WEBAUTHN_RP_ID
+      name: "Passkey-domæne (uden https:// og port)"
+      type: string
+      default: "localhost"
+      # Skal matche værtsnavnet i adressen ovenfor, fx uruz.dit-domæne.dk
+
+    # ---- Mimir (AI-coach) — helt valgfrit --------------------------------
+    - key: AI_PROVIDER
+      name: "AI-udbyder"
+      type: select
+      options: [none, custom, ollama, anthropic, openai, google]
+      default: none
+      # "custom" dækker enhver OpenAI-kompatibel server (llama.cpp, LM Studio,
+      # vLLM …). Uden model coacher appen videre på regelbaserede forslag.
+
+    - key: AI_BASE_URL
+      name: "AI-adresse"
+      type: string
+      default: ""
+      # Fx http://192.168.1.150:8080/v1 — lad stå tom for skytjenester.
+
+    - key: AI_MODEL
+      name: "AI-model"
+      type: string
+      default: ""
+
+    - key: AI_API_KEY
+      name: "AI-nøgle"
+      type: string
+      default: ""
+      secret: true
+
+    - key: AI_DISABLE_THINKING
+      name: "Slå modellens 'tænkning' fra (hurtigere)"
+      type: bool
+      default: true
+
+    # ---- Notifikationer -------------------------------------------------
+    - key: NEXT_PUBLIC_VAPID_PUBLIC_KEY
+      name: "VAPID public key (web push)"
+      type: string
+      default: ""
+      # Lav et nøglepar med: npm run gen:vapid
+
+    - key: VAPID_PRIVATE_KEY
+      name: "VAPID private key"
+      type: string
+      default: ""
+      secret: true
+
+    - key: VAPID_SUBJECT
+      name: "VAPID kontakt (mailto:)"
+      type: string
+      default: "mailto:admin@uruz.local"
+
+    # ---- E-mail (invitationer og reminders) -----------------------------
+    - key: RESEND_API_KEY
+      name: "Resend API-nøgle"
+      type: string
+      default: ""
+      secret: true
+
+    - key: EMAIL_FROM
+      name: "Afsender-adresse"
+      type: string
+      default: "Uruz <ravne@uruz.local>"
+
+    # ---- Baggrundsjob ----------------------------------------------------
+    - key: CRON_SECRET
+      name: "Cron-hemmelighed"
+      type: string
+      default: ""
+      secret: true
+      # Beskytter /api/cron. Uden den nægter endpointet at køre.
+
+  install:
+    script: |
+      mkdir -p /data
+      echo "Uruz: datamappe klar. Databasen oprettes ved første start."
+
+  startup:
+    # PORT er containersiden; Yggdrasil publicerer den på en fri værtsport.
+    command: "exec node server.js"
+    done_regex: 'Ready in|started server on'
+    stop_timeout: 20
+
+  ports:
+    - { name: web, default: 3000, protocol: tcp }
+
+  backup:
+    # Hele datamappen er databasen plus dens WAL-filer.
+    include: ["."]
