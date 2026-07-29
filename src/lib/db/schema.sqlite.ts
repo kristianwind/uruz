@@ -66,6 +66,11 @@ CREATE TABLE IF NOT EXISTS credentials (
   public_key    TEXT,                        -- base64url (passkey)
   counter       INTEGER NOT NULL DEFAULT 0,
   transports    TEXT,                        -- JSON array
+  -- What the person called this key ("iPhone", "work laptop"). Without it a
+  -- list of credentials is a list of identical rows, and nobody can tell which
+  -- one to remove.
+  name          TEXT,
+  last_used_at  TEXT,
   created_at    TEXT NOT NULL
 );
 

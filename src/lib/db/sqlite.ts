@@ -33,11 +33,34 @@ export function getDb(): DatabaseSync {
   // Every statement is CREATE ... IF NOT EXISTS, so this both creates a fresh
   // database and picks up new *tables* on one that has been running. A new
   // *column* on an existing table does not arrive this way — SQLite skips the
-  // whole CREATE — and needs an explicit `ALTER TABLE ... ADD COLUMN` here.
+  // whole CREATE — which is what ADDED_COLUMNS below is for.
   db.exec(SCHEMA_SQL);
+  applyColumnAdditions(db);
 
   instance = db;
   return db;
+}
+
+/**
+ * Columns added to a table that already existed in an earlier version.
+ *
+ * Additive only: nothing is ever dropped or renamed, so replaying the list on
+ * every start is safe and order-independent. A new column must be listed here
+ * *as well as* in SCHEMA_SQL — the schema is what a fresh database gets, this
+ * is what a running one gets.
+ */
+const ADDED_COLUMNS: Array<{ table: string; column: string; definition: string }> = [
+  { table: "credentials", column: "name", definition: "TEXT" },
+  { table: "credentials", column: "last_used_at", definition: "TEXT" },
+];
+
+function applyColumnAdditions(db: DatabaseSync): void {
+  for (const { table, column, definition } of ADDED_COLUMNS) {
+    const columns = db.prepare(`PRAGMA table_info(${table})`).all() as Row[];
+    if (columns.length === 0) continue; // Table isn't there at all; nothing to alter.
+    if (columns.some((c) => String(c.name) === column)) continue;
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
 }
 
 /** Reset the cached connection (used by scripts that rebuild the DB file). */

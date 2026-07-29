@@ -14,13 +14,23 @@ export interface StoredCredential {
   publicKey: string; // base64url
   counter: number;
   transports: string[];
+  /** What the person called this key. Null on keys registered before naming. */
+  name?: string | null;
+}
+
+/** A credential as the "your passkeys" list needs it — no key material. */
+export interface CredentialSummary {
+  id: string;
+  name: string | null;
+  createdAt: string;
+  lastUsedAt: string | null;
 }
 
 export function addCredential(c: StoredCredential): void {
   getDb()
     .prepare(
-      `INSERT INTO credentials (id, user_id, kind, public_key, counter, transports, created_at)
-       VALUES (?,?,?,?,?,?,?)`,
+      `INSERT INTO credentials (id, user_id, kind, public_key, counter, transports, name, created_at)
+       VALUES (?,?,?,?,?,?,?,?)`,
     )
     .run(
       c.id,
@@ -29,8 +39,53 @@ export function addCredential(c: StoredCredential): void {
       c.publicKey,
       c.counter,
       JSON.stringify(c.transports ?? []),
+      c.name?.trim() || null,
       nowIso(),
     );
+}
+
+/** The signed-in person's own keys, for the list under Me. */
+export function listCredentialSummaries(userId: string): CredentialSummary[] {
+  const rows = getDb()
+    .prepare(
+      "SELECT id, name, created_at, last_used_at FROM credentials WHERE user_id = ? ORDER BY created_at",
+    )
+    .all(userId) as Row[];
+  return rows.map((r) => ({
+    id: String(r.id),
+    name: r.name ? String(r.name) : null,
+    createdAt: String(r.created_at),
+    lastUsedAt: r.last_used_at ? String(r.last_used_at) : null,
+  }));
+}
+
+export function countUserCredentials(userId: string): number {
+  const row = getDb()
+    .prepare("SELECT COUNT(*) AS n FROM credentials WHERE user_id = ?")
+    .get(userId) as Row;
+  return Number(row.n);
+}
+
+/**
+ * Remove one key.
+ *
+ * Ownership is part of the WHERE clause rather than a separate lookup: there is
+ * then no window between checking and deleting, and somebody else's id simply
+ * matches nothing. Returns whether a row actually went — a route that answers
+ * "deleted" for an id that never existed is lying.
+ */
+export function deleteCredential(id: string, userId: string): boolean {
+  const res = getDb()
+    .prepare("DELETE FROM credentials WHERE id = ? AND user_id = ?")
+    .run(id, userId);
+  return Number(res.changes) > 0;
+}
+
+export function renameCredential(id: string, userId: string, name: string): boolean {
+  const res = getDb()
+    .prepare("UPDATE credentials SET name = ? WHERE id = ? AND user_id = ?")
+    .run(name.trim() || null, id, userId);
+  return Number(res.changes) > 0;
 }
 
 export function getCredential(id: string): StoredCredential | null {
@@ -59,7 +114,11 @@ export function listUserCredentials(userId: string): StoredCredential[] {
 }
 
 export function updateCredentialCounter(id: string, counter: number): void {
-  getDb().prepare("UPDATE credentials SET counter = ? WHERE id = ?").run(counter, id);
+  // The counter only moves on a successful assertion, so this is also the
+  // moment the key was last used — recorded together to keep them honest.
+  getDb()
+    .prepare("UPDATE credentials SET counter = ?, last_used_at = ? WHERE id = ?")
+    .run(counter, nowIso(), id);
 }
 
 // ---- WebAuthn challenges (short-lived) -----------------------------------

@@ -148,6 +148,7 @@ export async function registrationOptions(userId: string, email: string) {
 export async function verifyRegistration(
   userId: string,
   response: RegistrationResponseJSON,
+  name?: string,
 ): Promise<boolean> {
   const { rpID, origin } = await rpConfig();
   const expectedChallenge = takeChallenge(`reg:${userId}`);
@@ -173,6 +174,7 @@ export async function verifyRegistration(
     publicKey: isoBase64URL.fromBuffer(credential.publicKey),
     counter: credential.counter,
     transports: (credential.transports ?? []) as string[],
+    name,
   });
   return true;
 }

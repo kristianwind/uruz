@@ -4,6 +4,46 @@ En løbende log over ikke-oplagte valg og antagelser truffet under bygningen af
 Uruz, jf. instruktionen i afsnit 0 ("notér antagelsen i `DECISIONS.md`").
 Nyeste øverst inden for hver fase.
 
+## Tilføjelse — slet din passkey
+
+Bygget efter Yggdrasils løsning, som Kristian bad om — men med tre af dens huller
+lukket. Yggdrasil-sessionen pegede selv på dem som fejl, ikke som forskelle.
+
+- **Sletning kræver at man siger hvem man er igen.** Yggdrasil nøjes med en levende
+  session og en bekræftelses-dialog i browseren, hvilket er kosmetik. En ulåst
+  telefon på en bænk skal ikke være vejen til at fjerne ejerens nøgler — samme
+  begrundelse som at et kodeordsskift kræver det gamle kodeord. Er der et
+  kodeord, spørges der om det; er der ikke, kræves en frisk passkey-assertion.
+
+- **Den sidste vej ind kan ikke fjernes.** Yggdrasil har ingen sådan spærre, og
+  det er forsvarligt *dér*, fordi alle brugere har et kodeord og passkeys er et
+  tillæg. Uruz kan ikke antage det. Reglen ligger i `credential-removal.ts` som
+  en ren funktion med seks tests: den sidste nøgle må kun gå, hvis der er et
+  kodeord **eller** en mailserver der faktisk kan sende.
+
+- **"Vi kan altid maile dig" er falsk uden mailserver.** Uden SMTP eller Resend
+  skrives login-linket kun i serverens log, hvilket ikke er en vej ind for den
+  der er låst ude. Derfor tæller e-mail kun med, når `emailProvider()` ikke er
+  `dev`. Yggdrasil har præcis den fælde i sin glemt-kodeord-funktion.
+
+- **Sessionerne lukkes.** Fjerner man en nøgle fordi enheden er væk, er det
+  meningsløst hvis enhedens session lever videre. Vi sporer ikke hvilken session
+  der kom fra hvilken nøgle, så alle lukkes og den nuværende udstedes igen.
+
+- **Afvisningen kommer før udfordringen.** Først var rækkefølgen omvendt, så man
+  kunne nå at bekræfte sig selv og *derefter* få at vide at det var ens eneste
+  nøgle. Spærren røber intet en indlogget ejer ikke allerede ved om sin egen
+  konto, så den hører øverst.
+
+- **Ejerskab ligger i WHERE-klausulen**, ikke i et opslag efterfulgt af et tjek —
+  så er der ingen luge imellem, og et fremmed id rammer bare nul rækker. Og
+  `deleteCredential` returnerer om noget faktisk forsvandt, så et ukendt id
+  giver 404 frem for et 200 der lyver.
+
+- **Nøgler har navne.** Uden dem er listen tre ens rækker, og ingen tør fjerne
+  nogen af dem. Navnet spørges der om ved oprettelse, og `last_used_at` sættes
+  hvor tælleren i forvejen opdateres — det er samme øjeblik.
+
 ## Tilføjelse — engelsk som standardsprog
 
 - **Engelsk er hvad en fremmed sandsynligvis læser.** Appen blev skrevet på dansk

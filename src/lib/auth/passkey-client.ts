@@ -21,13 +21,27 @@ async function postJson(url: string, body?: unknown) {
 }
 
 /** Register a passkey for the currently signed-in user. */
-export async function registerPasskey(): Promise<boolean> {
+export async function registerPasskey(name?: string): Promise<boolean> {
   const optRes = await postJson("/api/auth/passkey/register/options");
   if (!optRes.ok) return false;
   const optionsJSON = await optRes.json();
   const response = await startRegistration({ optionsJSON });
-  const verifyRes = await postJson("/api/auth/passkey/register/verify", { response });
+  // The name is what makes a list of keys actionable later — a row saying
+  // "iPhone" can be removed with confidence; three identical rows cannot.
+  const verifyRes = await postJson("/api/auth/passkey/register/verify", { response, name });
   return verifyRes.ok;
+}
+
+/** A fresh assertion, used as proof of presence rather than to sign in. */
+export async function reauthenticate(email: string): Promise<unknown | null> {
+  const optRes = await postJson("/api/auth/passkey/login/options", { email });
+  if (!optRes.ok) return null;
+  const optionsJSON = await optRes.json();
+  try {
+    return await startAuthentication({ optionsJSON });
+  } catch {
+    return null;
+  }
 }
 
 /** Authenticate with a passkey for the given email. */
