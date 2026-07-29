@@ -17,10 +17,15 @@ npx serve website
 
 | Fil | Hvad |
 |---|---|
-| `index.html` | Dansk udgave (forsiden) |
-| `en.html` | Engelsk udgave |
+| `index.html` | Engelsk udgave (forsiden) |
+| `da.html` | Dansk udgave |
+| `en.html` | Viderestilling til forsiden — `/en.html` var udgivet, før engelsk blev standard |
 | `styles.css` | Al styling, delt af begge sider |
-| `img/` | Skærmbilleder af appen + favicon |
+| `img/` | Danske skærmbilleder + favicon |
+| `img/en/` | Engelske skærmbilleder |
+
+Engelsk er forsiden, fordi appen selv har engelsk som standardsprog: en der
+lander på domænet uden at have valgt noget, møder det samme sprog begge steder.
 
 ## To sprog, to dokumenter
 
@@ -30,11 +35,12 @@ hvad en skærmlæser og en søgemaskine har brug for, og det betyder at siden
 virker helt uden JavaScript.
 
 Prisen er at **de to filer skal holdes ens**. Ændrer du strukturen i
-`index.html`, skal `en.html` med.
+`index.html`, skal `da.html` med.
 
 ## Skærmbillederne
 
-`img/*.png` er kopier af `docs/screenshots/` i roden af repoet. De tages af
+`img/*.png` er kopier af `docs/screenshots/da/`, og `img/en/*.png` af
+`docs/screenshots/en/`. De tages af
 appen selv med demo-data:
 
 ```bash
@@ -47,7 +53,8 @@ rører hverken din rigtige database eller en dev-server du har kørende.
 Kopiér dem herind bagefter:
 
 ```bash
-cp docs/screenshots/*.png website/img/
+cp docs/screenshots/da/*.png website/img/
+cp docs/screenshots/en/*.png website/img/en/
 ```
 
 ## Hvordan det er bygget

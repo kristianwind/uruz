@@ -251,8 +251,8 @@ Lokalt kører Uruz på en indbygget SQLite-fil — nul opsætning. Til produktio
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** — hvordan det hænger sammen, og hvorfor.
 - **[DECISIONS.md](DECISIONS.md)** — hver ikke-oplagt beslutning og dens begrundelse.
 - **[website/](website/)** — præsentationssitet bag
-  [uruz-training.com](https://uruz-training.com), på dansk og engelsk. Åbn
-  `website/index.html` i en browser.
+  [uruz-training.com](https://uruz-training.com) — engelsk som forside,
+  dansk på `/da.html`. Åbn `website/index.html` i en browser.
 
 ---
 
