@@ -41,7 +41,7 @@ export default async function CoachPage() {
         ];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 lg:max-w-3xl">
       <PageHeader title={t("coach.name")} subtitle={t("coach.askTitle")} />
 
       <section>

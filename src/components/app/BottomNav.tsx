@@ -4,20 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useT } from "@/components/app/I18nProvider";
-import {
-  DumbbellIcon,
-  ChartIcon,
-  ShieldIcon,
-  UserIcon,
-} from "@/components/ui/icons";
-
-// Labels are resolved inside the component so they follow the active locale.
-const ITEMS = [
-  { href: "/train", key: "nav.train", Icon: DumbbellIcon },
-  { href: "/stats", key: "nav.stats", Icon: ChartIcon },
-  { href: "/valhal", key: "nav.valhal", Icon: ShieldIcon },
-  { href: "/me", key: "nav.me", Icon: UserIcon },
-] as const;
+import { NAV_ITEMS as ITEMS } from "./nav-items";
 
 export function BottomNav() {
   const t = useT();
@@ -25,7 +12,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label={t("nav.train")}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-elev/95 backdrop-blur pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-elev/95 backdrop-blur pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <ul className="mx-auto grid max-w-md grid-cols-4">
         {ITEMS.map(({ href, key, Icon }) => {

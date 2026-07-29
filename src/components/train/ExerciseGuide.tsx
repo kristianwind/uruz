@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExerciseMedia } from "@/components/exercise/ExerciseMedia";
 import { ChevronRightIcon } from "@/components/ui/icons";
 import { useT } from "@/components/app/I18nProvider";
@@ -37,6 +37,13 @@ export function ExerciseGuide({
   const t = useT();
   const [open, setOpen] = useState(false);
   const hasGuide = steps.length > 0 || cues.length > 0;
+
+  // Open by default where it costs nothing: on a wide screen the instructions
+  // fit beside the numbers instead of pushing them down. Decided after mount,
+  // never during render, so the server and the first client paint agree.
+  useEffect(() => {
+    if (window.matchMedia("(min-width: 1024px)").matches) setOpen(true);
+  }, []);
 
   return (
     <div className="mt-3">

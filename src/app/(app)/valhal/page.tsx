@@ -70,6 +70,7 @@ export default async function ValhalPage() {
     <div className="flex flex-col gap-6">
       <PageHeader title={t("valhal.title")} subtitle={t("valhal.leaderboard")} />
 
+      <div className="flex flex-col gap-6 lg:block lg:columns-2 lg:gap-6 lg:[&>*]:mb-6 lg:[&>*]:break-inside-avoid">
       {/* Traveller of the week */}
       {traveller && (
         <Card className="flex items-center gap-3 border-accent/40 bg-accent-soft/30">
@@ -136,6 +137,7 @@ export default async function ValhalPage() {
         </div>
         <BadgeGrid badges={badgeViews} />
       </section>
+      </div>
     </div>
   );
 }

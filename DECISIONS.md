@@ -4,6 +4,45 @@ En løbende log over ikke-oplagte valg og antagelser truffet under bygningen af
 Uruz, jf. instruktionen i afsnit 0 ("notér antagelsen i `DECISIONS.md`").
 Nyeste øverst inden for hver fase.
 
+## Tilføjelse — appen på en skærm man ikke holder i hånden
+
+- **Bundbjælken er svaret på tommelfingre, ikke på skærme.** På en telefon er den
+  nederste tredjedel dét man kan nå; på en desktop er en bjælke klistret til
+  bunden af et højt vindue strandet langt fra alt andet. Fra 768 px flytter de
+  samme destinationer til en skinne i venstre side. Under 768 px sker der intet.
+
+- **Grænsen går ved 768 px, altså iPad i portræt.** Man kan argumentere for at en
+  tablet i hånden stadig er "mobil", men det er også dér indholdet bliver bredt
+  nok til at bundbjælken ser forladt ud.
+
+- **Bredden slippes ikke helt fri.** Indholdet får et loft på 1152 px. En
+  tekstlinje på 1500 px er sværere at læse end en på 400. Sider der vil bruge
+  mere plads, gør det ved at dele sig i spalter — ikke ved at strække sig.
+
+- **Kortene flyder i to spalter frem for at stå i et gitter.** Et gitter
+  efterlader et hul under det korte kort indtil det høje ved siden af slutter.
+  Flydende spalter (`columns-2` med `break-inside-avoid`) fylder bare ud. Det
+  koster at læserækkefølgen bliver spalte for spalte, hvilket er acceptabelt for
+  et opslagsværk som statistik og admin.
+
+- **Logge-skærmen beholder sit lodrette forløb — men guiden flyttede ud til
+  siden.** Vægt, reps og "Log sæt" er tunet til at rammes uden at kigge, og de
+  skal blive hvor tommelfingeren leder efter dem. Da instruktionerne stod
+  ovenover, skubbede de knappen ned; fra 1024 px står de i en spalte ved siden
+  af i stedet. Målt: knappen sidder øverst i sin spalte, uanset hvor lang
+  vejledningen er.
+
+- **Øvelseskøen findes kun når der er plads til den.** På telefonen er
+  fremskridtsbjælkerne i toppen hele overblikket, og det er den rigtige handel
+  når hver pixel ligger mellem en tommelfinger og et tal. På en bred skærm er
+  der ingen handel: listen kan bare stå der og vise hvad der er gjort, hvad der
+  mangler, og lade en springe direkte til en øvelse.
+
+- **Telefonen er verificeret uændret, ikke antaget uændret.** Otte skærme
+  fotograferet på 390 px før og efter og sammenlignet pixel for pixel: nul
+  afvigende pixels. (Filernes kontrolsummer var forskellige — det er PNG-kodning,
+  ikke indhold. Værd at vide, for det ligner en regression.)
+
 ## Tilføjelse — øvelsen skal kunne ses, og skærmen skal blive ved med at være tændt
 
 - **Tegningen hører hjemme der hvor øvelsen laves.** At kende navnet på en

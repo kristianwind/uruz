@@ -34,7 +34,7 @@ export default async function TrainPage() {
 
       {/* Resume an interrupted session — one tap back into the gym flow. */}
       {active && (
-        <section className="mb-6">
+        <section className="mb-6 lg:max-w-2xl">
           <Link href={`/train/session/${active.id}`}>
             <Card interactive className="flex items-center justify-between border-accent bg-accent-soft/50">
               <div className="min-w-0">
@@ -50,7 +50,7 @@ export default async function TrainPage() {
       )}
 
       {/* Today's workout / quick start */}
-      <section aria-labelledby="today-h" className="mb-6">
+      <section aria-labelledby="today-h" className="mb-6 lg:max-w-2xl">
         <h2 id="today-h" className="mb-2 text-sm font-semibold uppercase tracking-wide text-faint">
           {t("train.todaysWorkout")}
         </h2>
@@ -75,7 +75,7 @@ export default async function TrainPage() {
         <h2 id="choose-h" className="mb-2 text-sm font-semibold uppercase tracking-wide text-faint">
           {t("train.chooseWorkout")}
         </h2>
-        <ul className="flex flex-col gap-3">
+        <ul className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3">
           {templates.map((w) => {
             const setCount = getWorkoutExercises(w.id).length;
             return (

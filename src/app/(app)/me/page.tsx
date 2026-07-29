@@ -33,6 +33,8 @@ export default async function MePage() {
     <div>
       <PageHeader title={t("me.title")} />
 
+      <div className="lg:block lg:columns-2 lg:gap-6 lg:[&>*]:mb-6 lg:[&>*]:break-inside-avoid">
+
       {/* Profile + rank */}
       <Card className="mb-6 flex items-center gap-4">
         <span
@@ -117,6 +119,7 @@ export default async function MePage() {
       <section className="mt-4">
         <LogoutButtons />
       </section>
+    </div>
     </div>
   );
 }

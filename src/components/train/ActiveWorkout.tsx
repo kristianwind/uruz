@@ -8,6 +8,7 @@ import { RestTimer } from "./RestTimer";
 import { PRToast } from "./PRToast";
 import { SetRow } from "./SetRow";
 import { ExerciseGuide } from "./ExerciseGuide";
+import { ExerciseQueue } from "./ExerciseQueue";
 import { useSync } from "@/lib/offline/useSync";
 import { useWakeLock } from "@/lib/hooks/useWakeLock";
 import { cn } from "@/lib/utils";
@@ -206,11 +207,14 @@ export function ActiveWorkout({
       : "";
 
   return (
-    <div className="flex flex-col gap-4">
+    /* On a phone this is the single column it has always been. From 1024px the
+       queue moves to a rail on the right — what is coming next is worth seeing
+       when there is room, and is not worth a tap when there is not. */
+    <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start lg:gap-6">
       <PRToast exerciseName={prName} onDone={() => setPrName(null)} />
 
       {/* Progress header */}
-      <header>
+      <header className="lg:col-span-2">
         <div className="flex items-center justify-between">
           <h1 className="truncate text-lg font-bold text-text">{workoutName}</h1>
           {(pending > 0 || syncing || !online) && (
@@ -236,11 +240,17 @@ export function ActiveWorkout({
         </div>
       </header>
 
+      <div className="flex flex-col gap-4">
       {/* Current exercise */}
       <section className="rounded-xl border border-border bg-elev p-4">
         <h2 className="text-xl font-bold text-text">{current.name}</h2>
         {targetLabel && <p className="mt-0.5 text-sm text-muted">{targetLabel}</p>}
 
+        {/* Two columns from 1024px: the instructions sit *beside* the numbers
+            rather than above them, so opening the guide never pushes "Log set"
+            further from the thumb — the one thing this screen exists for. */}
+        <div className="lg:grid lg:grid-cols-2 lg:gap-6">
+        <div>
         <ExerciseGuide
           name={current.name}
           svgKey={current.svgKey}
@@ -249,6 +259,9 @@ export function ActiveWorkout({
           cues={current.cues}
           mediaPref={mediaPref}
         />
+        </div>
+
+        <div>
         {current.suggestion && current.suggestion.reason === "increase" && (
           <p className="mt-2 rounded-lg bg-success-soft px-3 py-2 text-sm text-success">
             {t("train.suggestUp", { weight: current.suggestion.weight })}
@@ -330,6 +343,8 @@ export function ActiveWorkout({
             ))}
           </ul>
         )}
+        </div>
+        </div>
       </section>
 
       <RestTimer
@@ -377,6 +392,14 @@ export function ActiveWorkout({
       >
         {t("common.finishWorkout")}
       </Button>
+      </div>
+
+      <ExerciseQueue
+        exercises={exercises}
+        index={index}
+        sets={sets}
+        onPick={setIndex}
+      />
     </div>
   );
 }

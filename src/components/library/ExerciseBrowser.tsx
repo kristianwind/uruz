@@ -141,7 +141,7 @@ export function ExerciseBrowser({
       {filtered.length === 0 ? (
         <p className="py-8 text-center text-sm text-muted">{t("library.empty")}</p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2 xl:grid-cols-3">
           {filtered.map((e) => (
             <li key={e.id}>
               <Link

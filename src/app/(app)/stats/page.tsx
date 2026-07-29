@@ -102,7 +102,7 @@ export default async function StatsPage() {
       <PageHeader title={t("stats.title")} subtitle={t("stats.overview")} />
 
       {/* Headline numbers */}
-      <section className="grid grid-cols-3 gap-2">
+      <section className="grid grid-cols-3 gap-2 lg:grid-cols-6">
         <StatTile label={t("stats.totalSessions")} value={String(totals.sessions)} accent="gold" />
         <StatTile
           label={t("stats.tonnage")}
@@ -124,6 +124,10 @@ export default async function StatsPage() {
         />
       </section>
 
+      {/* From 1024px the cards flow into two columns rather than sitting in a
+          grid: a grid would leave a hole under the short card until the tall
+          one beside it ends. Flowing columns simply fill. */}
+      <div className="flex flex-col gap-6 lg:block lg:columns-2 lg:gap-6 lg:[&>*]:mb-6 lg:[&>*]:break-inside-avoid">
       {/* Consistency — the thing the app rewards most */}
       <Card>
         <div className="mb-2 flex items-baseline justify-between">
@@ -351,6 +355,7 @@ export default async function StatsPage() {
       >
         {t("stats.export")} (CSV)
       </Link>
+    </div>
     </div>
   );
 }

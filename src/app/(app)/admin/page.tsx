@@ -68,7 +68,7 @@ export default async function AdminPage() {
       </div>
 
       {/* System status */}
-      <section className="flex flex-col gap-2">
+      <section className="flex flex-col gap-2 md:grid md:grid-cols-2 md:items-start">
         <AIStatus provider={ai.provider} model={ai.model} configured={isAIConfigured()} />
         {/* Passkey config is invisible when wrong: the browser rejects it
             locally and the server never hears about it. So show it. */}
@@ -129,6 +129,7 @@ export default async function AdminPage() {
         </Card>
       </section>
 
+      <div className="flex flex-col gap-6 lg:block lg:columns-2 lg:gap-6 lg:[&>*]:mb-6 lg:[&>*]:break-inside-avoid">
       {/* The hall */}
       <section>
         <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-faint">
@@ -225,6 +226,7 @@ export default async function AdminPage() {
           </ul>
         )}
       </section>
+    </div>
     </div>
   );
 }

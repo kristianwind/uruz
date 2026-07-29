@@ -19,7 +19,7 @@ export default async function RemindersPage() {
   const schedule = existing ? parseCron(existing.scheduleCron) : null;
 
   return (
-    <div>
+    <div className="lg:max-w-3xl">
       <Link href="/me" className="mb-1 inline-flex items-center gap-1 text-sm text-muted">
         <ChevronLeftIcon size={16} /> {t("nav.me")}
       </Link>
