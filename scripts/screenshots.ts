@@ -19,7 +19,10 @@ import puppeteer from "puppeteer-core";
 
 const PORT = Number(process.env.URUZ_SHOT_PORT || 3200);
 const BASE = `http://localhost:${PORT}`;
-const OUT = join(process.cwd(), "docs", "screenshots");
+// One set per language: the Danish site should not show English screens, and
+// the README — public, English-facing — should not show Danish ones.
+const LOCALE = (process.env.URUZ_SHOT_LOCALE || "en").toLowerCase();
+const OUT = join(process.cwd(), "docs", "screenshots", LOCALE);
 const DB = join(tmpdir(), "uruz-screenshots", "uruz.sqlite");
 
 const CHROME_CANDIDATES = [
@@ -90,13 +93,16 @@ function stageLiveScreens(): string {
       "tsx",
       "-e",
       `import { getAnyHall } from "./src/lib/db/repo/halls";
-       import { getUserByEmail } from "./src/lib/db/repo/users";
+       import { getUserByEmail, updateUser } from "./src/lib/db/repo/users";
        import { listTemplates, getWorkoutExercises } from "./src/lib/db/repo/workouts";
        import { startSession, logSet } from "./src/lib/db/repo/sessions";
        import { addCoachMessage } from "./src/lib/db/repo/coach";
 
        const hall = getAnyHall()!;
        const user = getUserByEmail("kristian@uruz.local")!;
+       // The screenshots are of the app in one language, so the demo account
+       // has to be in it — the UI follows the signed-in user's preference.
+       updateUser(user.id, { localePref: process.env.URUZ_SHOT_LOCALE || "en" });
 
        const template = listTemplates(hall.id).find((t) => t.name.startsWith("Helkrop"))!;
        const items = getWorkoutExercises(template.id);
@@ -109,7 +115,9 @@ function stageLiveScreens(): string {
        addCoachMessage({
          userId: user.id,
          kind: "opsummering",
-         body: "Du har trænet to gange om ugen i tolv uger — det er stabiliteten, ikke de enkelte løft, der har flyttet dit benpres fra 47,5 til 55 kg. Ryggen halter lidt bagefter brystet; læg en ekstra trækøvelse ind i Helkrop B, så holder du balancen.",
+         body: (process.env.URUZ_SHOT_LOCALE || "en") === "da"
+           ? "Du har trænet to gange om ugen i tolv uger — det er stabiliteten, ikke de enkelte løft, der har flyttet dit benpres fra 47,5 til 55 kg. Ryggen halter lidt bagefter brystet; læg en ekstra trækøvelse ind i Helkrop B, så holder du balancen."
+           : "You have trained twice a week for twelve weeks — it is the consistency, not any single lift, that moved your leg press from 47.5 to 55 kg. Your back lags a little behind your chest; add one more pulling exercise to Full body B and you keep the balance.",
        });
 
        process.stdout.write(session.id);`,
@@ -190,7 +198,7 @@ async function main(): Promise<void> {
     }
 
     await browser.close();
-    console.log(`\n✔ Screenshots written to docs/screenshots/`);
+    console.log(`\n✔ Screenshots written to docs/screenshots/${LOCALE}/`);
   } finally {
     server.kill("SIGTERM");
   }

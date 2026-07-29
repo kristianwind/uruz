@@ -1,3 +1,4 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/app/PageHeader";
@@ -9,7 +10,7 @@ import { getT } from "@/lib/i18n/server";
 import { updateExerciseAction } from "../actions";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Fælles bibliotek" };
+export const generateMetadata = localizedTitle("titles.adminLibraryTitle");
 
 /** Admin editing of the shared exercise library (spec §9). */
 export default async function AdminLibraryPage() {

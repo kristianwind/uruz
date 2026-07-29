@@ -1,3 +1,4 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { PageHeader } from "@/components/app/PageHeader";
 import { ExerciseBrowser } from "@/components/library/ExerciseBrowser";
@@ -8,7 +9,7 @@ import { localizeExercise } from "@/lib/domain/localize";
 import { getT } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Øvelser" };
+export const generateMetadata = localizedTitle("library.exercises");
 
 export default async function ExercisesPage() {
   const ctx = await requireContext();

@@ -1,9 +1,10 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 import { getT } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Nyt kodeord" };
+export const generateMetadata = localizedTitle("auth.resetTitle");
 
 /**
  * Landing page for the "choose a new password" link.

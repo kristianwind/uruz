@@ -4,6 +4,30 @@ En løbende log over ikke-oplagte valg og antagelser truffet under bygningen af
 Uruz, jf. instruktionen i afsnit 0 ("notér antagelsen i `DECISIONS.md`").
 Nyeste øverst inden for hver fase.
 
+## Tilføjelse — engelsk som standardsprog
+
+- **Engelsk er hvad en fremmed sandsynligvis læser.** Appen blev skrevet på dansk
+  til to personer og er nu offentlig. En der ankommer uden et gemt valg, får
+  engelsk; en der har valgt, beholder sit valg. Kun kolonnens standardværdi er
+  ændret — ikke eksisterende rækker, for det ville skifte sproget under de to
+  der har brugt appen på dansk hele tiden.
+
+- **E-mails følger modtageren, ikke standarden.** En side der viser engelsk før
+  nogen har sagt andet, er et rimeligt gæt. At skrive til en navngiven person i
+  et sprog vedkommende ikke har valgt, er det ikke. Login- og
+  nulstillingsmails slår brugerens `locale_pref` op ud fra e-mailadressen.
+  Invitationer går til en uden konto, så der er intet valg at følge — de sendes
+  i afsenderens sprog, som er det bedste bud på et fælles et.
+
+- **Sidetitlerne var sytten danske strenge.** De er usynlige i appen selv, men
+  browserfanen, historikken og navnet på et hjemmeskærms-bogmærke kommer derfra.
+  De er nu `generateMetadata` med en nøgle, så de følger samme sprog som siden.
+
+- **To sæt skærmbilleder.** Den danske forside skal ikke vise engelske skærme, og
+  README — offentligt og engelsk-vendt — skal ikke vise danske. Scriptet tager
+  et sprog og sætter demo-brugerens `locale_pref`, for appen følger den
+  indloggede brugers valg. `npm run gen:screenshots` og `…:da`.
+
 ## Tilføjelse — appen på en skærm man ikke holder i hånden
 
 - **Bundbjælken er svaret på tommelfingre, ikke på skærme.** På en telefon er den

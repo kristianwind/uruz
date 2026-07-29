@@ -1,10 +1,11 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { InviteForm } from "@/components/auth/InviteForm";
 import { getInvitationByCode, isInvitationUsable } from "@/lib/db/repo/invitations";
 import { getT } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Invitation" };
+export const generateMetadata = localizedTitle("titles.inviteTitle");
 
 export default async function InvitePage({
   params,

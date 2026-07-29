@@ -1,3 +1,4 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import { redirect } from "next/navigation";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -6,7 +7,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { getT } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Log ind" };
+export const generateMetadata = localizedTitle("auth.signIn");
 
 export default async function LoginPage() {
   if (isFirstRun()) redirect("/welcome");

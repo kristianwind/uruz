@@ -19,7 +19,7 @@ i Yggdrasil Panel.
 | **Kode** | https://github.com/kristianwind/uruz |
 | **Image** | `ghcr.io/kristianwind/uruz:latest` (offentligt) |
 | **Website** | https://uruz-training.com |
-| **Tests** | 168, alle grønne |
+| **Tests** | 173, alle grønne |
 | **Site-kilde** | `website/` — dansk og engelsk, åbn `index.html` |
 
 ---
@@ -262,8 +262,9 @@ I den rækkefølge:
 
 ## Konventioner
 
-- **Brugervendt tekst er dansk**, i `/locales/da.json` og `en.json`. Aldrig
-  hardkodet i en komponent.
+- **Brugervendt tekst findes i begge sprog**, i `/locales/da.json` og `en.json`.
+  Aldrig hardkodet i en komponent — heller ikke sidetitler og e-mails.
+  **Engelsk er standarden**; den enkeltes valg vinder altid.
 - **Kodekommentarer er engelske**, og forklarer *hvorfor*, ikke *hvad*.
 - **Domænelogik hører i `/lib`**, ikke i komponenter.
 - **Enhver ikke-oplagt beslutning skrives i `DECISIONS.md`** med begrundelse.

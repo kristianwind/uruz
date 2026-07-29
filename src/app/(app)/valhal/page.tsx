@@ -1,3 +1,4 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import { PageHeader } from "@/components/app/PageHeader";
 import { EmptyState } from "@/components/app/EmptyState";
 import { Card, CardMuted } from "@/components/ui/Card";
@@ -19,7 +20,7 @@ import { getT } from "@/lib/i18n/server";
 import { fmtNum } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Valhal" };
+export const generateMetadata = localizedTitle("valhal.title");
 
 export default async function ValhalPage() {
   const ctx = await requireContext();

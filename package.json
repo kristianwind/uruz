@@ -20,7 +20,8 @@
     "setup": "tsx scripts/setup.ts",
     "gen:icons": "tsx scripts/gen-icons.ts",
     "gen:vapid": "tsx scripts/gen-vapid.ts",
-    "gen:screenshots": "tsx scripts/screenshots.ts"
+    "gen:screenshots": "URUZ_SHOT_LOCALE=en tsx scripts/screenshots.ts",
+    "gen:screenshots:da": "URUZ_SHOT_LOCALE=da URUZ_SHOT_PORT=3201 tsx scripts/screenshots.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.68.0",

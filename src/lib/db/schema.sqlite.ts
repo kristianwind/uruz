@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS users (
   avatar       TEXT,
   theme_pref   TEXT NOT NULL DEFAULT 'norse',
   mode_pref    TEXT NOT NULL DEFAULT 'dark',
-  locale_pref  TEXT NOT NULL DEFAULT 'da',
+  locale_pref  TEXT NOT NULL DEFAULT 'en',
   media_pref   TEXT NOT NULL DEFAULT 'illustration',
   difficulty   TEXT NOT NULL DEFAULT 'begynder',
   coach_tone   TEXT NOT NULL DEFAULT 'soft',

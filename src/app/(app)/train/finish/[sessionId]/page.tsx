@@ -1,3 +1,4 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import { redirect } from "next/navigation";
 import { requireContext } from "@/lib/auth/session";
 import { getSession, listSessionSets } from "@/lib/db/repo/sessions";
@@ -7,7 +8,7 @@ import { totalVolume } from "@/lib/domain/strength";
 import { getT } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Afslut træning" };
+export const generateMetadata = localizedTitle("titles.finishTitle");
 
 export default async function FinishPage({
   params,

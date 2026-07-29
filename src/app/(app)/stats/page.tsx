@@ -1,3 +1,4 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { PageHeader } from "@/components/app/PageHeader";
 import { EmptyState } from "@/components/app/EmptyState";
@@ -18,7 +19,7 @@ import { fmtNum } from "@/lib/utils";
 import * as S from "@/lib/domain/stats";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Statistik" };
+export const generateMetadata = localizedTitle("stats.title");
 
 const WEEKLY_GOAL = 2;
 

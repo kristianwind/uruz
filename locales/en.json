@@ -471,5 +471,29 @@
       "sat": "Sat",
       "sun": "Sun"
     }
+  },
+  "titles": {
+    "installTitle": "Install",
+    "adminLibraryTitle": "Shared library",
+    "builderTitle": "Build a workout",
+    "finishTitle": "Finish workout",
+    "inviteTitle": "Invitation",
+    "offlineTitle": "Offline"
+  },
+  "email": {
+    "magicSubject": "Your sign-in link for Uruz ᚢ",
+    "magicText": "Sign in to Uruz: {{link}}\n\nThe link expires in 30 minutes.",
+    "magicLead": "Tap to sign in:",
+    "magicButton": "Sign in",
+    "magicFoot": "The link expires in 30 minutes. If you didn't ask for it, you can ignore this email.",
+    "resetSubject": "A new password for Uruz ᚢ",
+    "resetText": "Choose a new password for Uruz: {{link}}\n\nThe link expires in 30 minutes. If you didn't ask for it, you can ignore this email — your password is unchanged.",
+    "resetLead": "Tap to choose a new password:",
+    "resetButton": "Choose a new password",
+    "resetFoot": "The link expires in 30 minutes. If you didn't ask for it, you can ignore this email — your password is unchanged.",
+    "inviteSubject": "You're invited to {{hall}} on Uruz ᚢ",
+    "inviteText": "You're invited to the hall \"{{hall}}\". Accept here: {{link}}",
+    "inviteLead": "You're invited to",
+    "inviteButton": "Accept invitation"
   }
 }

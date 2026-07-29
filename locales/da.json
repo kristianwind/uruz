@@ -471,5 +471,29 @@
       "sat": "Lør",
       "sun": "Søn"
     }
+  },
+  "titles": {
+    "installTitle": "Installér",
+    "adminLibraryTitle": "Fælles bibliotek",
+    "builderTitle": "Byg træning",
+    "finishTitle": "Afslut træning",
+    "inviteTitle": "Invitation",
+    "offlineTitle": "Offline"
+  },
+  "email": {
+    "magicSubject": "Dit login-link til Uruz ᚢ",
+    "magicText": "Log ind i Uruz: {{link}}\n\nLinket udløber om 30 minutter.",
+    "magicLead": "Tryk for at logge ind:",
+    "magicButton": "Log ind",
+    "magicFoot": "Linket udløber om 30 minutter. Bad du ikke om det, kan du ignorere denne mail.",
+    "resetSubject": "Nyt kodeord til Uruz ᚢ",
+    "resetText": "Vælg et nyt kodeord til Uruz: {{link}}\n\nLinket udløber om 30 minutter. Bad du ikke om det, kan du ignorere denne mail — dit kodeord er uændret.",
+    "resetLead": "Tryk for at vælge et nyt kodeord:",
+    "resetButton": "Vælg nyt kodeord",
+    "resetFoot": "Linket udløber om 30 minutter. Bad du ikke om det, kan du ignorere denne mail — dit kodeord er uændret.",
+    "inviteSubject": "Du er inviteret til {{hall}} på Uruz ᚢ",
+    "inviteText": "Du er inviteret til hallen \"{{hall}}\". Accepter her: {{link}}",
+    "inviteLead": "Du er inviteret til",
+    "inviteButton": "Accepter invitation"
   }
 }

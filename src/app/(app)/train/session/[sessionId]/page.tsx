@@ -1,3 +1,4 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import { redirect } from "next/navigation";
 import { requireContext } from "@/lib/auth/session";
 import { getSession } from "@/lib/db/repo/sessions";
@@ -10,7 +11,7 @@ import { getT } from "@/lib/i18n/server";
 import { workoutName, localizeExercise } from "@/lib/domain/localize";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Træning" };
+export const generateMetadata = localizedTitle("train.title");
 
 /** The active logging screen for one session. */
 export default async function SessionPage({

@@ -1,4 +1,5 @@
 import "server-only";
+import { createT, type Locale } from "@/lib/i18n/core";
 
 /**
  * Email delivery, used by auth (magic links, invites) and reminders (§7/§8).
@@ -112,48 +113,53 @@ function logToConsole(input: EmailInput): { ok: boolean; dev: boolean } {
   return { ok: true, dev: true };
 }
 
-export function magicLinkEmail(link: string): { subject: string; html: string; text: string } {
-  return {
-    subject: "Dit login-link til Uruz ᚢ",
-    text: `Log ind i Uruz: ${link}\n\nLinket udløber om 30 minutter.`,
-    html: `<div style="font-family:sans-serif;max-width:480px">
+/**
+ * The three messages the app sends.
+ *
+ * Each takes the *recipient's* locale, not the app's default. A sign-in link
+ * goes to one specific person, and we know which language they chose — sending
+ * it in the default would mean writing to someone in a language they did not
+ * pick, which is worse than a page rendering in English before anyone has said
+ * otherwise.
+ */
+type Mail = { subject: string; html: string; text: string };
+
+function shell(lead: string, button: string, link: string, foot?: string): string {
+  return `<div style="font-family:sans-serif;max-width:480px">
       <h1 style="color:#e0a83e">Uruz ᚢ</h1>
-      <p>Tryk for at logge ind:</p>
-      <p><a href="${link}" style="display:inline-block;background:#e0a83e;color:#17130a;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:600">Log ind</a></p>
-      <p style="color:#888;font-size:13px">Linket udløber om 30 minutter. Bad du ikke om det, kan du ignorere denne mail.</p>
-    </div>`,
+      <p>${lead}</p>
+      <p><a href="${link}" style="display:inline-block;background:#e0a83e;color:#17130a;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:600">${button}</a></p>
+      ${foot ? `<p style="color:#888;font-size:13px">${foot}</p>` : ""}
+    </div>`;
+}
+
+export function magicLinkEmail(link: string, locale?: Locale): Mail {
+  const t = createT(locale);
+  return {
+    subject: t("email.magicSubject"),
+    text: t("email.magicText", { link }),
+    html: shell(t("email.magicLead"), t("email.magicButton"), link, t("email.magicFoot")),
   };
 }
 
-export function passwordResetEmail(link: string): {
-  subject: string;
-  html: string;
-  text: string;
-} {
+export function passwordResetEmail(link: string, locale?: Locale): Mail {
+  const t = createT(locale);
   return {
-    subject: "Nyt kodeord til Uruz ᚢ",
-    text: `Vælg et nyt kodeord til Uruz: ${link}\n\nLinket udløber om 30 minutter. Bad du ikke om det, kan du ignorere denne mail — dit kodeord er uændret.`,
-    html: `<div style="font-family:sans-serif;max-width:480px">
-      <h1 style="color:#e0a83e">Uruz ᚢ</h1>
-      <p>Tryk for at vælge et nyt kodeord:</p>
-      <p><a href="${link}" style="display:inline-block;background:#e0a83e;color:#17130a;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:600">Vælg nyt kodeord</a></p>
-      <p style="color:#888;font-size:13px">Linket udløber om 30 minutter. Bad du ikke om det, kan du ignorere denne mail — dit kodeord er uændret.</p>
-    </div>`,
+    subject: t("email.resetSubject"),
+    text: t("email.resetText", { link }),
+    html: shell(t("email.resetLead"), t("email.resetButton"), link, t("email.resetFoot")),
   };
 }
 
-export function inviteEmail(link: string, hallName: string): {
-  subject: string;
-  html: string;
-  text: string;
-} {
+export function inviteEmail(link: string, hallName: string, locale?: Locale): Mail {
+  const t = createT(locale);
   return {
-    subject: `Du er inviteret til ${hallName} på Uruz ᚢ`,
-    text: `Du er inviteret til hallen "${hallName}". Accepter her: ${link}`,
-    html: `<div style="font-family:sans-serif;max-width:480px">
-      <h1 style="color:#e0a83e">Uruz ᚢ</h1>
-      <p>Du er inviteret til <strong>${hallName}</strong>.</p>
-      <p><a href="${link}" style="display:inline-block;background:#e0a83e;color:#17130a;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:600">Accepter invitation</a></p>
-    </div>`,
+    subject: t("email.inviteSubject", { hall: hallName }),
+    text: t("email.inviteText", { hall: hallName, link }),
+    html: shell(
+      `${t("email.inviteLead")} <strong>${hallName}</strong>.`,
+      t("email.inviteButton"),
+      link,
+    ),
   };
 }

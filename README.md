@@ -27,13 +27,13 @@ Den kan også køre helt for sig selv med `docker run` eller lokalt med `npm run
 
 | | | |
 |:--:|:--:|:--:|
-| ![Træn](docs/screenshots/train.png) | ![Log et sæt](docs/screenshots/session.png) | ![Statistik](docs/screenshots/stats.png) |
+| ![Træn](docs/screenshots/en/train.png) | ![Log et sæt](docs/screenshots/en/session.png) | ![Statistik](docs/screenshots/en/stats.png) |
 | **Træn** — dagens træning, eller vælg frit | **Log et sæt** — forudfyldt, ét tryk | **Statistik** — tonnage, fremgang, indsigter |
-| ![Valhal](docs/screenshots/valhal.png) | ![Mimir](docs/screenshots/coach.png) | ![Bibliotek](docs/screenshots/library.png) |
+| ![Valhal](docs/screenshots/en/valhal.png) | ![Mimir](docs/screenshots/en/coach.png) | ![Bibliotek](docs/screenshots/en/library.png) |
 | **Valhal** — rangliste, runer og milepæle | **Mimir** — ugens analyse og "spørg om alt" | **Bibliotek** — øvelser med trin og cues |
 
 <sub>Skærmbillederne er taget af `npm run gen:screenshots` med demo-data — ingen
-rigtige personers træning.</sub>
+rigtige personers træning. Appen kører på dansk med `npm run gen:screenshots:da`.</sub>
 
 ---
 

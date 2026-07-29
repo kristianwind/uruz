@@ -3,6 +3,7 @@ import { getUserByEmail } from "@/lib/db/repo/users";
 import { createMagicToken } from "@/lib/db/repo/auth";
 import { sendEmail, magicLinkEmail, passwordResetEmail } from "@/lib/notify/email";
 import { getAppOrigin } from "@/lib/auth/origin";
+import { isLocale } from "@/lib/i18n/core";
 
 export const runtime = "nodejs";
 
@@ -27,7 +28,9 @@ export async function POST(req: Request) {
     const link = reset
       ? `${base}/login/reset?token=${token}`
       : `${base}/api/auth/magic/callback?token=${token}`;
-    const mail = reset ? passwordResetEmail(link) : magicLinkEmail(link);
+    // The recipient's own choice, not the app default — see notify/email.
+    const locale = isLocale(user.localePref) ? user.localePref : undefined;
+    const mail = reset ? passwordResetEmail(link, locale) : magicLinkEmail(link, locale);
     await sendEmail({ to: email, ...mail });
   }
   return NextResponse.json({ ok: true });

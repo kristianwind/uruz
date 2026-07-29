@@ -15,7 +15,13 @@ import en from "@locales/en.json";
 export const LOCALES = ["da", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
 
-export const DEFAULT_LOCALE: Locale = "da";
+/**
+ * English is the default. The app was written in Danish for two people, and is
+ * now public — someone arriving without a saved preference is far more likely
+ * to read English than Danish. A signed-in user's own choice always wins, and
+ * every string, including the exercise content, exists in both.
+ */
+export const DEFAULT_LOCALE: Locale = "en";
 
 const dictionaries: Record<Locale, unknown> = { da, en };
 

@@ -1,3 +1,4 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/app/PageHeader";
@@ -29,7 +30,7 @@ import {
 } from "./actions";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Administration" };
+export const generateMetadata = localizedTitle("admin.title");
 
 export default async function AdminPage() {
   const ctx = await requireContext();

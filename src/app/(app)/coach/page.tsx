@@ -1,3 +1,4 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import { PageHeader } from "@/components/app/PageHeader";
 import { Card, CardMuted } from "@/components/ui/Card";
 import { AskMimir } from "@/components/coach/AskMimir";
@@ -12,7 +13,7 @@ import { addConstraintAction, resolveConstraintAction } from "./actions";
 import { getT } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Mimir" };
+export const generateMetadata = localizedTitle("coach.title");
 
 export default async function CoachPage() {
   const ctx = await requireContext();

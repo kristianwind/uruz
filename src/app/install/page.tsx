@@ -1,9 +1,10 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { ChevronLeftIcon } from "@/components/ui/icons";
 import { getT } from "@/lib/i18n/server";
 
-export const metadata = { title: "Installér" };
+export const generateMetadata = localizedTitle("titles.installTitle");
 
 function Steps({ heading, steps }: { heading: string; steps: string[] }) {
   return (

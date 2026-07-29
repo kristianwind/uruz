@@ -14,6 +14,7 @@ import { renameHall } from "@/lib/db/repo/halls";
 import { writeAudit } from "@/lib/audit";
 import { sendEmail, inviteEmail } from "@/lib/notify/email";
 import { getAppOrigin } from "@/lib/auth/origin";
+import { isLocale } from "@/lib/i18n/core";
 import type { AppContext } from "@/lib/auth/session";
 
 /**
@@ -51,7 +52,9 @@ export async function inviteUserAction(
 
   const base = await getAppOrigin();
   const link = `${base}/invite/${invite.code}`;
-  const mail = inviteEmail(link, ctx.hall.name);
+  // The invitee has no account yet, so there is no preference to honour.
+  // The inviter's language is the best available guess at a shared one.
+  const mail = inviteEmail(link, ctx.hall.name, isLocale(ctx.user.localePref) ? ctx.user.localePref : undefined);
   const sent = await sendEmail({ to: parsed.email, ...mail });
 
   writeAudit(ctx.hall.id, ctx.user.id, "invitation_created", invite.id, {

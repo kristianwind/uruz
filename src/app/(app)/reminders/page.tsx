@@ -1,3 +1,4 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { PageHeader } from "@/components/app/PageHeader";
 import { ReminderSettings } from "@/components/notify/ReminderSettings";
@@ -9,7 +10,7 @@ import { getT } from "@/lib/i18n/server";
 import { saveReminderAction, setCoachToneAction } from "./actions";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Reminders" };
+export const generateMetadata = localizedTitle("reminders.title");
 
 export default async function RemindersPage() {
   const ctx = await requireContext();

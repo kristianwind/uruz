@@ -1,3 +1,4 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/app/PageHeader";
@@ -11,7 +12,7 @@ import { getT } from "@/lib/i18n/server";
 import { saveWorkoutAction } from "../../actions";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Byg træning" };
+export const generateMetadata = localizedTitle("titles.builderTitle");
 
 /**
  * Program builder route. `new` starts an empty workout; any other id edits an

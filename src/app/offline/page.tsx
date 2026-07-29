@@ -1,7 +1,8 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import { CloudOffIcon } from "@/components/ui/icons";
 import { getT } from "@/lib/i18n/server";
 
-export const metadata = { title: "Offline" };
+export const generateMetadata = localizedTitle("titles.offlineTitle");
 
 export default async function OfflinePage() {
   const t = await getT();

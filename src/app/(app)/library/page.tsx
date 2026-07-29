@@ -1,3 +1,4 @@
+import { localizedTitle } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { PageHeader } from "@/components/app/PageHeader";
 import { Card, CardTitle, CardMuted } from "@/components/ui/Card";
@@ -9,7 +10,7 @@ import { getT } from "@/lib/i18n/server";
 import { workoutName, workoutDescription } from "@/lib/domain/localize";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Bibliotek" };
+export const generateMetadata = localizedTitle("library.title");
 
 /**
  * Library hub: the hall's workouts (templates + own) and a way into the
