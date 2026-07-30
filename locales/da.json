@@ -86,7 +86,16 @@
     "prCongrats": "⚡ Ny rekord — {{exercise}}!",
     "targetReps": "Mål: {{min}}–{{max}} reps",
     "targetHold": "Mål: {{sec}} sek",
-    "suggestUp": "Prøv {{weight}} kg næste gang"
+    "suggestUp": "Prøv {{weight}} kg næste gang",
+    "history": "Tidligere træninger",
+    "historyEmpty": "Ingen gennemførte træninger endnu.",
+    "historyOpen": "Se træningen",
+    "sessionDelete": "Slet træningen",
+    "sessionDeleteConfirm": "Slet hele træningen med alle sæt? Det kan ikke fortrydes.",
+    "sessionDeleted": "Træningen er slettet.",
+    "sessionSets": "{{count}} sæt",
+    "sessionDuration": "{{min}} min",
+    "editSets": "Ret sættene ved at trykke på dem."
   },
   "library": {
     "title": "Bibliotek",
@@ -267,7 +276,11 @@
     "passkeyReauth": "Bekræft med dit kodeord for at fjerne nøglen.",
     "passkeyReauthKey": "Bekræft med en af dine passkeys for at fjerne nøglen.",
     "passkeyLastWayIn": "Det er din eneste vej ind. Sæt et kodeord først — eller få en mailserver sat op, så du kan få et login-link.",
-    "passkeyGone": "Nøglen findes ikke længere."
+    "passkeyGone": "Nøglen findes ikke længere.",
+    "rotationLock": "Lås til højformat",
+    "rotationLocked": "Låst",
+    "rotationUnlocked": "Fri",
+    "rotationUnsupported": "Din browser kan ikke låse rotationen. På iPhone gøres det i Kontrolcenter — træk ned fra øverste højre hjørne og tryk på hængelåsen med pilen om."
   },
   "auth": {
     "welcome": "Velkommen til Uruz",

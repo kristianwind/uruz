@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/app/PageHeader";
 import { Card, CardTitle, CardMuted } from "@/components/ui/Card";
 import { PreferenceControls } from "@/components/app/PreferenceControls";
+import { RotationLock } from "@/components/app/RotationLock";
 import { ChevronRightIcon, CogIcon } from "@/components/ui/icons";
 import { LogoutButtons } from "@/components/auth/LogoutButtons";
 import { PasswordSection } from "@/components/auth/PasswordSection";
@@ -58,7 +59,7 @@ export default async function MePage() {
         <h2 id="settings-h" className="mb-2 text-sm font-semibold uppercase tracking-wide text-faint">
           {t("me.settings")}
         </h2>
-        <Card>
+        <Card className="flex flex-col gap-3">
           <PreferenceControls
             initialMode={user.modePref}
             initialTheme={user.themePref}
@@ -68,6 +69,9 @@ export default async function MePage() {
             onPersistLocale={persistLocale}
             onPersistMedia={persistMediaPref}
           />
+          <div className="border-t border-border pt-3">
+            <RotationLock />
+          </div>
         </Card>
       </section>
 

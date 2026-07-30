@@ -291,7 +291,9 @@ export function ActiveWorkout({
                   label={t("common.kg")}
                   value={weight}
                   onChange={setWeight}
-                  step={2.5}
+                  // Half a kilo: what the machines actually land on. Hold to
+                  // move faster — see Stepper.
+                  step={0.5}
                   max={1000}
                   className="flex-1"
                 />

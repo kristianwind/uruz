@@ -80,7 +80,10 @@ export default async function TrainPage() {
             const setCount = getWorkoutExercises(w.id).length;
             return (
               <li key={w.id}>
-                <Link href={`/train/start/${w.id}`}>
+                {/* To the workout, not into it. Tapping a name used to start
+                    a session immediately, so there was no way to look at what
+                    was in one — or to change your mind. */}
+                <Link href={`/library/workout/${w.id}?from=train`}>
                   <Card interactive className="flex items-center justify-between">
                     <div className="min-w-0">
                       <CardTitle className="truncate">{workoutName(w, t.locale)}</CardTitle>
@@ -106,6 +109,12 @@ export default async function TrainPage() {
         >
           {t("library.buildYourOwn")} <ChevronRightIcon size={16} />
         </Link>
+      <Link
+        href="/train/history"
+        className="mt-2 flex items-center justify-center gap-1 py-3 text-sm font-medium text-muted"
+      >
+        {t("train.history")} <ChevronRightIcon size={16} />
+      </Link>
       </section>
     </div>
   );

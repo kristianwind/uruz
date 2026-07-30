@@ -4,6 +4,41 @@ En løbende log over ikke-oplagte valg og antagelser truffet under bygningen af
 Uruz, jf. instruktionen i afsnit 0 ("notér antagelsen i `DECISIONS.md`").
 Nyeste øverst inden for hver fase.
 
+## Tilføjelse — det første rigtige træningspas afslørede
+
+Fundet ved at bruge appen i et center, ikke ved at læse koden.
+
+- **Vægten går 0,5 ad gangen, ikke 2,5.** Ét trin var én skive, hvilket ikke kan
+  udtrykke hvad maskinerne faktisk står på: de lander på halve, og på stakke med
+  helt andre spring. Et tal man ikke kan indtaste, er et tal der bliver logget
+  forkert. **Hold på knappen for at gentage**, hurtigere jo længere man holder —
+  ellers ville 20 til 60 være firs tryk. Feltet kan stadig tastes direkte i.
+
+- **Sæt-rækken havde altid kunnet rettes og slettes — den så bare ikke sådan ud.**
+  Funktionen fandtes; der var ingen antydning af at rækken kunne trykkes på, og
+  den første der brugte appen rigtigt kunne derfor ikke rette et fejl-logget sæt.
+  Et blyant-ikon var hele forskellen. Værd at huske: en funktion uden en synlig
+  vej ind findes ikke.
+
+- **En træning skal ses før den startes.** Træn-siden linkede direkte til
+  `/train/start`, som opretter en session med det samme. Man kunne altså ikke
+  kigge på hvad der lå i en træning uden at have startet den — og ikke fortryde.
+  Nu går linket til trænings-siden, hvor indholdet står, og hvor Start,
+  Dublér og Redigér i forvejen lå. Tilbage-pilen følger hvor man kom fra.
+
+- **Arkivet manglede helt.** Tallene blev lagt sammen til statistik og aldrig
+  vist som sig selv, så en forkert logget træning forblev forkert — der var
+  ingen skærm at finde den på igen. `/train/history` viser dem, og den enkelte
+  kan rettes med de samme sæt-rækker som den levende skærm. Én opførsel, ét sted
+  at få den rigtig.
+
+- **Rotationslås kan ikke lade sig gøre på iPhone, og det siger appen så.**
+  Manifestet beder om portrait (Android følger det), og `screen.orientation.lock()`
+  findes i Chromium men afviser med `NotSupportedError` uden for en installeret
+  app — målt, ikke antaget. iOS Safari har ingen af delene. Kontakten vises kun
+  hvor den virker; ellers står der hvor iPhonens egen låseknap sidder. En kontakt
+  der ikke gør noget, lærer folk at mistro appen.
+
 ## Tilføjelse — slet din passkey
 
 Bygget efter Yggdrasils løsning, som Kristian bad om — men med tre af dens huller

@@ -78,6 +78,21 @@ export function finishSession(id: string, input: FinishSessionInput = {}): Sessi
   return getSession(id);
 }
 
+/**
+ * Delete a whole session and everything logged in it.
+ *
+ * The user id is part of the WHERE clause rather than a lookup followed by a
+ * check: no window in between, and somebody else's id simply matches nothing.
+ * Returns whether a row actually went, so a route cannot answer "deleted" for
+ * a session that was never there.
+ */
+export function deleteSessionOwned(id: string, userId: string): boolean {
+  const res = getDb()
+    .prepare("DELETE FROM sessions WHERE id = ? AND user_id = ?")
+    .run(id, userId);
+  return Number(res.changes) > 0;
+}
+
 export function deleteSession(id: string): void {
   getDb().prepare("DELETE FROM sessions WHERE id = ?").run(id);
 }

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useT } from "@/components/app/I18nProvider";
-import { BoltIcon } from "@/components/ui/icons";
+import { BoltIcon, PencilIcon } from "@/components/ui/icons";
 import type { LoggedSet } from "./ActiveWorkout";
 
 /**
@@ -51,11 +51,21 @@ export function SetRow({
           <span className="tabnum font-semibold text-text">{summary}</span>
           {set.isWarmup && <span className="text-xs text-warning">{t("train.warmup")}</span>}
         </span>
-        {set.isPr && (
-          <span className="flex items-center gap-1 text-xs font-semibold text-success">
-            <BoltIcon size={14} /> {t("train.prNew")}
-          </span>
-        )}
+        <span className="flex items-center gap-2">
+          {set.isPr && (
+            <span className="flex items-center gap-1 text-xs font-semibold text-success">
+              <BoltIcon size={14} /> {t("train.prNew")}
+            </span>
+          )}
+          {/* A row you can tap has to look like one. Without this the edit and
+              delete controls exist but are invisible, which is the same as not
+              existing — the first person to use this in a gym could not correct
+              a mis-logged set. */}
+          <PencilIcon
+            size={15}
+            className={cn("shrink-0 transition-transform", open ? "text-accent" : "text-faint")}
+          />
+        </span>
       </button>
 
       {open && (

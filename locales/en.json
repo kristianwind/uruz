@@ -86,7 +86,16 @@
     "prCongrats": "⚡ New record — {{exercise}}!",
     "targetReps": "Target: {{min}}–{{max}} reps",
     "targetHold": "Target: {{sec}} sec",
-    "suggestUp": "Try {{weight}} kg next time"
+    "suggestUp": "Try {{weight}} kg next time",
+    "history": "Past workouts",
+    "historyEmpty": "No finished workouts yet.",
+    "historyOpen": "Open workout",
+    "sessionDelete": "Delete workout",
+    "sessionDeleteConfirm": "Delete the whole workout and every set in it? This cannot be undone.",
+    "sessionDeleted": "The workout has been deleted.",
+    "sessionSets": "{{count}} sets",
+    "sessionDuration": "{{min}} min",
+    "editSets": "Tap a set to correct it."
   },
   "library": {
     "title": "Library",
@@ -267,7 +276,11 @@
     "passkeyReauth": "Confirm with your password to remove the key.",
     "passkeyReauthKey": "Confirm with one of your passkeys to remove the key.",
     "passkeyLastWayIn": "That's your only way in. Set a password first — or have a mail server configured, so a sign-in link can reach you.",
-    "passkeyGone": "That key no longer exists."
+    "passkeyGone": "That key no longer exists.",
+    "rotationLock": "Lock to portrait",
+    "rotationLocked": "Locked",
+    "rotationUnlocked": "Free",
+    "rotationUnsupported": "Your browser can't lock rotation. On an iPhone it's in Control Centre — swipe down from the top-right and tap the padlock with the arrow around it."
   },
   "auth": {
     "welcome": "Welcome to Uruz",

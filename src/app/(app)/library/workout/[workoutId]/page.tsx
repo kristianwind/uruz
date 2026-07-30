@@ -19,8 +19,10 @@ export const dynamic = "force-dynamic";
 /** Workout detail: what's in it, which muscles it hits, and how to start it. */
 export default async function WorkoutDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ workoutId: string }>;
+  searchParams?: Promise<{ from?: string }>;
 }) {
   const { workoutId } = await params;
   const ctx = await requireContext();
@@ -38,11 +40,17 @@ export default async function WorkoutDetailPage({
 
   const intensity = muscleIntensity(localized.map(({ ex }) => ex.primaryMuscles));
   const description = workoutDescription(workout, t.locale);
+  // Back where you came from: this page is reachable from both Train and the
+  // library, and an arrow that lands somewhere else is a small betrayal.
+  const cameFromTrain = (await searchParams)?.from === "train";
 
   return (
     <div>
-      <Link href="/library" className="mb-1 inline-flex items-center gap-1 text-sm text-muted">
-        <ChevronLeftIcon size={16} /> {t("library.title")}
+      <Link
+        href={cameFromTrain ? "/train" : "/library"}
+        className="mb-1 inline-flex items-center gap-1 text-sm text-muted"
+      >
+        <ChevronLeftIcon size={16} /> {cameFromTrain ? t("nav.train") : t("library.title")}
       </Link>
 
       <h1 className="pb-1 pt-2 text-2xl font-bold tracking-tight">

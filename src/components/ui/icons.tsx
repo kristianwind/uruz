@@ -115,3 +115,18 @@ export const CloudOffIcon = (p: IconProps) => (
     <path d="M3 3l18 18M7 8a5 5 0 0 1 9 1 4 4 0 0 1 1 7H8" />
   </Svg>
 );
+
+/** Pencil — marks a row as editable, where that would otherwise be invisible. */
+export const PencilIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z" />
+    <path d="M13.5 6.5l4 4" />
+  </Svg>
+);
+
+/** Trash — destructive actions, where a word alone is easy to skim past. */
+export const TrashIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" />
+  </Svg>
+);
