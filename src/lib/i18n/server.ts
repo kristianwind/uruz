@@ -16,9 +16,14 @@ export const LOCALE_COOKIE = "uruz-locale";
 
 export async function getLocale(userLocale?: string | null): Promise<Locale> {
   if (isLocale(userLocale)) return userLocale;
-  const store = await cookies();
-  const fromCookie = store.get(LOCALE_COOKIE)?.value;
-  if (isLocale(fromCookie)) return fromCookie;
+  try {
+    const store = await cookies();
+    const fromCookie = store.get(LOCALE_COOKIE)?.value;
+    if (isLocale(fromCookie)) return fromCookie;
+  } catch {
+    // No request scope (the built-in scheduler calls through here) — there is
+    // no cookie to consult, so the default is the honest answer.
+  }
   return DEFAULT_LOCALE;
 }
 

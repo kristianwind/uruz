@@ -144,12 +144,22 @@ gameskill:
       # en adresse på det domæne du sender fra.
 
     # ---- Baggrundsjob ----------------------------------------------------
+    # Appen kører selv sit baggrundsjob (reminders m.m.) hvert kvarter —
+    # der skal ikke sættes noget op for at ravnene flyver.
     - key: CRON_SECRET
-      name: "Cron-hemmelighed"
+      name: "Cron-hemmelighed (valgfri)"
       type: string
       default: ""
       secret: true
-      # Beskytter /api/cron. Uden den nægter endpointet at køre.
+      # Beskytter /api/cron — kun nødvendig hvis en EKSTERN scheduler skal
+      # kunne kalde endpointet. Uden den nægter endpointet at køre.
+
+    - key: URUZ_SCHEDULER
+      name: "Indbygget scheduler (lad stå tom)"
+      type: string
+      default: ""
+      # Tom = til i produktion. Sæt "0" hvis en ekstern cron kalder /api/cron
+      # og du vil have præcis én afsender.
 
   install:
     script: |
