@@ -1,64 +1,60 @@
 # Uruz ᚢ
 
-> **Styrkerunen.** En træningsapp til iPhone og web, hvor du logger styrketræning
-> lynhurtigt, får coaching af **Mimir**, ser ærlig statistik og bliver holdt til
-> ilden af ravnene **Huginn & Muninn**.
+> **The strength rune.** A training app for iPhone and web: log your sets fast,
+> get coached by **Mimir**, see honest statistics, and be kept at it by the
+> ravens **Huginn & Muninn**.
 
-Uruz er bygget mobil-først til brug i et fitnesscenter: store knapper, få tryk
-pr. sæt, og den virker **selv uden internet** — sæt gemmes lokalt og
-synkroniserer af sig selv, når nettet er tilbage.
+Uruz is built mobile-first for use in a gym: big buttons, few taps per set, and
+it works **with no internet at all** — sets are saved on the device and sync
+themselves when the signal comes back.
 
-Den kører som en **[Rune i Yggdrasil Panel](https://yggdrasilpanel.com)** — ét
-klik fra panelet, og den står og kører med sin egen database og backup.
-Den kan også køre helt for sig selv med `docker run` eller lokalt med `npm run dev`.
+It runs as a **[Rune in Yggdrasil Panel](https://yggdrasilpanel.com)** — one
+click from the panel and it is up with its own database and backups. It also
+runs perfectly well on its own with `docker run`, or locally with `npm run dev`.
 
-**[uruz-training.com](https://uruz-training.com)** · [Yggdrasil Panel](https://yggdrasilpanel.com)
+**[uruz-training.com](https://uruz-training.com)** · [Yggdrasil Panel](https://yggdrasilpanel.com) · [På dansk](README.da.md)
 
-> ⚠️ **Tidlig udvikling, bygget med Claude Code.** Stilles til rådighed som den
-> er — uden nogen form for garanti og uden noget ansvar overhovedet. Du bruger
-> den udelukkende på eget ansvar.
->
 > ⚠️ **Early development & built with Claude Code.** Provided as-is, with no
 > warranty and no liability whatsoever — you use it entirely at your own risk.
 > Free software under **[AGPL-3.0](LICENSE)**.
 
 ---
 
-## Sådan ser den ud
+## What it looks like
 
 | | | |
 |:--:|:--:|:--:|
-| ![Træn](docs/screenshots/en/train.png) | ![Log et sæt](docs/screenshots/en/session.png) | ![Statistik](docs/screenshots/en/stats.png) |
-| **Træn** — dagens træning, eller vælg frit | **Log et sæt** — forudfyldt, ét tryk | **Statistik** — tonnage, fremgang, indsigter |
-| ![Valhal](docs/screenshots/en/valhal.png) | ![Mimir](docs/screenshots/en/coach.png) | ![Bibliotek](docs/screenshots/en/library.png) |
-| **Valhal** — rangliste, runer og milepæle | **Mimir** — ugens analyse og "spørg om alt" | **Bibliotek** — øvelser med trin og cues |
+| ![Train](docs/screenshots/en/train.png) | ![Log a set](docs/screenshots/en/session.png) | ![Stats](docs/screenshots/en/stats.png) |
+| **Train** — today's workout, or pick freely | **Log a set** — prefilled, one tap | **Stats** — tonnage, progress, insights |
+| ![Valhalla](docs/screenshots/en/valhal.png) | ![Mimir](docs/screenshots/en/coach.png) | ![Library](docs/screenshots/en/library.png) |
+| **Valhalla** — leaderboard, runes and milestones | **Mimir** — the weekly analysis and "ask anything" | **Library** — exercises with steps and cues |
 
-<sub>Skærmbillederne er taget af `npm run gen:screenshots` med demo-data — ingen
-rigtige personers træning. Appen kører på dansk med `npm run gen:screenshots:da`.</sub>
+<sub>Taken by `npm run gen:screenshots` against demo data — nobody's real
+training. `npm run gen:screenshots:da` renders the app in Danish.</sub>
 
 ---
 
-## Vælg én af tre veje
+## Pick one of three ways
 
-De tre måder at køre Uruz på er **alternativer, ikke trin**. Vælg én:
+The three ways to run Uruz are **alternatives, not steps**. Pick one:
 
-| | Til hvem | Hvor |
+| | For whom | Where |
 |---|---|---|
-| **Lokalt med Node** | Prøv den af, eller udvikl på den | [Kom i gang på 2 minutter](#kom-i-gang-på-2-minutter) nedenfor |
-| **Docker** | Kør den permanent på en maskine du selv har | [Drift med Docker](#drift-med-docker) |
-| **Rune i Yggdrasil Panel** | Du har allerede panelet, og vil have backup og opdatering med | [Drift som Rune](#drift-som-rune-i-yggdrasil-panel) |
+| **Locally with Node** | Trying it out, or working on it | [Up and running in 2 minutes](#up-and-running-in-2-minutes) below |
+| **Docker** | Running it permanently on a machine you have | [Running it with Docker](#running-it-with-docker) |
+| **A Rune in Yggdrasil Panel** | You already run the panel and want its backups and updates | [Running it as a Rune](#running-it-as-a-rune-in-yggdrasil-panel) |
 
-Alle tre kører nøjagtig samme app med samme data. Du kan begynde lokalt og
-flytte den senere — databasen er én fil, du kan tage med.
+All three run exactly the same app against the same data. You can start locally
+and move it later — the database is one file you can carry.
 
 ---
 
-## Kom i gang på 2 minutter
+## Up and running in 2 minutes
 
-*Den lokale vej. Skal den køre permanent, så tag Docker eller Yggdrasil i stedet.*
+*The local route. If it should run permanently, take Docker or Yggdrasil.*
 
-Du skal have [Node.js](https://nodejs.org) version 22 eller nyere. Åbn en
-terminal i mappen med projektet og skriv:
+You need [Node.js](https://nodejs.org) 22 or newer. Open a terminal in the
+project folder:
 
 ```bash
 npm install
@@ -72,62 +68,63 @@ npm run setup
 npm run dev
 ```
 
-Åbn så **http://localhost:3000** i browseren. Første gang bliver du bedt om at
-oprette administrator-kontoen — det er dig.
+Then open **http://localhost:3000**. The first screen asks you to create the
+administrator account — that is you.
 
-> **Det var det.** Der er ingen database at installere, ingen konti at oprette
-> og ingen nøgler at skaffe for at komme i gang. Alt det kommer senere, og kun
-> hvis du vil have AI-coach, notifikationer eller drift i skyen.
+> **That is all.** No database to install, no accounts to create, no keys to
+> obtain. All of that comes later, and only if you want the AI coach,
+> notifications or cloud hosting.
 
-### Vil du bare kigge på en app med data i?
+### Just want to see it with data in it?
 
 ```bash
 npm run db:seed:demo && npm run db:seed:history
 ```
 
-Det opretter demo-brugerne Kristian og Ib og ~12 ugers realistisk træning, så
-statistik, Valhal og badges har noget at vise.
+That creates demo users and about twelve weeks of plausible training, so the
+statistics, Valhalla and the badges have something to show.
 
 ---
 
-## Hvad kan den?
+## What it does
 
-| Område | Hvad du får |
+| Area | What you get |
 |---|---|
-| **Log træning** | Vælg en færdig træning eller træn frit. Sæt er forudfyldt med sidste gangs vægt × reps — som regel skal du bare bekræfte. Hviletimer starter selv. Rekorder fejres med det samme. |
-| **Virker offline** | Alt logges lokalt først. Er der intet net i kælderen, kommer det med op — appen synkroniserer selv bagefter. Intet går tabt. |
-| **Bibliotek & builder** | 14 øvelser med tegning, trin og cues + 7 færdige træninger. Byg din egen, eller dublér en skabelon og justér den. |
-| **Statistik** | Fremgang pr. øvelse, tonnage, fremmøde-kalender, muskelbalance, rekorder — og sjove indsigter ("Du har løftet 9,8 × bybus 🚌"). |
-| **Mimir (AI-coach)** | Ugentlig analyse, "Spørg Mimir" og — vigtigst — *fortæl om en skavank eller et ønske*, så tilpasser han træningen. Virker med enhver AI-udbyder, også en model på dit eget net. |
-| **Valhal** | Venlig kappestrid, runer/badges, rangorden fra Thræl til Einherjer og milepæle. |
-| **Ravnene** | Reminders på dine træningsdage, ros efter en god tur og et blidt puf hvis du har været væk. Tonen kan sættes blød eller hård. |
-| **Admin** | Invitér folk, styr roller, redigér det fælles bibliotek, se audit-log og status på AI/push/e-mail. |
-| **Sprog** | Dansk og engelsk — også øvelsesindholdet, ikke bare knapperne. |
+| **Logging** | Pick a ready-made workout or train freely. Sets are prefilled with last time's weight × reps — usually you just confirm. The rest timer starts itself. Records are celebrated on the spot. |
+| **Works offline** | Everything is logged locally first. No signal in the basement is not a problem: it syncs itself afterwards, and nothing is lost. |
+| **Library & builder** | 14 exercises with a drawing, steps and cues, plus 7 ready-made workouts. Build your own, or duplicate a template and adjust it. |
+| **Statistics** | Progress per exercise, tonnage, an attendance calendar, muscle balance, records — and fun insights ("you have lifted 9.8 × a city bus 🚌"). |
+| **Mimir (AI coach)** | A weekly analysis, "ask Mimir", and — most usefully — *tell him about a niggle or a wish*, and he adapts the training around it. Works with any AI provider, including a model on your own network. |
+| **Valhalla** | Friendly rivalry, runes and badges, ranks from Thrall to Einherjar, and milestones. |
+| **The ravens** | Reminders on your training days, praise after a good session, and a gentle push if you have been away. The tone can be set gentle or tough. |
+| **Admin** | Invite people, manage roles, edit the shared library, read the audit log, and see the status of AI, push and email. |
+| **Languages** | English and Danish — including the exercise content, not just the buttons. |
 
 ---
 
-## Installér på din iPhone
+## Install it on your iPhone
 
-Uruz er en PWA: den lægger sig på hjemmeskærmen og opfører sig som en rigtig app.
+Uruz is a PWA: it sits on the home screen and behaves like a real app.
 
-1. Åbn appen i **Safari** (kun Safari kan installere på iOS).
-2. Tryk på **Del-ikonet** (firkanten med pil op) nederst.
-3. Rul ned og tryk **"Føj til hjemmeskærm"**.
-4. Tryk **"Tilføj"**.
+1. Open it in **Safari** — only Safari can install on iOS.
+2. Tap the **share icon** (the square with an arrow) at the bottom.
+3. Scroll down and tap **"Add to Home Screen"**.
+4. Tap **"Add"**.
 
-På Mac/PC: åbn i Chrome eller Edge og klik installér-ikonet i adresselinjen.
+On a computer: open it in Chrome or Edge and click the install icon in the
+address bar.
 
-Guiden findes også inde i appen under **Mig → Installér app**.
+There is a walkthrough inside the app under **Me → Install app**.
 
 ---
 
-## Tilvalg: AI-coach, notifikationer og e-mail
+## Optional: AI coach, notifications and email
 
-Alt herunder er valgfrit. Uruz virker uden — Mimir giver stadig konkrete,
-data-baserede forslag, de er bare regelbaserede i stedet for formuleret af en
-sprogmodel.
+Everything below is optional. Uruz works without it — Mimir still gives
+concrete, data-driven suggestions; they are rule-based rather than written by a
+language model.
 
-Kopiér `.env.example` til `.env.local` og udfyld det, du vil bruge:
+Copy `.env.example` to `.env.local` and fill in what you want:
 
 ```bash
 cp .env.example .env.local
@@ -135,200 +132,205 @@ cp .env.example .env.local
 
 ### Mimir (AI)
 
-Uruz er **ikke bundet til én leverandør**. Sæt `AI_PROVIDER` til `anthropic`,
-`openai`, `google`, `ollama` eller `custom`.
+Uruz is **not tied to one vendor**. Set `AI_PROVIDER` to `anthropic`, `openai`,
+`google`, `ollama` or `custom`.
 
 ```bash
-# Egen model på eget netværk (ingen API-nøgle nødvendig)
+# Your own model on your own network — no API key needed
 AI_PROVIDER=custom
-AI_BASE_URL=http://din-server.lan:8080/v1
+AI_BASE_URL=http://your-server.lan:8080/v1
 AI_MODEL=gemma-4-26b-qat
 ```
 
 ```bash
-# Eller en skytjeneste
+# Or a hosted one
 AI_PROVIDER=anthropic
 AI_MODEL=claude-sonnet-5
 AI_API_KEY=sk-ant-…
 ```
 
-Tjek forbindelsen under **Mig → Admin → AI-status**.
+Check the connection under **Me → Admin → AI status**.
 
-### Notifikationer (web push)
+### Notifications (web push)
 
 ```bash
 npm run gen:vapid
 ```
 
-Læg de to nøgler den udskriver i `.env.local`. Uden dem sendes reminders på
-e-mail i stedet.
+Put the two keys it prints into `.env.local`. Without them, reminders go by
+email instead.
 
-### E-mail
+### Email
 
-Uruz sender login-links, invitationer og reminders. Vælg én af to veje:
+Uruz sends sign-in links, invitations and reminders. Two ways, one fallback.
 
-**Din egen mailserver (SMTP)** — det du sandsynligvis allerede har hos dit
-webhotel, i firmaet, eller en Gmail-konto med et app-kodeord:
+**Your own mail server (SMTP)** — likely what you already have at your host, at
+work, or a Gmail account with an app password:
 
 ```bash
-SMTP_HOST=smtp.dit-domæne.dk
+SMTP_HOST=smtp.example.com
 SMTP_PORT=587
-SMTP_USER=uruz@dit-domæne.dk
+SMTP_USER=uruz@example.com
 SMTP_PASSWORD=…
-EMAIL_FROM="Uruz <uruz@dit-domæne.dk>"
+EMAIL_FROM="Uruz <uruz@example.com>"
 ```
 
-Port 587 taler klartekst og opgraderer med STARTTLS; 465 er TLS fra første
-byte. Det udleder Uruz selv af porten — `SMTP_SECURE=true|false` overstyrer,
-hvis din server er speciel.
+Port 587 starts in plaintext and upgrades with STARTTLS; 465 is TLS from the
+first byte. Uruz derives that from the port — `SMTP_SECURE=true|false`
+overrides it if your server is unusual.
 
-**Eller en API-nøgle** fra [resend.com](https://resend.com): sæt
-`RESEND_API_KEY` og `EMAIL_FROM`. Er begge dele sat, vinder SMTP.
+**Or an API key** from [resend.com](https://resend.com): set `RESEND_API_KEY`
+and `EMAIL_FROM`. If both are configured, SMTP wins.
 
-Sætter du ingen af delene, skrives e-mails ud i terminalen i stedet —
-invitations- og login-links virker altså stadig, mens du udvikler.
+Set neither, and messages are written to the terminal instead — invitation and
+sign-in links still work while you are developing.
 
-> Mange udbydere afviser en afsender de ikke mener er din. Peger `EMAIL_FROM`
-> på et domæne du ikke sender fra, ryger mailen i filteret eller retur.
-> **Mig → Admin** viser hvilken af de tre veje der faktisk er i brug.
+> Many providers reject a sender they do not consider yours. If `EMAIL_FROM`
+> points at a domain you do not send from, mail lands in spam or bounces.
+> **Me → Admin** shows which of the three routes is actually in use.
 
-### Reminders skal have et ur
+### Reminders need a clock
 
-Reminders sendes af `/api/cron`, som skal kaldes med jævne mellemrum (hvert
-kvarter er fint). Sæt `CRON_SECRET` i `.env.local` og peg fx Vercel Cron,
-Supabase scheduled functions eller en simpel cron-linje på:
+Reminders are sent by `/api/cron`, which has to be called regularly — every
+fifteen minutes is fine. Set `CRON_SECRET` and point Vercel Cron, a Supabase
+scheduled function, or a plain cron line at:
 
 ```bash
-curl -H "Authorization: Bearer $CRON_SECRET" https://din-app.dk/api/cron
+curl -H "Authorization: Bearer $CRON_SECRET" https://your-app.example.com/api/cron
 ```
 
 ---
 
-## Drift med Docker
+## Running it with Docker
 
-*Én maskine, én container, ingen panel.*
+*One machine, one container, no panel.*
 
 ```bash
 docker run -d --name uruz -p 3000:3000 -v uruz-data:/data \
   ghcr.io/kristianwind/uruz:latest
 ```
 
-Imaget bygges til både `amd64` og `arm64`, så det kører også på en Raspberry Pi.
-`/data` er alt — SQLite-filen og dens skrivelog. Monter den et sted du tager
-backup af.
+The image is built for both `amd64` and `arm64`, so it runs on a Raspberry Pi
+too. `/data` is everything — the SQLite file and its write-ahead log. Mount it
+somewhere you back up.
 
-Den fulde opskrift står i **[Hosting Uruz yourself](docs/guides/self-hosting.md)**.
-
----
-
-## Drift som Rune i Yggdrasil Panel
-
-Uruz er først og fremmest bygget til at køre som en **Rune** i
-**[Yggdrasil Panel](https://yggdrasilpanel.com)** — panelet, der gør en server
-til noget man kan pege og klikke på. En Rune er en app panelet kan så: du
-vælger den, udfylder et par felter, og så står den og kører med sin egen
-datamappe og sin egen backup.
-
-1. **Runes → Carve a rune** → importér [`yggdrasil/uruz.yaml`](yggdrasil/uruz.yaml)
-2. Så en server ud fra runen og giv den et subdomæne
-3. Udfyld felterne du vil bruge (AI, e-mail, notifikationer — alt er valgfrit)
-
-Alle variabler er beskrevet i manifestet, og appen udleder selv sin adresse,
-så den virker bag panelets proxy uden håndkonfiguration.
-
-Vil du hellere køre den for dig selv, er det ét kald:
-
-```bash
-docker run -d -p 3000:3000 -v uruz-data:/data ghcr.io/kristianwind/uruz:latest
-```
-
-Imaget bygges multi-arch (amd64 + arm64) af GitHub Actions ved hvert push.
-Panelets egen kildekode ligger i
-[kristianwind/yggdrasil](https://github.com/kristianwind/yggdrasil).
+The full recipe is in **[Hosting Uruz yourself](docs/guides/self-hosting.md)**.
 
 ---
 
-## Drift i skyen (Supabase + Vercel)
+## Running it as a Rune in Yggdrasil Panel
 
-Lokalt kører Uruz på en indbygget SQLite-fil — nul opsætning. Til produktion:
+Uruz is built first and foremost to run as a **Rune** in
+**[Yggdrasil Panel](https://yggdrasilpanel.com)** — the panel that turns a
+server into something you can point and click at. A Rune is an app the panel can
+plant: you pick it, fill in a few fields, and it is up with its own data
+directory and its own backups.
 
-1. Opret et projekt på [supabase.com](https://supabase.com).
-2. Kør de to migrationer i `supabase/migrations/` (SQL-editoren duer fint).
-   De opretter skemaet **og** Row Level Security, så ingen kan se andres rå
-   træningslogs — heller ikke hvis der skulle være en fejl i app-koden.
-3. Sæt `DATA_BACKEND=supabase` og Supabase-nøglerne i miljøvariablerne.
-4. Deploy til [Vercel](https://vercel.com) og sæt de samme variabler der.
+1. **Runes → Carve a rune** → import [`yggdrasil/uruz.yaml`](yggdrasil/uruz.yaml)
+2. Create a server from the rune and give it a subdomain
+3. Fill in the fields you want — AI, email, notifications are all optional
+
+Every variable is described in the manifest, and the app works out its own
+address, so it runs behind the panel's proxy with no hand-configuration.
+
+The image is built multi-arch by GitHub Actions on every push. The panel's own
+source is at [kristianwind/yggdrasil](https://github.com/kristianwind/yggdrasil).
 
 ---
 
-## Kommandoer
+## Running it in the cloud (Supabase + Vercel)
 
-| Kommando | Hvad den gør |
+Locally Uruz runs on a built-in SQLite file — zero setup. For production:
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. Run the migrations in `supabase/migrations/` (the SQL editor is fine). They
+   create the schema **and** Row Level Security, so nobody can read anyone
+   else's raw training logs — not even if the app code has a bug.
+3. Set `DATA_BACKEND=supabase` and the Supabase keys as environment variables.
+4. Deploy to [Vercel](https://vercel.com) and set the same variables there.
+
+> Worth knowing: the Supabase schema exists and the policies are written, but
+> the adapter is not built yet — the app runs on SQLite today. See
+> [HANDOFF.md](HANDOFF.md).
+
+---
+
+## Commands
+
+| Command | What it does |
 |---|---|
-| `npm run dev` | Starter appen lokalt |
-| `npm run setup` | Klargør database + indhold (kør én gang) |
-| `npm run db:seed` | Indlæser øvelser, skabeloner og badges |
-| `npm run db:seed:demo` | Som ovenfor + demobrugere |
-| `npm run db:seed:history` | ~12 ugers demo-træningsdata |
-| `npm run db:reset` | Sletter den lokale database |
-| `npm test` | Kører testene |
-| `npm run typecheck` | Tjekker typer |
-| `npm run build:check` | Prøve-build (rører ikke dev-serveren) |
-| `npm run gen:icons` | Gentegner app-ikonerne |
-| `npm run gen:vapid` | Laver nøgler til notifikationer |
-| `npm run gen:screenshots` | Tager skærmbillederne ovenfor med demo-data |
+| `npm run dev` | Starts the app locally |
+| `npm run setup` | Prepares the database and content (run once) |
+| `npm run db:seed` | Loads exercises, templates and badges |
+| `npm run db:seed:demo` | As above, plus demo users |
+| `npm run db:seed:history` | ~12 weeks of demo training data |
+| `npm run db:reset` | Deletes the local database |
+| `npm test` | Runs the tests |
+| `npm run typecheck` | Checks types |
+| `npm run build:check` | A trial build that leaves the dev server alone |
+| `npm run gen:icons` | Redraws the app icons |
+| `npm run gen:vapid` | Generates notification keys |
+| `npm run gen:screenshots` | Takes the screenshots above, against demo data |
+| `npm run gen:docs` | Renders the guides into the website |
 
 ---
 
-## Dokumentation
+## Documentation
 
-**Brugervejledninger** (engelsk, som appens standardsprog):
+**Guides:**
 
-- **[Sådan bruger du Uruz](docs/guides/using-uruz.md)** — for den der træner.
-  Log ind, læg den på telefonen, log en træning, ret et sæt, arkivet, byg dine
-  egne træninger, Mimir, Valhal, reminders og hvordan du får dine data ud.
-- **[Hos­t den selv](docs/guides/self-hosting.md)** — for den der kører serveren.
-  Tre måder at køre den på, e-mail, AI, notifikationer, backup, opdatering og
-  de fælder der er lette at falde i.
+- **[Using Uruz](docs/guides/using-uruz.md)** — for the person training. Signing
+  in, putting it on your phone, logging a workout, correcting a set, the
+  archive, building your own workouts, Mimir, Valhalla, reminders, and getting
+  your data out.
+- **[Hosting Uruz yourself](docs/guides/self-hosting.md)** — for whoever runs
+  the server. Three ways to run it, email, AI, notifications, backup, updating,
+  and the traps that are easy to fall into.
 
-**Baggrund:**
+**Background:**
 
-- **[HANDOFF.md](HANDOFF.md)** — status, hvad der er verificeret, og hvad der ikke er.
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** — hvordan det hænger sammen, og hvorfor.
-- **[DECISIONS.md](DECISIONS.md)** — hver ikke-oplagt beslutning og dens begrundelse.
-- **[website/](website/)** — præsentationssitet bag
-  [uruz-training.com](https://uruz-training.com) — engelsk som forside,
-  dansk på `/da.html`. Åbn `website/index.html` i en browser.
-
----
-
-## En ærlig note om Mimir
-
-Mimir er en træningscoach, ikke en læge. Han giver ikke kostråd, kommenterer
-aldrig på krop eller vægt, og henviser til læge eller fysioterapeut ved smerte.
-Det er bygget ind i hans instruktioner og kan ikke slås fra — heller ikke med
-den "hårde" tone, som kun gør ham mere kontant, aldrig nedladende.
+- **[HANDOFF.md](HANDOFF.md)** — current state, what has been verified against
+  reality, and what has not. *(Danish)*
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** — how the pieces fit together, and why.
+  *(Danish)*
+- **[DECISIONS.md](DECISIONS.md)** — every non-obvious decision and its
+  reasoning. *(Danish)*
+- **[docs/COMMERCIAL.md](docs/COMMERCIAL.md)** — a draft plan for running Uruz
+  as a hosted service alongside the free one. *(Danish)*
+- **[website/](website/)** — the site behind
+  [uruz-training.com](https://uruz-training.com): English on the front,
+  Danish at `/da.html`.
 
 ---
 
-## Licens
+## An honest note about Mimir
 
-Uruz er fri software under
+Mimir is a training coach, not a doctor. He gives no dietary advice, never
+comments on your body or your weight, and refers you to a doctor or a
+physiotherapist when something hurts. That is built into his instructions and
+cannot be switched off — not even with the "tough" tone, which only makes him
+blunter, never unkind.
+
+---
+
+## Licence
+
+Uruz is free software under the
 **[GNU Affero General Public License v3.0](LICENSE)**.
 
-Kør den, læs den, del den, ændr den. Det er *Affero*-delen der betyder noget for
-en app som denne: ændrer du den, og bruger andre din udgave over et netværk, har
-de krav på din kildekode. At køre den — ændret eller ej — for dig selv, dine
-venner eller din træningsmakker medfører ingen forpligtelser ud over at lade
-noterne stå. At sælge hosting bygget på en lukket gren gør.
+Run it, read it, share it, change it. The *Affero* part is the one that matters
+for an app like this: if you change it and other people use your version over a
+network, they are entitled to your source. Running it — modified or not — for
+yourself, your friends or your training partner carries no obligation beyond
+leaving the notices intact. Selling hosting built on a closed fork does.
 
-Valgt frem for MIT, fordi den koster ingenting i praksis og holder døren åben
-for at sige nej til en lukket kopi senere. Fravalgt open core — hvor nogle
-funktioner kun findes i en betalt udgave — fordi det er præcis mekanikken der
-gør den åbne udgave til en rest. De to spor skal være den samme app.
+Chosen over MIT because it costs nothing in practice and keeps the door open to
+saying no to a closed copy later. Open core was rejected — keeping features out
+of the free version is exactly the mechanism that turns it into a leftover, and
+the two tracks are meant to be the same app.
 
-Ophavsret © 2026 Kristian Wind.
+Copyright © 2026 Kristian Wind.
 
 ---
 
-*Uruz ᚢ — byg styrke, én rune ad gangen.*
+*Uruz ᚢ — build strength, one rune at a time.*

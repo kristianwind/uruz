@@ -52,7 +52,11 @@ These guides are in English, matching the app's default language, the front page
 of [uruz-training.com](https://uruz-training.com) and the repository itself —
 that is what someone arriving without a preference meets.
 
-`README.md`, `DECISIONS.md` and `HANDOFF.md` are in Danish. They were written
-for the two people building it, and they still are.
+`README.md` is English, with the Danish original kept at
+[`README.da.md`](../README.da.md) — the same pattern as the website.
+
+`DECISIONS.md`, `HANDOFF.md` and `ARCHITECTURE.md` are still Danish. They were
+written for the two people building it, and they still are; translating them is
+on the list.
 
 The app itself is fully bilingual, exercise instructions included.
