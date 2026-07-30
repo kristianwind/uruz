@@ -1,233 +1,197 @@
 # Handoff — Uruz ᚢ
 
-Status og overleveringsnoter, skrevet 28. juli 2026.
+Status og overleveringsnoter, skrevet 30. juli 2026.
 Til dig selv om tre måneder, eller til den næste der rører projektet.
+
+Den forrige udgave var fra 28. juli. Der er sket tyve commits siden, og noget af
+det ændrer **hvor tingene kører** — læs afsnittet om værterne først, også hvis
+du springer resten over.
 
 ---
 
 ## Hvad det er
 
-En træningsapp (PWA) til iPhone og web til Kristian og Ib. Lynhurtig
-sæt-logning der virker uden internet, ærlig statistik, en AI-coach (Mimir) der
-kan tilpasse træningen til skavanker, og et gamification-lag i nordisk klædning.
+En træningsapp (PWA) til iPhone og web. Lynhurtig sæt-logning der virker uden
+internet, ærlig statistik, en AI-coach (Mimir) der kan tilpasse træningen til
+skavanker, og et gamification-lag i nordisk klædning.
 
-Bygget efter en detaljeret dansk specifikation i ti faser. Kører som en **Rune**
-i Yggdrasil Panel.
+Kører som en **Rune** i Yggdrasil Panel. Fri software under **AGPL-3.0**.
 
 | | |
 |---|---|
-| **Kode** | https://github.com/kristianwind/uruz |
-| **Image** | `ghcr.io/kristianwind/uruz:latest` (offentligt) |
-| **Website** | https://uruz-training.com |
-| **Tests** | 173, alle grønne |
-| **Site-kilde** | `website/` — dansk og engelsk, åbn `index.html` |
+| **Kode** | https://github.com/kristianwind/uruz (offentligt) |
+| **Image** | `ghcr.io/kristianwind/uruz:latest` (multi-arch) |
+| **App i drift** | https://uruz.yggdrasilpanel.com |
+| **Website** | https://uruz-training.com — engelsk forside, dansk på `/da.html` |
+| **Tests** | 179, alle grønne |
+| **Standardsprog** | Engelsk. Den enkeltes valg vinder altid. |
 
 ---
 
-## Sådan kommer du i gang
+## ⚠️ Værterne — det der har kostet mest
 
-```bash
-npm install && npm run setup && npm run dev
-```
+**De to ting kører ikke længere på samme maskine.**
 
-Vil du se den med data i:
+| Hvad | Vært | Server-id | Port |
+|---|---|---|---|
+| **uruz-training.com** | `100.80.130.8` (`kw01`) | `994bd145-1418-4f2c-bb14-ca19dbf3d10c` | 25023 |
+| **Uruz-appen** | `100.92.81.54` (`.164`) | `0b0bf9c4-80a1-418e-8df5-bb19788be31d` | 25012 |
 
-```bash
-npm run db:seed:demo && npm run db:seed:history
-```
+Sitet flyttede **29. juli**. Den gamle container på `.164` (`ygg-66e5a45d`) står
+stoppet med sine gamle filer stadig i datamappen.
 
-Ingen konti, ingen nøgler, ingen database at installere. Det er med vilje.
+**Deployer du til den gamle vært, lykkes det.** Hvert trin svarer 200, filerne
+lander med rigtig ejer — og intet af det bliver synligt nogen steder. Det skete
+tre gange på én aften, før nogen opdagede det.
+
+**Hvorfor det ikke blev opdaget:** Cloudflare serverede forsiden fra cache, så
+den svarede 200 hele tiden. Det var kun en *ny* sti — `/docs/…` — der afslørede
+det, fordi der ikke var noget cachet at falde tilbage på.
+
+> **Verificér altid mod origin, aldrig kun gennem Cloudflare.** Et cachet svar
+> fra en stoppet container ser nøjagtig ud som en sund server.
+
+Den fulde deploy-opskrift står i `CLAUDE.md` og er rettet.
 
 ---
 
-## Hvordan det hænger sammen
+## Hvad der er sket siden sidst
 
-Læs [ARCHITECTURE.md](ARCHITECTURE.md) for det fulde billede. Det korte:
+**Login har fået to nye veje ind.** Kodeord (scrypt, rate-limitet, kræver det
+gamle ved skift) og login-link på e-mail, der nu virker rigtigt. Passkeys kan
+navngives, ses med "sidst brugt", og slettes — men sletning kræver
+genautentificering og nægter at fjerne din sidste vej ind.
 
-```
-UI (React)  →  Domæne (rene funktioner, testet)  →  Data (repositories)
-                                                  →  Tjenester (AI, push, auth)
-```
+**E-mail virker.** SMTP2GO på `mail-eu.smtp2go.com:2525`. Verificeret ved at
+sende et rigtigt login-link: loggen fik nul nye linjer, hvilket er hvad et
+vellykket send ser ud som — appen skriver kun, når den *ikke* kan sende.
 
-**Den bærende regel:** alt der kan regnes ud, er rene funktioner uden I/O. Derfor
-er hvert tal i appen unit-testet, og derfor kan Uruz coache fornuftigt helt uden
-en AI-model.
+**Engelsk er standardsproget**, inklusive sidetitler, manifest og beskrivelser.
+E-mails følger dog modtagerens eget valg, ikke standarden — en side på engelsk
+før nogen har sagt andet er et rimeligt gæt, en mail til en navngiven person er
+det ikke.
 
-**To datalag bag én flade:** `node:sqlite` lokalt og i containeren (nul
-opsætning), Supabase/Postgres med Row Level Security klar i
-`supabase/migrations/` hvis I bliver mange.
+**Appen bruger skærmen på desktop og iPad.** Sidebjælke fra 768 px, indhold i
+spalter, øvelseskø ved siden af logge-skærmen. Telefonen er verificeret uændret
+— otte skærme fotograferet før og efter, nul afvigende pixels.
+
+**Det første rigtige træningspas afslørede fire ting**, alle rettet: vægten går
+0,5 ad gangen (hold knappen for at gentage), sæt-rækken har fået et blyant-ikon
+så man kan se at den kan rettes, en træning vises før den startes, og der er nu
+et arkiv over tidligere træninger hvor sæt kan rettes og hele træninger slettes.
+
+**Dokumentation.** To brugervejledninger i `docs/guides/`, udgivet på
+uruz-training.com/docs af `npm run gen:docs`. README er engelsk med den danske
+bevaret som `README.da.md`.
 
 ---
 
 ## Hvad der er verificeret — og hvad der ikke er
 
-Det her er den vigtigste sektion. Jeg har testet meget i browseren og i en
-kørende container, men ikke alt kan testes uden rigtig hardware.
+### Verificeret mod virkeligheden
 
-### Verificeret
+- **En rigtig træning i centret.** Kristian trænede 30. juli. Det var den
+  vigtigste manglende test, og den afslørede fire fejl der nu er rettet.
+- **Fire brugere er på.** Invitationsflowet er prøvet af andre end den der
+  byggede det.
+- **E-mail går ud** gennem SMTP2GO, målt mod den kørende server.
+- **Passkey-sletning** i alle fire tilfælde: 409 på sidste nøgle uden anden vej
+  ind, 403 på forkert kodeord, 404 på ukendt id, 200 med nøglen faktisk væk.
+- **Databasemigrationer** — `name` og `last_used_at` blev tilføjet til en
+  eksisterende database ved opstart, set med egne øjne.
+- **SMTP-koden** mod en rigtig SMTP-samtale, ikke en mock.
+- **Ankre i dokumentationen** mod `api.github.com/markdown/raw`.
 
-- **Offline-logning.** Slog nettet fra midt i en træning, loggede sæt, så det
-  havne i IndexedDB-køen, tændte nettet, så det synkronisere. Køen tømtes.
-- **Første kørsel i container.** Tom database → opret admin → biblioteket
-  seedes automatisk → uautentificeret adgang afvises → data overlever genstart.
-- **Mimir mod den rigtige model.** Ugentlig analyse (4,7 s) og "Spørg Mimir"
-  (7 s) mod `gemma-4-26b-qat`. Tilpasning af træning til en øm skulder, inkl.
-  at skavanken huskes til en senere, urelateret forespørgsel.
-- **Passkey-domænet** udledes korrekt af adressen (testet i container med
-  et rigtigt domæne), og adressen udledes nu af selve forespørgslen når
-  konfigurationen stadig står på localhost.
-- **Password-login** hele vejen rundt: sæt, skift, log ind, throttling,
-  nulstilling via e-mail. Se afsnittet nedenfor.
-- **E-mail via SMTP** mod en rigtig SMTP-samtale: beskeden kom frem med korrekt
-  afsender, modtager og emne.
-- **Hold skærmen tændt.** Låsen tages på logge-skærmen og slippes igen når man
-  navigerer væk — også ved navigation inde i appen, som er det virkelige
-  tilfælde.
-- **Reminders.** Cron springer korrekt over når man allerede har trænet i dag,
-  og vælger rivalise-teksten når en hal-kammerat har trænet.
-- **Sikkerhed.** Sidste admin kan ikke deaktiveres. Magic-links er engangs.
-  Uautentificerede API-kald giver 401.
+### Ikke verificeret
 
-### Ikke verificeret — kræver rigtig hardware
-
-- **Face ID / passkeys på en fysisk iPhone.** Alt *omkring* dem er testet
-  (sessioner, gating, magic-link-fallback, at RP ID udledes rigtigt), men
-  browseren jeg har haft til rådighed har ingen authenticator. Kristian fik en
-  fejl på sin iPhone; årsagen (RP ID defaultede til `localhost`) er fundet og
-  rettet, men **selve Face ID-flowet er stadig ikke set lykkes én gang.**
-  → *Det er det første der skal bekræftes.*
-- **Web push på iOS.** Kræver at appen er lagt på hjemmeskærmen. VAPID-nøgler
-  er genereret og koden er på plads, men en notifikation er aldrig landet på en
-  rigtig telefon.
-- **Supabase/Postgres-backend.** Skema og RLS-policies er skrevet, men aldrig
-  kørt mod en rigtig Supabase-instans. Lokalt kører alt på SQLite.
-- **En rigtig træning i centret.** Ingen har brugt appen til det den er lavet
-  til endnu. Det er den vigtigste test der mangler.
+- **Face ID på en fysisk iPhone.** Stadig. Alt omkring det er testet, men selve
+  flowet er aldrig set lykkes. Nu er der ingen risiko ved at prøve: kodeord og
+  e-mail virker begge som vej ind.
+- **Arkivet i en browser.** Ruten svarer, koden er typechecket og bygget, men
+  Mac'en løb tør for hukommelse og en dev-server kunne ikke startes. Sidens
+  udseende er aldrig set.
+- **Web push på iOS.** Kræver appen på hjemmeskærmen. Aldrig set en notifikation
+  lande.
+- **Supabase-backenden.** Skema og RLS er skrevet, men **adapteren findes ikke**
+  — `DATA_BACKEND` optræder ikke i koden. Appen kører kun på SQLite.
 
 ---
 
-## Adressen: `NEXT_PUBLIC_APP_URL` behøver ikke længere at være sat
+## 🚧 Det næste
 
-Det var årsagen til at både passkey og login-links var brudt: serveren blev
-oprettet med rune-defaulten `http://localhost:3000`, og den værdi drev både
-login-links i e-mails og passkey-domænet (RP ID).
+**En genstart mangler.** De to knapper på Træn-siden (`7e9def9`) er den eneste
+app-kodeændring der ikke er ude. Alt andet siden sidste genstart er
+dokumentation og website.
 
-**Det er nu løst i koden.** `src/lib/auth/origin.ts` er taget i brug: siger
-konfigurationen stadig `localhost`, mens forespørgslen tydeligvis kommer et
-andet sted fra, læses `x-forwarded-host` / `x-forwarded-proto` i stedet — dem
-sætter proxyen foran. Rækkefølge: konfiguration, forespørgsel, localhost.
+**Reminders sender stadig ingenting.** `/api/cron` bliver aldrig kaldt. Kræver
+`CRON_SECRET` og en schedule hvert kvarter. Ravnene er bygget og venter.
 
-Sæt gerne alligevel variablen til appens rigtige adresse. En eksplicit adresse
-vinder altid, og så afhænger intet af proxyens headere. **Mig → Admin →
-Passkey-opsætning** siger nu hvilken af de to der er i brug.
+**Oversættelse.** `DECISIONS.md`, `HANDOFF.md` og `ARCHITECTURE.md` er stadig
+danske — omkring 7.700 ord. README er klaret.
 
-### Kom ind uden passkey
+**Level 2** — hostet udgave. Planen ligger i `docs/COMMERCIAL.md` og er ikke
+besluttet. Første tekniske skridt er flere haller pr. installation: kun seks
+filer antager at der findes én (`getAnyHall()`). Licensen, som var det mest
+presserende, er på plads.
 
-Der er tre veje ind: passkey, kodeord og login-link på e-mail.
-
-Er der hverken SMTP eller Resend sat op, skriver appen i stedet login-linket i
-serverens log — nok til at komme ind første gang, men **det bør ikke være en
-permanent tilstand**: alle der kan læse loggen, kan dermed logge ind som en
-hvilken som helst bruger. Sæt en mailserver op (se README), eller sæt et
-kodeord under **Mig → Kodeord** så snart du er inde.
-
----
-
-## Password-login
-
-Efterspurgt fordi "ikke alle kan bruge passkey". Passkey er stadig den
-anbefalede vej; kodeord er alternativet, ét tryk væk på login-skærmen.
-
-| Hvor | Hvad |
-|---|---|
-| `/login` | "Brug kodeord i stedet", og "Glemt kodeord?" derunder |
-| **Mig → Kodeord** | sæt, skift eller fjern sit kodeord |
-| Onboarding | tilbydes sammen med passkey, efter kontoen er oprettet |
-| E-mail | et engangslink til at vælge nyt kodeord, gyldigt 30 min |
-
-Værd at vide om opførslen:
-
-- **Fem fejl pr. kvarter**, talt både pr. e-mail og pr. kalder-adresse. Et
-  vellykket login nulstiller tælleren. Tælleren lever i hukommelsen — det
-  virker fordi der er én container; skaleres der ud, skal den i databasen.
-- **Alle login-fejl ser ens ud** (samme 401), og der hashes også for en ukendt
-  e-mail, så svartiden ikke røber om kontoen findes.
-- **Skift kræver det nuværende kodeord** og lukker alle andre sessioner.
-- **Hashen ligger i `user_passwords`**, ikke som kolonne på `users` — i
-  Postgres kan ethvert hal-medlem læse andres `users`-række.
-
-Verificeret lokalt: kodeord sat gennem UI'et, forkert kodeord afvist, rigtigt
-kodeord logger ind, throttling slår til på sjette forsøg, nulstillingslinket
-virker én gang, et for kort kodeord bruger ikke linket op, og et
-nulstillings-link kan ikke bruges som login-link.
-
-**Ikke verificeret:** ingen har brugt det på en rigtig telefon endnu.
+**Kvasir.** Kristian har spurgt om Mimir skulle omdøbes. Der er argumenteret
+imod: Kvasir er allerede Yggdrasils AI-assistent — 28 filer og sin egen guide —
+og to projekter på samme maskine med hver sin assistent af samme navn bliver
+forvirrende. Ikke afgjort.
 
 ---
 
 ## Kendte skævheder
 
-- **`Startprogram.html` fandtes aldrig.** Specifikationen henviser til den som
-  kilde til øvelsesindhold. Trin og cues er skrevet ud fra beskrivelsen i
-  afsnit 15. Dukker filen op, ligger indholdet samlet i
-  `src/lib/db/seed-data.ts`.
-- **arm64-bygget er flaky.** Next.js' SWC-compiler crasher sporadisk under
-  QEMU-emulering (`Illegal instruction`). Workflowet er delt op så amd64 altid
-  bliver udgivet og arm64 følger med når det lykkes. Skal arm64 være pålideligt,
-  kræver det en rigtig ARM-runner.
-- **Lokal mappe hedder `Uruz`, repoet hedder `uruz`.** Kosmetisk.
+- **`Startprogram.html` fandtes aldrig.** Øvelsesindholdet er skrevet ud fra
+  beskrivelsen i specifikationens afsnit 15.
+- **arm64-bygget er flaky.** SWC crasher sporadisk under QEMU. Workflowet er
+  delt, så amd64 altid bliver udgivet.
+- **Fem andre servere på `.164` står stoppet.** Om de skal køre, ved kun
+  Kristian.
+- **Mac'en løber tør for hukommelse.** Et produktionsbyg tog 17,6 minutter i
+  stedet for ti sekunder, og vitest' elleve arbejdsprocesser fik to tests til at
+  fejle på timeout — de kører grønt på 241 ms alene.
+  `npx vitest run --no-file-parallelism` virker.
 
 ---
 
 ## Ting der er nemme at gøre forkert
 
-Skrevet ned fordi jeg gjorde dem forkert først.
-
 | Fælde | Hvad der sker |
 |---|---|
-| `next build` mens dev-serveren kører | Begge skriver `.next` og dev-serveren korrumperes. Brug `npm run build:check`. |
-| Seed-scripts mens dev-serveren kører | SQLite-lås: `database is locked`. Stop serveren først. |
-| Læse filer med `fs` i app-koden | Next standalone sporer imports, ikke filer. Skemaet er derfor et TS-modul, ikke en `.sql`-fil. |
-| `<Line>` i et React-fragment i Recharts | Kurven tegnes ikke, helt uden fejlbesked. Skal være direkte barn. |
-| Importere en *mappe* fra en klientkomponent | `@/lib/i18n` gav en ubrugelig runtime-fejl. Brug fuld sti (`@/lib/i18n/core`). |
-| Glemme `env(safe-area-inset-top)` | Indhold lander oven i iPhonens ur, fordi status-bjælken er gennemsigtig. |
-| Antage at en model kun foreslår ét | Modellen udtrykker "erstat X" som *både* en bytning og en fjernelse. Bytning vinder. |
-| Lade en flex-container indeholde både tekst og et link | Teksten og linket bliver hver sit flex-element og lander på hver sin linje med et hul imellem, når det wrapper. |
-| Tro at en rune-opdatering ændrer en eksisterende server | Yggdrasil sår rune-defaults først og lægger serverens **gemte** env ovenpå. En gammel default bliver siddende på serveren. |
-| Læse `window` under render i en klientkomponent | Serveren siger falsk, browseren sandt, og React smider hele træet væk. Afgør det i en `useEffect` — se `usePasskeySupported`. |
-| Tilføje en kolonne til en tabel der allerede findes | `CREATE TABLE IF NOT EXISTS` springer hele sætningen over, så kolonnen når aldrig en kørende database. En ny *tabel* klarer sig selv; en ny *kolonne* kræver `ALTER TABLE`. |
+| **Deploye sitet til `.164`** | Lykkes, svarer 200, ændrer ingenting. Sitet ligger på `100.80.130.8`. |
+| **Verificere kun gennem Cloudflare** | En stoppet container ser sund ud i timevis. Spørg origin. |
+| Glemme at bumpe `?v=` på CSS | Cloudflare holder stylesheets i fire timer: ny opbygning, gammelt udseende. |
+| `docker restart` for at opdatere | Genbruger samme image. Ligner en vellykket opdatering, henter intet. |
+| `next build` mens dev-serveren kører | Begge skriver `.next`. Brug `npm run build:check`. |
+| Seed-scripts mens dev-serveren kører | SQLite-lås. |
+| Tilføje en kolonne til en tabel der findes | `CREATE TABLE IF NOT EXISTS` springer den over. Kolonnen skal i `ADDED_COLUMNS` i `sqlite.ts` **og** i skemaet. |
+| `requireContext()` i en API-rute | Den kaster, og en kastet fejl bliver til 500. Brug `getContext()` og returnér 401. |
+| Redigere `website/docs/` | Genereret af `npm run gen:docs`. Ret markdown'en. |
+| Relative stier fra `/docs/` | `href="docs.css"` bliver til `/docs/docs.css`. Filen ligger i roden. |
+| Stole på en grøn test uden at tælle | En sammenligning over nul elementer er altid grøn. Tjek at der overhovedet blev målt noget. |
+| Måle i browserruden uden at kigge | Viewport kan være nul, og så er hver måling vrøvl. Tag et skærmbillede. |
 
-Alle er dokumenteret med begrundelse i [DECISIONS.md](DECISIONS.md).
+Alle er dokumenteret med begrundelse i `DECISIONS.md`.
 
 ---
 
 ## Drift
 
-### Opdatér den kørende app
+**Opdatér appen:** push til `main` → GitHub Actions bygger → genstart serveren
+**Uruz** i Yggdrasil på `.164`. En genstart henter det nye image; det gør en
+`docker restart` ikke.
 
-Push til `main` → GitHub Actions bygger og skubber → **genstart serveren i
-Yggdrasil** for at hente det nye image.
+**Opdatér sitet:** `npm run gen:docs`, så tar/scp/pak ud på `100.80.130.8`.
+Filerne er live med det samme — nginx serverer direkte fra datamappen. Fuld
+opskrift i `CLAUDE.md`.
 
-Efter en UI-ændring: service workeren cacher app-skallen, så en telefon kan
-vise den gamle version. Slet appen fra hjemmeskærmen og tilføj den igen, eller
-genindlæs i Safari.
+**Backup:** `/data` i sin helhed, ikke kun `.sqlite` — WAL kan gemme de nyeste
+skrivninger.
 
-### Rune-manifestet
-
-Ligger i `yggdrasil/uruz.yaml`. Panelet **gemmer runen i sin egen database** —
-retter du filen, sker der ingenting før du importerer den igen under
-**Runes → Carve a rune**.
-
-### Reminders
-
-Sender først noget når `/api/cron` bliver kaldt. Kræver `CRON_SECRET` sat, og
-en schedule der kalder endpointet hvert kvarter. Uden hemmeligheden nægter det
-at køre — med vilje, for det sender beskeder til rigtige mennesker.
-
-### Backup
-
-`/data` er hele databasen inkl. WAL-filer. Runens `backup.include: ["."]`
-fanger det hele. En backup af kun `.sqlite` kan mangle de nyeste skrivninger.
+**Efter en UI-ændring** kan telefonen vise den gamle udgave: service workeren
+cacher app-skallen. Slet appen fra hjemmeskærmen og læg den på igen.
 
 ---
 
@@ -235,37 +199,21 @@ fanger det hele. En backup af kun `.sqlite` kan mangle de nyeste skrivninger.
 
 | Symptom | Kig her |
 |---|---|
-| Passkey fejler | **Mig → Admin → Passkey-opsætning**. Adresse og domæne skal passe sammen, og der skal være HTTPS. |
-| Mimir svarer ikke | **Mig → Admin → AI-status → Tjek forbindelse**. Uden model falder appen tilbage til regelbaserede forslag — det er meningen. |
-| Reminders kommer ikke | Er `CRON_SECRET` sat, og bliver `/api/cron` faktisk kaldt? |
-| Containeren starter ikke | `curl https://din-adresse/api/health` — den rører databasen, så den fanger også et lager-problem. |
+| Sitet viser gammelt indhold | Deployede du til den rigtige vært? Er containeren oppe? Er CSS-versionen bumpet? |
+| Passkey fejler | **Mig → Admin → Passkey-opsætning** |
+| Mail kommer ikke | **Mig → Admin** viser hvilken vej der bruges. Tjek at `EMAIL_FROM` er en afsender du ejer |
+| Reminders kommer ikke | Bliver `/api/cron` kaldt? |
+| Containeren starter ikke | `curl https://uruz.yggdrasilpanel.com/api/health` — den rører databasen |
 | Gamle skærme på telefonen | Service worker-cache. Geninstallér fra hjemmeskærmen. |
-
----
-
-## Det jeg ville gøre som det næste
-
-I den rækkefølge:
-
-1. **Bekræft Face ID på en rigtig iPhone.** Det eneste ubekræftede i
-   login-flowet — og nu ikke længere det eneste der kan lukke dig ind, for
-   kodeord virker. Prøv gerne begge dele på telefonen.
-2. **Log en rigtig træning i centret.** Alt er bygget ud fra en formodning om
-   hvordan det føles med svedige fingre mellem sæt. Den formodning skal testes.
-3. **Invitér Ib.** Så bliver Valhal og ranglisten meningsfuld, og
-   invitationsflowet bliver prøvet af en anden end den der byggede det.
-4. **Sæt cron op** så ravnene faktisk sender noget.
-5. Derefter: bonus-listen i specifikationens afsnit 17 (supersæt, foto-
-   progression, deload-uger, træningsmakker-tilstand).
 
 ---
 
 ## Konventioner
 
-- **Brugervendt tekst findes i begge sprog**, i `/locales/da.json` og `en.json`.
-  Aldrig hardkodet i en komponent — heller ikke sidetitler og e-mails.
-  **Engelsk er standarden**; den enkeltes valg vinder altid.
+- **Brugervendt tekst findes i begge sprog**, i `/locales/`. Aldrig hardkodet —
+  heller ikke sidetitler og e-mails. **Engelsk er standarden.**
 - **Kodekommentarer er engelske**, og forklarer *hvorfor*, ikke *hvad*.
 - **Domænelogik hører i `/lib`**, ikke i komponenter.
 - **Enhver ikke-oplagt beslutning skrives i `DECISIONS.md`** med begrundelse.
-- Tests dækker ren logik. UI verificeres i browseren, ikke med snapshots.
+- Tests dækker ren logik. UI verificeres i browseren — og et skærmbillede er
+  mere troværdigt end en måling.
