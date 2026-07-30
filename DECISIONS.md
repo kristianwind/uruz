@@ -1,586 +1,656 @@
-# Beslutninger (DECISIONS)
-
-En løbende log over ikke-oplagte valg og antagelser truffet under bygningen af
-Uruz, jf. instruktionen i afsnit 0 ("notér antagelsen i `DECISIONS.md`").
-Nyeste øverst inden for hver fase.
-
-## Tilføjelse — det første rigtige træningspas afslørede
-
-Fundet ved at bruge appen i et center, ikke ved at læse koden.
-
-- **Vægten går 0,5 ad gangen, ikke 2,5.** Ét trin var én skive, hvilket ikke kan
-  udtrykke hvad maskinerne faktisk står på: de lander på halve, og på stakke med
-  helt andre spring. Et tal man ikke kan indtaste, er et tal der bliver logget
-  forkert. **Hold på knappen for at gentage**, hurtigere jo længere man holder —
-  ellers ville 20 til 60 være firs tryk. Feltet kan stadig tastes direkte i.
-
-- **Sæt-rækken havde altid kunnet rettes og slettes — den så bare ikke sådan ud.**
-  Funktionen fandtes; der var ingen antydning af at rækken kunne trykkes på, og
-  den første der brugte appen rigtigt kunne derfor ikke rette et fejl-logget sæt.
-  Et blyant-ikon var hele forskellen. Værd at huske: en funktion uden en synlig
-  vej ind findes ikke.
-
-- **En træning skal ses før den startes.** Træn-siden linkede direkte til
-  `/train/start`, som opretter en session med det samme. Man kunne altså ikke
-  kigge på hvad der lå i en træning uden at have startet den — og ikke fortryde.
-  Nu går linket til trænings-siden, hvor indholdet står, og hvor Start,
-  Dublér og Redigér i forvejen lå. Tilbage-pilen følger hvor man kom fra.
-
-- **Arkivet manglede helt.** Tallene blev lagt sammen til statistik og aldrig
-  vist som sig selv, så en forkert logget træning forblev forkert — der var
-  ingen skærm at finde den på igen. `/train/history` viser dem, og den enkelte
-  kan rettes med de samme sæt-rækker som den levende skærm. Én opførsel, ét sted
-  at få den rigtig.
-
-- **Rotationslås kan ikke lade sig gøre på iPhone, og det siger appen så.**
-  Manifestet beder om portrait (Android følger det), og `screen.orientation.lock()`
-  findes i Chromium men afviser med `NotSupportedError` uden for en installeret
-  app — målt, ikke antaget. iOS Safari har ingen af delene. Kontakten vises kun
-  hvor den virker; ellers står der hvor iPhonens egen låseknap sidder. En kontakt
-  der ikke gør noget, lærer folk at mistro appen.
-
-## Tilføjelse — slet din passkey
-
-Bygget efter Yggdrasils løsning, som Kristian bad om — men med tre af dens huller
-lukket. Yggdrasil-sessionen pegede selv på dem som fejl, ikke som forskelle.
-
-- **Sletning kræver at man siger hvem man er igen.** Yggdrasil nøjes med en levende
-  session og en bekræftelses-dialog i browseren, hvilket er kosmetik. En ulåst
-  telefon på en bænk skal ikke være vejen til at fjerne ejerens nøgler — samme
-  begrundelse som at et kodeordsskift kræver det gamle kodeord. Er der et
-  kodeord, spørges der om det; er der ikke, kræves en frisk passkey-assertion.
-
-- **Den sidste vej ind kan ikke fjernes.** Yggdrasil har ingen sådan spærre, og
-  det er forsvarligt *dér*, fordi alle brugere har et kodeord og passkeys er et
-  tillæg. Uruz kan ikke antage det. Reglen ligger i `credential-removal.ts` som
-  en ren funktion med seks tests: den sidste nøgle må kun gå, hvis der er et
-  kodeord **eller** en mailserver der faktisk kan sende.
-
-- **"Vi kan altid maile dig" er falsk uden mailserver.** Uden SMTP eller Resend
-  skrives login-linket kun i serverens log, hvilket ikke er en vej ind for den
-  der er låst ude. Derfor tæller e-mail kun med, når `emailProvider()` ikke er
-  `dev`. Yggdrasil har præcis den fælde i sin glemt-kodeord-funktion.
-
-- **Sessionerne lukkes.** Fjerner man en nøgle fordi enheden er væk, er det
-  meningsløst hvis enhedens session lever videre. Vi sporer ikke hvilken session
-  der kom fra hvilken nøgle, så alle lukkes og den nuværende udstedes igen.
-
-- **Afvisningen kommer før udfordringen.** Først var rækkefølgen omvendt, så man
-  kunne nå at bekræfte sig selv og *derefter* få at vide at det var ens eneste
-  nøgle. Spærren røber intet en indlogget ejer ikke allerede ved om sin egen
-  konto, så den hører øverst.
-
-- **Ejerskab ligger i WHERE-klausulen**, ikke i et opslag efterfulgt af et tjek —
-  så er der ingen luge imellem, og et fremmed id rammer bare nul rækker. Og
-  `deleteCredential` returnerer om noget faktisk forsvandt, så et ukendt id
-  giver 404 frem for et 200 der lyver.
-
-- **Nøgler har navne.** Uden dem er listen tre ens rækker, og ingen tør fjerne
-  nogen af dem. Navnet spørges der om ved oprettelse, og `last_used_at` sættes
-  hvor tælleren i forvejen opdateres — det er samme øjeblik.
-
-## Tilføjelse — engelsk som standardsprog
-
-- **Engelsk er hvad en fremmed sandsynligvis læser.** Appen blev skrevet på dansk
-  til to personer og er nu offentlig. En der ankommer uden et gemt valg, får
-  engelsk; en der har valgt, beholder sit valg. Kun kolonnens standardværdi er
-  ændret — ikke eksisterende rækker, for det ville skifte sproget under de to
-  der har brugt appen på dansk hele tiden.
-
-- **E-mails følger modtageren, ikke standarden.** En side der viser engelsk før
-  nogen har sagt andet, er et rimeligt gæt. At skrive til en navngiven person i
-  et sprog vedkommende ikke har valgt, er det ikke. Login- og
-  nulstillingsmails slår brugerens `locale_pref` op ud fra e-mailadressen.
-  Invitationer går til en uden konto, så der er intet valg at følge — de sendes
-  i afsenderens sprog, som er det bedste bud på et fælles et.
-
-- **Sidetitlerne var sytten danske strenge.** De er usynlige i appen selv, men
-  browserfanen, historikken og navnet på et hjemmeskærms-bogmærke kommer derfra.
-  De er nu `generateMetadata` med en nøgle, så de følger samme sprog som siden.
-
-- **To sæt skærmbilleder.** Den danske forside skal ikke vise engelske skærme, og
-  README — offentligt og engelsk-vendt — skal ikke vise danske. Scriptet tager
-  et sprog og sætter demo-brugerens `locale_pref`, for appen følger den
-  indloggede brugers valg. `npm run gen:screenshots` og `…:da`.
-
-## Tilføjelse — appen på en skærm man ikke holder i hånden
-
-- **Bundbjælken er svaret på tommelfingre, ikke på skærme.** På en telefon er den
-  nederste tredjedel dét man kan nå; på en desktop er en bjælke klistret til
-  bunden af et højt vindue strandet langt fra alt andet. Fra 768 px flytter de
-  samme destinationer til en skinne i venstre side. Under 768 px sker der intet.
-
-- **Grænsen går ved 768 px, altså iPad i portræt.** Man kan argumentere for at en
-  tablet i hånden stadig er "mobil", men det er også dér indholdet bliver bredt
-  nok til at bundbjælken ser forladt ud.
-
-- **Bredden slippes ikke helt fri.** Indholdet får et loft på 1152 px. En
-  tekstlinje på 1500 px er sværere at læse end en på 400. Sider der vil bruge
-  mere plads, gør det ved at dele sig i spalter — ikke ved at strække sig.
-
-- **Kortene flyder i to spalter frem for at stå i et gitter.** Et gitter
-  efterlader et hul under det korte kort indtil det høje ved siden af slutter.
-  Flydende spalter (`columns-2` med `break-inside-avoid`) fylder bare ud. Det
-  koster at læserækkefølgen bliver spalte for spalte, hvilket er acceptabelt for
-  et opslagsværk som statistik og admin.
-
-- **Logge-skærmen beholder sit lodrette forløb — men guiden flyttede ud til
-  siden.** Vægt, reps og "Log sæt" er tunet til at rammes uden at kigge, og de
-  skal blive hvor tommelfingeren leder efter dem. Da instruktionerne stod
-  ovenover, skubbede de knappen ned; fra 1024 px står de i en spalte ved siden
-  af i stedet. Målt: knappen sidder øverst i sin spalte, uanset hvor lang
-  vejledningen er.
-
-- **Øvelseskøen findes kun når der er plads til den.** På telefonen er
-  fremskridtsbjælkerne i toppen hele overblikket, og det er den rigtige handel
-  når hver pixel ligger mellem en tommelfinger og et tal. På en bred skærm er
-  der ingen handel: listen kan bare stå der og vise hvad der er gjort, hvad der
-  mangler, og lade en springe direkte til en øvelse.
-
-- **Telefonen er verificeret uændret, ikke antaget uændret.** Otte skærme
-  fotograferet på 390 px før og efter og sammenlignet pixel for pixel: nul
-  afvigende pixels. (Filernes kontrolsummer var forskellige — det er PNG-kodning,
-  ikke indhold. Værd at vide, for det ligner en regression.)
-
-## Tilføjelse — øvelsen skal kunne ses, og skærmen skal blive ved med at være tændt
-
-- **Tegningen hører hjemme der hvor øvelsen laves.** At kende navnet på en
-  bevægelse er ikke det samme som at kende bevægelsen, og at slå den op betød at
-  forlade træningen, finde den i biblioteket og navigere tilbage — med
-  hviletimeren kørende. Tegningen står nu ved siden af navnet, og trin og cues
-  er ét tryk væk uden at gå nogen steder.
-
-- **Guiden er foldet sammen som udgangspunkt.** Midt i en træning er vægten og
-  reps det tommelfingeren rækker efter. En mur af instruktioner mellem dem og
-  toppen af skærmen ville skubbe hele pointen med appen længere ned. Målt på
-  390 px: "Log sæt" er stadig synlig med guiden åben.
-
-- **Wake lock prøver igen ved første berøring.** Nogle browsere giver kun en
-  lås under en brugerhandling. At komme hertil ved at trykke på en træning
-  tæller med, men effekten kører et øjeblik senere, og det vindue er kort. Gik
-  det galt, er næste tryk på skærmen en gratis chance til — og at logge et sæt
-  *er* et tryk, så det koster brugeren ingenting. Låsen lyttes der desuden efter
-  `release` på, for browseren slipper den på egne betingelser (et opkald, en
-  notifikation), og uden det kom den aldrig igen.
-
-- **iOS' strømbesparingstilstand nægter helt.** Det er dens ret, og der er intet
-  at gøre ved det fra appens side. Værd at vide når skærmen alligevel slukker.
-
-## Tilføjelse — e-mail, hallens navn og et offentligt repo
-
-- **SMTP før Resend.** En selvhostet opsætning har som regel allerede en
-  mailserver; at kræve en konto hos en tredjepart for at kunne sende et
-  login-link er en unødig forhindring. Er begge sat, vinder SMTP: at taste en
-  mailserver ind er bevidst arbejde, en glemt API-nøgle er det ikke. Uden nogen
-  af delene skrives beskeden i loggen, hvilket er nok til at komme i gang og
-  udtrykkeligt ikke nok til at blive ved med.
-
-- **`nodemailer` er den ene nye afhængighed.** SMTP er en protokol med TLS,
-  STARTTLS og autentificering; at skrive den selv for at undgå en afhængighed
-  ville være dyrere end afhængigheden. Den har ingen egne runtime-afhængigheder
-  og intet native build, hvilket er den linje projektet har holdt.
-
-- **Hallen navngives af den der bygger den.** Standarden var to bestemte
-  personers navne, hvilket mødte enhver anden installation med to fremmede. Nu
-  spørges der ved første kørsel, med et neutralt fald-tilbage-navn, og en admin
-  kan rette det bagefter — et navn valgt i en fart klokken seks om morgenen skal
-  ikke være permanent.
-
-- **Repoet er offentligt, og `CLAUDE.md` er ikke.** Arbejdsnoterne om
-  produktions-værten indeholder server-id'er, interne adresser og ssh-detaljer.
-  De ligger nu i `.gitignore`, så de ikke kan committes ved et uheld. HANDOFF.md
-  er samtidig renset for den interne adresse og for opskriften på at logge ind
-  via containerens log.
-
-## Tilføjelse — skærmen skal blive tændt, og sitet skal kunne fylde en skærm
-
-- **Wake lock lever præcis så længe logge-skærmen er åben.** Et hvil på halvfems
-  sekunder er rigeligt til at telefonen låser, og at låse op med kalk på
-  fingrene for at taste to tal er det mest irriterende ved at bruge en telefon i
-  et center. Låsen tages når skærmen åbnes og slippes når man forlader den — en
-  lås der overlevede træningen ville være et fladt batteri. Browseren dropper
-  den selv når fanen skjules, så den tages igen ved `visibilitychange`; uden det
-  holder den op med at virke efter første afbrydelse, uden at nogen opdager det.
-  Ingen indstilling: det er den opførsel man vil have midt i en træning, og
-  browsere der ikke kan det, gør ingenting.
-
-- **Sitet var mobil-først og bare centreret.** På en stor skærm læste det som en
-  smal spalte med to tomme marginer. Bredden, typografien og luften vokser nu
-  med skærmen via `clamp()` frem for spring ved et breakpoint, så der ikke
-  findes en bredde hvor layoutet synligt hopper.
-
-- **Seks skærmbilleder på én række blev valgt fra.** De kan være der på en bred
-  skærm, men hver telefon bliver så lille at tallene i den — hele pointen med at
-  vise rigtige skærmbilleder — ikke kan læses. Tre store slår seks dekorative.
-
-- **Websitet er to dokumenter, ikke en sprogknap.** `index.html` er dansk,
-  `en.html` engelsk, hver med sit eget `lang`, sin `canonical` og et
-  `hreflang`-link til den anden. Det er hvad en skærmlæser og en søgemaskine har
-  brug for, og siden virker helt uden JavaScript. Prisen er at de to filer skal
-  holdes ens — det står i `website/README.md`.
-
-## Tilføjelse — kodeord som alternativ til passkey
-
-*(Ønsket undervejs: "ikke alle kan bruge passkey".)*
-
-- **Passkey forbliver anbefalingen; kodeord er alternativet.** Login-skærmen
-  åbner stadig på passkey. Kodeord ligger ét tryk væk, fordi det er den
-  eneste vej ind for en enhed eller browser der slet ikke kan passkeys — ikke
-  fordi det er lige så godt.
-
-- **Hashen ligger i sin egen tabel, ikke som kolonne på `users`.** Postgres-
-  policyen "hall members visible" lader ethvert medlem læse hele *rækken* for
-  alle andre i hallen — det er den der driver Valhal. En kodeords-hash på den
-  række ville dermed være læsbar for ens egen træningsmakker. `user_passwords`
-  har RLS slået til og *ingen* policies, hvilket gør den uopnåelig for
-  `anon`/`authenticated` uanset hvad; kun serveren kan røre den. Afviger
-  bevidst fra handoff-notens "password_hash på users".
-
-- **Rate limiting fandtes ikke før nu.** En passkey kan ikke gættes; et kodeord
-  kan. Grænsen er fem fejl pr. kvarter, talt både pr. e-mail og pr.
-  kalder-adresse, så hverken én konto eller én maskine kan bruges til at male
-  sig igennem. Et vellykket login nulstiller begge tællere, så almindelig brug
-  aldrig nærmer sig loftet. Tilstanden ligger i hukommelsen — Uruz kører som
-  én container mod én SQLite-fil, så der er præcis én proces at tælle i. Skal
-  det skaleres vandret, skal tælleren i databasen.
-
-- **Alle fejl ved login ser ens ud.** Ukendt e-mail, intet kodeord sat, forkert
-  kodeord og deaktiveret konto giver samme 401. Der hashes også når der intet
-  er at sammenligne med, så "findes ikke" ikke er målbart hurtigere end
-  "forkert kodeord" — ellers ville de ens fejlbeskeder være til grin.
-
-- **Et skift af kodeord kræver det gamle, og lukker alle andre sessioner.** En
-  levende session er ikke bevis nok: en telefon der ligger ulåst på en bænk
-  skal ikke være vejen til at låse ejeren ude. Og skifter man kodeord fordi en
-  anden kender det, ville det være meningsløst at lade den andens session leve.
-
-- **Glemt kodeord går gennem et engangslink med sit eget formål.** Linket
-  erstatter det gamle kodeord som bevis, så det må ikke kunne bruges til noget
-  andet: `consumeMagicToken` kræver nu et matchende formål, og et
-  nulstillings-link afvises derfor af login-callbacket. Styrken tjekkes *før*
-  linket bruges op — et afvist kodeord må ikke koste brugeren linket.
-
-- **Samme styrkeregel i browser og server.** `checkPasswordStrength` er flyttet
-  til `password-rules.ts` uden `server-only`, så formularen kan sige "for kort"
-  med det samme. Serveren afgør stadig; klient-tjekket er en høflighed.
-
-## Tilføjelse — appen udleder sin egen adresse
-
-- **Forespørgslen slår en konfiguration der stadig siger localhost.**
-  `NEXT_PUBLIC_APP_URL` vinder når den peger et rigtigt sted hen, men
-  defaulten `http://localhost:3000` er ikke et svar — det er fraværet af et.
-  Kom forespørgslen tydeligvis ikke fra localhost, læses `x-forwarded-host` /
-  `x-forwarded-proto` i stedet. Det er dét der gør, at en selvhostet opsætning
-  bag en proxy virker uden håndkonfiguration. Rækkefølge: konfiguration,
-  forespørgsel, localhost.
-
-- **At stole på forwarded-headere er et bevidst valg.** Operatøren ejer sin
-  egen proxy, og en eksplicit sat adresse vinder altid, så en installation der
-  bekymrer sig kan låse den fast. Admin-panelet siger nu når adressen er
-  udledt frem for sat.
-
-- **`rpConfig()` blev asynkron.** Adressen kommer nu fra forespørgslen, og
-  `headers()` er async i Next 15. Det smitter af på `checkWebAuthnConfig()` og
-  admin-siden, men holder passkey-domænet og login-links på én sandhed.
-
-- **Passkey-understøttelse afgøres efter mount.** `passkeySupported()` kigger
-  på `window` og var derfor falsk på serveren og sand i browseren — første
-  paint var uenig med serveren, og React smed hele træet væk og byggede det
-  igen. Fejlen var der før kodeords-arbejdet; den er rettet nu, fordi den nye
-  knap arvede den.
-
-## Tilføjelse — skavanker & ønsker (Mimir tilpasser træningen)
-
-*(Ønsket undervejs: "man skal kunne skrive til AI og fortælle en skavank eller
-et ønske, og den skal rette træningen til eller komme med forslag".)*
-
-- **Mimir foreslår, mennesket bestemmer.** Et forslag ændrer aldrig noget af
-  sig selv. Brugeren ser hver ændring (byt / justér / fjern) med begrundelse og
-  godkender. Resultatet gemmes som en *kopi* — det oprindelige program
-  overlever, så en tilpasning til en øm skulder ikke umærkeligt bliver den
-  permanente plan.
-
-- **Modellen må aldrig opfinde øvelser.** Den får en liste af id'er og må kun
-  vælge derfra; hvert id valideres mod biblioteket før forslaget vises. Ukendte
-  id'er kasseres — de gættes ikke.
-
-- **Skavanker og ønsker huskes.** De gemmes i `user_constraints` og lægges ind i
-  *alle* senere Mimir-kald. Verificeret: efter "min skulder gør ondt" fjernede
-  Mimir skulderpres i en senere, helt urelateret forespørgsel om tid og ryg —
-  med begrundelsen "grundet dine smerter". De kan ses og afmeldes i UI'et, for
-  brugeren skal kunne se hvad coachen tager hensyn til.
-
-- **Byt slår fjern.** Modellen udtrykker rutinemæssigt "erstat X" som *både* en
-  bytning og en fjernelse af X. Læst bogstaveligt ville øvelsen bare forsvinde,
-  fordi fjernelser anvendes først. Bytningen vinder — det var tydeligvis
-  meningen. (Fanget i den første live-test.)
-
-- **En træning kan aldrig tømmes helt.** Fjernelser der ville efterlade nul
-  øvelser kasseres.
-
-- **Smerte udløser altid lægehenvisningen**, uafhængigt af hvad modellen
-  finder på: teksten flages server-side ud fra ordvalg, og UI'et viser noten.
-
-## Fase 8 — Mimir (AI-coach)
-
-*(Ønsket undervejs: "man skal kunne vælge AI-udbyder: alle de kendte + custom".)*
-
-- **Én `chat()`-flade, mange udbydere.** Anthropic, OpenAI, Google, Ollama og
-  enhver OpenAI-kompatibel server (llama.cpp/llama-swap, LM Studio, vLLM,
-  OpenRouter …) — valgt udelukkende med `AI_PROVIDER`/`AI_BASE_URL`/`AI_MODEL`.
-  Resten af appen ved ikke hvem der svarede. Kaldene er skrevet med `fetch`
-  frem for udbyder-SDK'er, så alle udbydere behandles ens og en nøglefri,
-  selvhostet server virker uden særbehandling.
-
-- **Ingen API-nøgle er en gyldig opsætning.** En model på eget net har typisk
-  ingen nøgle; `Authorization` sendes kun hvis der faktisk *er* en nøgle,
-  fordi nogle lokale servere afviser en tom bearer-token.
-
-- **Appen coacher også uden model.** `insights.ts` udleder konkrete forslag
-  (plateau, ubalance, forsømt øvelse, stime, deload, smerte i noter) direkte af
-  data. Det er både fallback ved model-fejl *og* den fulde oplevelse hvis man
-  ikke ønsker AI. En model-nedbrud koster aldrig brugeren sin coaching.
-
-- **Reasoning-modeller kræver særlig håndtering** (fundet i test mod Gemma-4
-  26B): modellen brugte hele token-budgettet på skjult "tænkning" og
-  returnerede tomt svar. Nu: budgettet er hævet, `<think>`-blokke strippes,
-  tomt svar med `reasoning_content` giver en tydelig fejl i stedet for tavshed,
-  og `chat_template_kwargs.enable_thinking=false` sendes til selvhostede
-  servere — det bragte svartiden fra ~21 s til under 1 s. Feltet sendes *kun*
-  til selvhostede endpoints, da OpenAI afviser ukendte felter.
-
-- **Kun anonymiserede aggregater forlader serveren.** Modellen får tal og
-  øvelsesnavne — aldrig navn, e-mail eller id'er.
-
-- **Sikkerhedsreglerne står over tonen.** Uanset "blød/hård" coach-tone må
-  Mimir ikke give kost-, kalorie- eller vægttabsråd, ikke love helbredelse, og
-  skal henvise til læge ved smerte. Reglen om kost blev skærpet efter at
-  modellen i test selv begyndte at rådgive om proteinindtag.
-
-## Fase 7 — Reminders & notifikationer (Huginn & Muninn)
-
-- **Ris må aldrig blive skam.** Ravnenes tekster ligger i faste banker med to
-  toner. Selv "hård" tone er kontant og drillende — aldrig nedladende, og
-  aldrig et ord om krop eller vægt. Der nudges tidligst efter 4 dage (2-3
-  træninger om ugen betyder helt normale hviledage) og aldrig efter 21 dage:
-  så tier appen hellere end at blive en dårlig samvittighed.
-
-- **Ingen reminder til den der allerede har trænet i dag.** Verificeret: cron
-  sprang reminderen over da dagens træning var logget, og sendte den da
-  træningen var 5 dage gammel.
-
-- **Har en hal-kammerat trænet, bruges rivalise-teksten i stedet.** Så bliver
-  reminderen "Ib har lagt en træning i hallen. Skal den stå uimodsagt?" frem
-  for en generisk påmindelse (afsnit 8).
-
-- **Push først, e-mail som fallback.** Uden en registreret enhed går beskeden
-  på e-mail, så en reminder aldrig forsvinder i stilhed. Beskeden gemmes
-  desuden altid i appen, uanset om leveringen lykkes.
-
-- **Beskeder vælges deterministisk ud fra et seed**, så samme dag ikke skifter
-  tekst ved hver gengivelse.
-
-- **Cron nægter at køre uden `CRON_SECRET`.** Endpointet sender beskeder til
-  rigtige mennesker, så det fejler lukket frem for at defaulte til åbent.
-  Alt arbejdet er idempotent — kører den for ofte, sker der intet.
-
-- **iOS kræver installation før push.** `pushSupport()` skelner mellem "ikke
-  understøttet" og "føj appen til hjemmeskærmen først", fordi det første ville
-  være direkte misvisende på en iPhone.
-
-## Fase 6 — Gamification
-
-- **Badges genberegnes fra historikken, ikke ved hændelser.** I stedet for at
-  tælle op når noget sker, evalueres alle mærker mod hele træningshistorikken.
-  Så kan en offline-afspilning, et rettet sæt eller en overset hændelse aldrig
-  efterlade en bruger med et forkert mærke — data er facit.
-
-- **Kriterier ligger i data (`criteria_json`).** Koden kender kun kriterie-
-  *typerne* (antal træninger, rekorder, uge-stime, før-kl-X, hele biblioteket),
-  så nye mærker kan seedes uden en ny deploy.
-
-- **Rang beregnes af historikken, også for andre i hallen.** Den gemte
-  `rank_level`-kolonne opdateres kun når *den* bruger åbner appen; ranglisten
-  ville derfor vise en hal-kammerat med forældet rang (fanget i browseren: Ib
-  stod som "Thræl" med præcis samme tal som Kristians "Jarl"). Ranglisten
-  udleder derfor rangen fra data.
-
-- **Fremmøde vejer tungest i rang-point** (2 pr. træning, 1 pr. rekord, 3 pr.
-  uge i stimen). At møde op er det appen belønner — ikke at være stærkest.
-
-- **Ranglisten deler kun aggregater.** Kun totaler, stime og ugens antal
-  forlader serveren, aldrig rå sæt-logs, så en privat profil stadig kan være
-  med i den venlige kappestrid (afsnit 2).
-
-## Fase 5 — Statistik
-
-- **Al statistik er rene funktioner.** `src/lib/domain/stats.ts` kender hverken
-  database eller React, så hvert tal brugeren ser er unit-testet (31 tests).
-  UI-laget formaterer kun det, funktionerne returnerer.
-
-- **Uger starter mandag, datoer er lokale.** ISO-uger er hvad danskere forventer,
-  og dag-nøgler bygges af lokale felter — ellers ville en træning kl. 23:30
-  lande på den forkerte dag i statistikken.
-
-- **Stimen brydes ikke af en igangværende uge.** Har man trænet i sidste uge,
-  men endnu ikke i denne, tæller stimen stadig: ugen er ikke forbi endnu. Det
-  er en motivations-app, ikke en dommer.
-
-- **Konsistens måles pr. uge og kan ikke "spares op".** Fem træninger i én uge
-  udligner ikke syv tomme uger — hver uge bidrager højst sit mål. At møde op
-  jævnt er pointen (afsnit 13).
-
-- **Muskelvolumen krediteres hver primær muskel.** Det måler *eksponering*, ikke
-  fysiologi, og er præcis nok til at gøre "meget pres, lidt træk" synligt.
-  Ubalance flages først ved mindst 10 sæt, så tidlige tal ikke skræmmer.
-
-- **Styrke-standarder er grove og vejledende.** Maskiner varierer voldsomt
-  mellem fabrikanter, så niveauet vises som en indikation relativt til
-  kropsvægt — aldrig som en facitliste.
-
-- **Sjove enheder vælges så tallet kan forestilles.** Enheden skaleres til et
-  tal mellem 1 og 100 ("9,8 × bybus" frem for "0,03 × blåhval").
-
-- **Demo-historik som script.** `npm run db:seed:history` genererer ~12 ugers
-  realistisk træning med deterministisk tilfældighed, så statistik, badges og
-  Valhal kan ses og testes før der findes rigtige data.
-
-- **CSV med semikolon og BOM.** Dansk Excel forventer semikolon som separator,
-  og uden BOM bliver æ/ø/å til volapyk.
-
-- **Recharts-fælder (fundet ved verifikation i browseren):** `<Line>` skal være
-  *direkte* barn af `<LineChart>` — pakket i et React-fragment tegnes kurven
-  ikke, helt uden fejlbesked. Og y-aksens `domain` beregnes eksplicit i stedet
-  for `"dataMin - 5"`-strengformen, som gav et tomt plot.
-
-## Tilføjelse — sprogvalg & øvelsesvisning
-
-*(Ønsket undervejs: "valg af sprog eller kun engelsk" + "illustration eller
-billeder af øvelsen".)*
-
-- **Sprog er en brugerindstilling, ikke en build-flag.** Dansk og engelsk ligger
-  som hver sin fil i `/locales`. Valget gemmes både på brugeren (`locale_pref`)
-  og i en cookie, så login-, invitations- og installationssiderne — som vises
-  *før* man er logget ind — også rammer det rigtige sprog. Brugerens gemte valg
-  vinder over cookien når man er logget ind.
-
-- **Øvelsesindholdet er også oversat, ikke kun knapperne.** Et engelsk UI med
-  danske øvelsesnavne ville være halvt arbejde, så øvelser har `name_en`,
-  `instructions_steps_en`, `cues_en` og `safer_variant_en`, og de syv+ færdige
-  skabeloner har `name_en`/`description_en`. Alt falder tilbage til dansk hvis
-  en oversættelse mangler — biblioteket viser aldrig blanke felter.
-  Brugerens *egne* træninger oversættes ikke: de hedder det, brugeren skrev.
-
-- **Illustration eller foto pr. bruger.** Øvelser har et valgfrit `image_url`;
-  indstillingen `media_pref` vælger mellem stregtegning og foto. Illustrationen
-  er altid fallback — den virker offline, kræver intet netværk og findes for
-  hver øvelse. Et foto der ikke kan hentes falder lydløst tilbage til tegningen.
-
-- **Aldrig importér en mappe fra en klientkomponent.** `@/lib/i18n` (mappen)
-  gav en ubrugelig runtime-fejl (`Cannot read properties of undefined`), fordi
-  mappen også indeholder `server.ts` med `server-only`. Delt i18n-kode ligger
-  derfor i `@/lib/i18n/core` og importeres altid med fuld sti.
-
-- **Service workeren registreres ikke i udvikling.** Den cacher `/_next/static/`
-  cache-first; i dev skifter chunk-navne hele tiden, så en cachet chunk holder
-  op med at passe til HTML'en og hydrering dør. En allerede installeret worker
-  afregistreres aktivt i dev.
-
-## Fase 3 — Kerne-logning
-
-- **Klient-genererede id'er gør synk idempotent.** Hvert sæt får et uuid i
-  browseren *før* det sendes. Serveren afviser dubletter på id, så en kø der
-  afspilles to gange (offline → online, eller to faner) aldrig dobbeltlogger
-  eller uddeler samme rekord igen. Verificeret i test og i browseren.
-
-- **Offline-kø i IndexedDB, ikke i service workeren.** iOS Safari mangler
-  Background Sync; køen ligger derfor i IndexedDB og tømmes af appen (ved
-  mount, ved `online`, og efter hver skrivning). Rækkefølgen bevares: køen
-  stopper ved første netværksfejl i stedet for at springe over.
-
-- **4xx dropper en kø-post, 5xx prøver igen.** Et permanent afvist kald (fx
-  slettet session) må ikke blokere alle senere sæt bag sig. Efter 8 forgæves
-  forsøg opgives posten, så køen ikke bliver "forgiftet".
-
-- **PR-detektion sker server-side i samme kald som indsættelsen.** Reglerne
-  findes ét sted (`prCandidatesForSet`/`newRecords`), og klienten spørger
-  bagefter kun "slog det en rekord?" — så fejring og data aldrig er uenige.
-  En rekord skal slås *strengt*, så man ikke fejrer at gentage sin egen bedste.
-
-- **Epley-formlen til estimeret 1RM.** Almindelig gym-standard og rimelig i
-  det 1–12 reps-område Uruz sigter mod. Vises altid som *estimat*.
-
-- **Vægtforslag rundes til noget der findes i centret.** 2,5 kg-spring over
-  20 kg, 1 kg under — ellers foreslår appen 61,7 kg, som ingen maskine kan
-  indstilles til.
-
-## Fase 2 — Auth & brugere
-
-- **Opake server-sessioner i httpOnly-cookie.** I stedet for JWT i klienten
-  gemmes et tilfældigt token i `auth_sessions` og sættes som httpOnly,
-  SameSite=Lax cookie (secure i produktion). Det gør "log ud på alle enheder"
-  triviel (slet brugerens rækker) og holder tokens uden for JavaScript.
-
-- **Passkeys via `@simplewebauthn` v13, ikke Supabase Auth.** Supabase' egen
-  WebAuthn-understøttelse er ikke ensartet tilgængelig; `@simplewebauthn` virker
-  ens på begge backends og holder auth bag vores egen `AuthProvider`-flade, som
-  instruktionen kræver (afsnit 3). Magic-link er indbygget fallback.
-
-- **Ingen lækage af kontoeksistens.** `/api/auth/magic/request` svarer altid
-  `{ok:true}`, og passkey-login-options returnerer gyldige options selv for
-  ukendte e-mails. Kun reelle, aktive brugere får faktisk sendt et link.
-
-- **Magic-tokens er engangs.** Token markeres brugt ved indløsning; genbrug
-  afvises (verificeret). Levetid 30 min, invitationer 14 dage.
-
-- **Første kørsel seeder biblioteket.** `/api/auth/first-run` opretter hal +
-  admin *og* kører indholds-seed, så en frisk produktionsopsætning har øvelser
-  og skabeloner fra første login uden at køre scripts.
-
-- **Passkey-registrering er valgfri ved onboarding.** Brugeren er allerede
-  logget ind via session, så "Fortsæt" springer den over — ellers ville en
-  enhed uden authenticator kunne låse sig selv ude.
-
-## Fase 1 — Fundament
-
-- **`Startprogram.html` fandtes ikke i mappen.** Instruktionen henviser til den
-  som kilde til øvelsesindhold, men filen var ikke til stede. Øvelsesindholdet
-  (trin, cues, sikre varianter) er derfor skrevet ud fra beskrivelsen i afsnit
-  15 og almindelig, forsigtig træningsvejledning. Erstattes gerne med det
-  faktiske indhold hvis filen dukker op.
-
-- **To datalag bag én grænseflade.** Appen kører som standard på et indbygget
-  **`node:sqlite`**-lager (Node 26) — nul eksterne afhængigheder, så appen
-  virker med det samme og kan testes lokalt. Produktionsmålet er **Supabase
-  Postgres med Row Level Security** (leveres som migrationer + policies +
-  adapter). Al dataadgang går gennem `@/lib/db`, så backend kan skiftes uden at
-  røre UI. Begrundelse: instruktionen kræver Supabase/RLS *og* at appen er
-  triviel at køre for en ikke-tekniker — de to hensyn forenes ved at gøre
-  backend'en udskiftelig.
-
-- **RLS i produktion; repository-scoping i dev.** Row Level Security hører til
-  Postgres/Supabase. Det lokale sqlite-lag har ikke RLS; i stedet håndhæver
-  repository-laget samme adgangsregler (bruger ser kun egne rå-logs, admin ser
-  hele hallen). DoD-kravet om RLS opfyldes af Postgres-policyerne.
-
-- **Tailwind v4 (CSS-først).** Semantiske farve-variabler på to akser
-  (mørk/lys × norse/plain) sat via `data-mode`/`data-theme` på `<html>`. Et
-  inline-script sætter temaet før første paint for at undgå flash.
-
-- **`tsx` til scripts.** Seed/reset/gen-scripts deler kode med appen (sti-alias
-  `@/*`, extensionless `.ts`-imports). Node's rå type-stripping resolver ikke
-  disse; `tsx` gør, og er standardværktøj.
-
-- **Ikoner uden billed-afhængigheder.** PWA-ikonerne genereres af en lille,
-  ren PNG-encoder (Node's indbyggede `zlib` + CRC) der rasteriserer ᚢ-runen.
-  Ingen `sharp`/`canvas` native build-afhængighed.
-
-- **Demobrugere i seed (valgfrit).** `npm run db:seed` lægger kun indhold
-  (øvelser, skabeloner, badges). `npm run db:seed:demo` opretter desuden
-  admin (Kristian) + en ventende invitation til Ib (kode `IBIBIBIB`), så appen
-  kan udforskes straks (afsnit 15). En ren produktions­opsætning bruger i
-  stedet admin-først-onboarding ved første kørsel.
-
-- **Offline-kø klient-side.** iOS Safari mangler Background Sync, så
-  sæt-logningens offline-kø lever i IndexedDB på klienten og tømmes når nettet
-  er tilbage. Service workeren står kun for app-skal-caching. (Bygges i fase 3.)
+# Decisions (DECISIONS)
+
+A running log of non-obvious choices and assumptions made while building
+Uruz, per the instruction in section 0 ("note the assumption in `DECISIONS.md`").
+Newest first within each phase.
+
+## Addition — the ravens fly by themselves
+
+- **The scheduler lives in the app, not in the host.** Reminders never fired
+  because nothing called `/api/cron` — the endpoint sat finished for days
+  waiting for a cron job nobody had set up, and every future installation
+  would inherit the same silent gap. Now `instrumentation.ts` ticks the same
+  idempotent work every 15 minutes in production: a plain `docker run` of the
+  image gets working reminders with zero configuration. `/api/cron` stays for
+  hosts that prefer an external driver (idempotency makes both at once
+  harmless), and `URUZ_SCHEDULER=0` hands the job over entirely. In
+  development the scheduler is off unless `URUZ_SCHEDULER=1` — a dev database
+  full of seeded users must not mail real people by accident.
+
+- **The instrumentation hook keeps the exact shape the compiler recognises.**
+  A first version did its guards inline and imported through the `@/` alias —
+  Next then resolved the scheduler's import chain (web-push → `node:http`)
+  for the edge bundle too, and the dev server failed to boot. The fix is the
+  documented pattern verbatim: `if (process.env.NEXT_RUNTIME === "nodejs")`
+  wrapping a *relative* dynamic import, which the edge pass eliminates.
+  Deviating from that shape is what broke it.
+
+- **`getLocale()` no longer assumes a request.** It read the locale cookie
+  unconditionally, and `cookies()` throws outside a request scope — so the
+  first scheduler tick for a user without a saved language preference would
+  have crashed. Outside a request there is no cookie to consult; the default
+  locale is the honest answer, so that is what it returns.
+
+- **English documentation, Danish snapshots.** `DECISIONS.md`, `HANDOFF.md`
+  and `ARCHITECTURE.md` follow the README's pattern: English is the
+  maintained text, the Danish originals are preserved as `*.da.md` and say
+  so at the top. Maintaining both languages of a living document is double
+  bookkeeping nobody will do.
+
+## Addition — what the first real training session revealed
+
+Found by using the app in a gym, not by reading the code.
+
+- **The weight steps by 0.5, not 2.5.** One step was one plate, which cannot
+  express what the machines actually sit at: they land on halves, and on stacks
+  with entirely different increments. A number you cannot enter is a number that
+  gets logged wrong. **Hold the button to repeat**, faster the longer you hold —
+  otherwise 20 to 60 would be eighty taps. The field can still be typed into
+  directly.
+
+- **The set row could always be edited and deleted — it just didn't look like it.**
+  The feature existed; there was no hint that the row could be tapped, and so the
+  first person to use the app for real could not correct a mislogged set.
+  A pencil icon was the entire difference. Worth remembering: a feature without a
+  visible way in does not exist.
+
+- **A workout must be viewable before it is started.** The Train page linked
+  directly to `/train/start`, which creates a session immediately. So you could
+  not look at what a workout contained without having started it — and could not
+  back out. The link now goes to the workout page, where the contents are shown,
+  and where Start, Duplicate and Edit already lived. The back arrow follows where
+  you came from.
+
+- **The archive was missing entirely.** The numbers were summed into statistics
+  and never shown as themselves, so a wrongly logged workout stayed wrong — there
+  was no screen to find it on again. `/train/history` shows them, and each one
+  can be corrected with the same set rows as the live screen. One behavior, one
+  place to get it right.
+
+- **Rotation lock is impossible on iPhone, and the app now says so.**
+  The manifest requests portrait (Android honors it), and `screen.orientation.lock()`
+  exists in Chromium but rejects with `NotSupportedError` outside an installed
+  app — measured, not assumed. iOS Safari has neither. The toggle is only shown
+  where it works; otherwise the text says where the iPhone's own lock button is.
+  A toggle that does nothing teaches people to distrust the app.
+
+## Addition — delete your passkey
+
+Built after Yggdrasil's solution, as Kristian requested — but with three of its
+holes closed. The Yggdrasil session itself pointed to them as bugs, not as
+differences.
+
+- **Deletion requires saying who you are again.** Yggdrasil settles for a live
+  session and a confirmation dialog in the browser, which is cosmetics. An
+  unlocked phone on a bench must not be the way to remove the owner's keys — the
+  same reasoning as a password change requiring the old password. If there is a
+  password, it is asked for; if there is not, a fresh passkey assertion is
+  required.
+
+- **The last way in cannot be removed.** Yggdrasil has no such guard, and that
+  is defensible *there*, because all users have a password and passkeys are an
+  add-on. Uruz cannot assume that. The rule lives in `credential-removal.ts` as
+  a pure function with six tests: the last key may only go if there is a
+  password **or** a mail server that can actually send.
+
+- **"We can always email you" is false without a mail server.** Without SMTP or
+  Resend, the login link is only written to the server's log, which is not a way
+  in for someone who is locked out. Therefore email only counts when
+  `emailProvider()` is not `dev`. Yggdrasil has exactly that trap in its
+  forgot-password feature.
+
+- **The sessions are closed.** If you remove a key because the device is gone,
+  it is pointless if the device's session lives on. We do not track which
+  session came from which key, so all are closed and the current one is issued
+  again.
+
+- **The rejection comes before the challenge.** At first the order was reversed,
+  so you could get as far as confirming yourself and *then* be told it was your
+  only key. The guard reveals nothing a logged-in owner does not already know
+  about their own account, so it belongs first.
+
+- **Ownership lives in the WHERE clause**, not in a lookup followed by a check —
+  then there is no gap in between, and a foreign id simply hits zero rows. And
+  `deleteCredential` returns whether anything actually disappeared, so an
+  unknown id gives a 404 rather than a 200 that lies.
+
+- **Keys have names.** Without them the list is three identical rows, and no one
+  dares remove any of them. The name is asked for at creation, and `last_used_at`
+  is set where the counter is already updated — it is the same moment.
+
+## Addition — English as the default language
+
+- **English is what a stranger will most likely read.** The app was written in
+  Danish for two people and is now public. Someone arriving without a saved
+  choice gets English; someone who has chosen keeps their choice. Only the
+  column's default value is changed — not existing rows, because that would
+  switch the language out from under the two people who have used the app in
+  Danish all along.
+
+- **Emails follow the recipient, not the default.** A page showing English
+  before anyone has said otherwise is a reasonable guess. Writing to a named
+  person in a language they have not chosen is not. Login and reset emails look
+  up the user's `locale_pref` from the email address. Invitations go to someone
+  without an account, so there is no choice to follow — they are sent in the
+  sender's language, which is the best guess at a shared one.
+
+- **The page titles were seventeen Danish strings.** They are invisible in the
+  app itself, but the browser tab, the history and the name of a home-screen
+  bookmark come from them. They are now `generateMetadata` with a key, so they
+  follow the same language as the page.
+
+- **Two sets of screenshots.** The Danish landing page must not show English
+  screens, and the README — public and English-facing — must not show Danish
+  ones. The script takes a language and sets the demo user's `locale_pref`,
+  because the app follows the logged-in user's choice. `npm run gen:screenshots`
+  and `…:da`.
+
+## Addition — the app on a screen you do not hold in your hand
+
+- **The bottom bar is the answer to thumbs, not to screens.** On a phone, the
+  bottom third is what you can reach; on a desktop, a bar stuck to the bottom of
+  a tall window is stranded far from everything else. From 768 px the same
+  destinations move to a rail on the left side. Below 768 px nothing happens.
+
+- **The boundary is at 768 px, i.e. iPad in portrait.** One can argue that a
+  tablet in the hand is still "mobile", but that is also where the content
+  becomes wide enough that the bottom bar looks abandoned.
+
+- **The width is not set entirely free.** The content gets a ceiling of 1152 px.
+  A line of text at 1500 px is harder to read than one at 400. Pages that want
+  more space get it by splitting into columns — not by stretching.
+
+- **The cards flow in two columns rather than sitting in a grid.** A grid
+  leaves a hole under the short card until the tall one next to it ends.
+  Flowing columns (`columns-2` with `break-inside-avoid`) simply fill up. The
+  cost is that the reading order becomes column by column, which is acceptable
+  for a reference view like statistics and admin.
+
+- **The logging screen keeps its vertical flow — but the guide moved out to the
+  side.** Weight, reps and "Log set" are tuned to be hit without looking, and
+  they must stay where the thumb looks for them. With the instructions above,
+  they pushed the button down; from 1024 px they sit in a column beside it
+  instead. Measured: the button sits at the top of its column, no matter how
+  long the guide is.
+
+- **The exercise queue only exists when there is room for it.** On the phone,
+  the progress bars at the top are the entire overview, and that is the right
+  trade when every pixel sits between a thumb and a number. On a wide screen
+  there is no trade: the list can simply stand there and show what is done,
+  what remains, and let you jump straight to an exercise.
+
+- **The phone is verified unchanged, not assumed unchanged.** Eight screens
+  photographed at 390 px before and after and compared pixel by pixel: zero
+  differing pixels. (The files' checksums were different — that is PNG encoding,
+  not content. Worth knowing, because it looks like a regression.)
+
+## Addition — the exercise must be visible, and the screen must stay on
+
+- **The drawing belongs where the exercise is done.** Knowing the name of a
+  movement is not the same as knowing the movement, and looking it up meant
+  leaving the workout, finding it in the library and navigating back — with the
+  rest timer running. The drawing now sits next to the name, and steps and cues
+  are one tap away without going anywhere.
+
+- **The guide is collapsed by default.** Mid-workout, the weight and reps are
+  what the thumb reaches for. A wall of instructions between them and the top
+  of the screen would push the entire point of the app further down. Measured
+  at 390 px: "Log set" is still visible with the guide open.
+
+- **Wake lock retries on first touch.** Some browsers only grant a lock during
+  a user action. Getting here by tapping a workout counts, but the effect runs
+  a moment later, and that window is short. If it failed, the next tap on the
+  screen is a free second chance — and logging a set *is* a tap, so it costs
+  the user nothing. The lock is also listened to for `release`, because the
+  browser lets go of it on its own terms (a call, a notification), and without
+  that it would never come back.
+
+- **iOS' low power mode refuses outright.** That is its right, and there is
+  nothing to be done about it from the app's side. Worth knowing when the
+  screen goes dark anyway.
+
+## Addition — email, the hall's name and a public repo
+
+- **SMTP before Resend.** A self-hosted setup usually already has a mail
+  server; requiring an account with a third party to be able to send a login
+  link is a needless obstacle. If both are set, SMTP wins: typing in a mail
+  server is deliberate work, a forgotten API key is not. With neither, the
+  message is written to the log, which is enough to get started and expressly
+  not enough to keep going.
+
+- **`nodemailer` is the one new dependency.** SMTP is a protocol with TLS,
+  STARTTLS and authentication; writing it ourselves to avoid a dependency
+  would cost more than the dependency. It has no runtime dependencies of its
+  own and no native build, which is the line the project has held.
+
+- **The hall is named by whoever builds it.** The default was two specific
+  people's names, which greeted every other installation with two strangers.
+  It is now asked for at first run, with a neutral fallback name, and an admin
+  can change it afterwards — a name chosen in a hurry at six in the morning
+  should not be permanent.
+
+- **The repo is public, and `CLAUDE.md` is not.** The working notes about the
+  production host contain server ids, internal addresses and ssh details.
+  They now live in `.gitignore`, so they cannot be committed by accident.
+  HANDOFF.md has at the same time been scrubbed of the internal address and of
+  the recipe for logging in via the container's log.
+
+## Addition — the screen must stay on, and the site must be able to fill a screen
+
+- **The wake lock lives exactly as long as the logging screen is open.** A rest
+  of ninety seconds is plenty for the phone to lock, and unlocking with chalk
+  on your fingers to type two numbers is the most annoying part of using a
+  phone in a gym. The lock is taken when the screen opens and released when you
+  leave it — a lock that outlived the workout would be a dead battery. The
+  browser drops it by itself when the tab is hidden, so it is retaken on
+  `visibilitychange`; without that it stops working after the first
+  interruption, without anyone noticing. No setting: it is the behavior you
+  want mid-workout, and browsers that cannot do it do nothing.
+
+- **The site was mobile-first and merely centered.** On a big screen it read
+  as a narrow column with two empty margins. The width, the typography and the
+  spacing now grow with the screen via `clamp()` rather than jumps at a
+  breakpoint, so there is no width at which the layout visibly hops.
+
+- **Six screenshots in one row was rejected.** They can fit on a wide screen,
+  but each phone becomes so small that the numbers in it — the entire point of
+  showing real screenshots — cannot be read. Three big ones beat six
+  decorative ones.
+
+- **The website is two documents, not a language button.** `index.html` is
+  Danish, `en.html` English, each with its own `lang`, its own `canonical` and
+  an `hreflang` link to the other. That is what a screen reader and a search
+  engine need, and the page works entirely without JavaScript. The price is
+  that the two files must be kept in sync — it says so in `website/README.md`.
+
+## Addition — password as an alternative to passkey
+
+*(Requested along the way: "not everyone can use passkeys".)*
+
+- **Passkey remains the recommendation; password is the alternative.** The
+  login screen still opens on passkey. Password sits one tap away, because it
+  is the only way in for a device or browser that cannot do passkeys at all —
+  not because it is just as good.
+
+- **The hash lives in its own table, not as a column on `users`.** The Postgres
+  policy "hall members visible" lets any member read the entire *row* for
+  everyone else in the hall — it is the one that drives Valhal. A password hash
+  on that row would thereby be readable by your own training partner.
+  `user_passwords` has RLS enabled and *no* policies, which makes it
+  unreachable for `anon`/`authenticated` no matter what; only the server can
+  touch it. Deliberately deviates from the handoff note's "password_hash on
+  users".
+
+- **Rate limiting did not exist until now.** A passkey cannot be guessed; a
+  password can. The limit is five failures per quarter hour, counted both per
+  email and per caller address, so neither one account nor one machine can be
+  used to grind through. A successful login resets both counters, so ordinary
+  use never comes near the ceiling. The state lives in memory — Uruz runs as
+  one container against one SQLite file, so there is exactly one process to
+  count in. If it is to scale horizontally, the counter must go in the
+  database.
+
+- **All login failures look the same.** Unknown email, no password set, wrong
+  password and deactivated account give the same 401. Hashing is also done
+  when there is nothing to compare against, so "does not exist" is not
+  measurably faster than "wrong password" — otherwise the identical error
+  messages would be a joke.
+
+- **Changing the password requires the old one, and closes all other sessions.**
+  A live session is not proof enough: a phone lying unlocked on a bench must
+  not be the way to lock the owner out. And if you change your password because
+  someone else knows it, it would be pointless to let that someone's session
+  live.
+
+- **Forgot password goes through a one-time link with its own purpose.** The
+  link replaces the old password as proof, so it must not be usable for
+  anything else: `consumeMagicToken` now requires a matching purpose, and a
+  reset link is therefore rejected by the login callback. Strength is checked
+  *before* the link is consumed — a rejected password must not cost the user
+  the link.
+
+- **The same strength rule in browser and server.** `checkPasswordStrength` has
+  moved to `password-rules.ts` without `server-only`, so the form can say "too
+  short" immediately. The server still decides; the client check is a courtesy.
+
+## Addition — the app derives its own address
+
+- **The request beats a configuration that still says localhost.**
+  `NEXT_PUBLIC_APP_URL` wins when it points somewhere real, but the default
+  `http://localhost:3000` is not an answer — it is the absence of one. If the
+  request clearly did not come from localhost, `x-forwarded-host` /
+  `x-forwarded-proto` are read instead. That is what makes a self-hosted setup
+  behind a proxy work without hand-configuration. Order: configuration,
+  request, localhost.
+
+- **Trusting forwarded headers is a deliberate choice.** The operator owns
+  their own proxy, and an explicitly set address always wins, so an
+  installation that worries can pin it down. The admin panel now says when the
+  address is derived rather than set.
+
+- **`rpConfig()` became asynchronous.** The address now comes from the request,
+  and `headers()` is async in Next 15. It spreads to `checkWebAuthnConfig()`
+  and the admin page, but keeps the passkey domain and login links on one
+  truth.
+
+- **Passkey support is decided after mount.** `passkeySupported()` looks at
+  `window` and was therefore false on the server and true in the browser — the
+  first paint disagreed with the server, and React threw the whole tree away
+  and built it again. The bug predates the password work; it is fixed now,
+  because the new button inherited it.
+
+## Addition — ailments & wishes (Mimir adapts the training)
+
+*(Requested along the way: "you should be able to write to the AI and tell it
+about an ailment or a wish, and it should adjust the training or make
+suggestions".)*
+
+- **Mimir suggests, the human decides.** A suggestion never changes anything by
+  itself. The user sees every change (swap / adjust / remove) with reasoning
+  and approves. The result is saved as a *copy* — the original program
+  survives, so an adaptation to a sore shoulder does not imperceptibly become
+  the permanent plan.
+
+- **The model may never invent exercises.** It gets a list of ids and may only
+  choose from it; every id is validated against the library before the
+  suggestion is shown. Unknown ids are discarded — they are not guessed.
+
+- **Ailments and wishes are remembered.** They are stored in `user_constraints`
+  and injected into *all* later Mimir calls. Verified: after "my shoulder
+  hurts", Mimir removed shoulder presses in a later, entirely unrelated query
+  about time and back — with the reasoning "due to your pain". They can be
+  viewed and dismissed in the UI, because the user must be able to see what
+  the coach is taking into account.
+
+- **Swap beats remove.** The model routinely expresses "replace X" as *both* a
+  swap and a removal of X. Read literally, the exercise would simply vanish,
+  because removals are applied first. The swap wins — that was clearly the
+  intent. (Caught in the first live test.)
+
+- **A workout can never be emptied completely.** Removals that would leave zero
+  exercises are discarded.
+
+- **Pain always triggers the doctor referral**, regardless of what the model
+  comes up with: the text is flagged server-side based on wording, and the UI
+  shows the note.
+
+## Phase 8 — Mimir (AI coach)
+
+*(Requested along the way: "you should be able to choose AI provider: all the
+well-known ones + custom".)*
+
+- **One `chat()` surface, many providers.** Anthropic, OpenAI, Google, Ollama
+  and any OpenAI-compatible server (llama.cpp/llama-swap, LM Studio, vLLM,
+  OpenRouter …) — selected solely with `AI_PROVIDER`/`AI_BASE_URL`/`AI_MODEL`.
+  The rest of the app does not know who answered. The calls are written with
+  `fetch` rather than provider SDKs, so all providers are treated alike and a
+  keyless, self-hosted server works without special treatment.
+
+- **No API key is a valid setup.** A model on your own network typically has
+  no key; `Authorization` is only sent if there actually *is* a key,
+  because some local servers reject an empty bearer token.
+
+- **The app coaches even without a model.** `insights.ts` derives concrete
+  suggestions (plateau, imbalance, neglected exercise, streak, deload, pain in
+  notes) directly from data. It is both the fallback on model failure *and*
+  the full experience if you do not want AI. A model outage never costs the
+  user their coaching.
+
+- **Reasoning models require special handling** (found in testing against
+  Gemma-4 26B): the model spent the entire token budget on hidden "thinking"
+  and returned an empty answer. Now: the budget is raised, `<think>` blocks
+  are stripped, an empty answer with `reasoning_content` gives a clear error
+  instead of silence, and `chat_template_kwargs.enable_thinking=false` is sent
+  to self-hosted servers — that brought the response time from ~21 s to under
+  1 s. The field is *only* sent to self-hosted endpoints, since OpenAI rejects
+  unknown fields.
+
+- **Only anonymized aggregates leave the server.** The model gets numbers and
+  exercise names — never name, email or ids.
+
+- **The safety rules rank above the tone.** Regardless of "soft/hard" coach
+  tone, Mimir may not give diet, calorie or weight-loss advice, may not
+  promise cures, and must refer to a doctor on pain. The diet rule was
+  tightened after the model in testing started advising on protein intake on
+  its own.
+
+## Phase 7 — Reminders & notifications (Huginn & Muninn)
+
+- **Ribbing must never become shame.** The ravens' texts live in fixed banks
+  with two tones. Even the "hard" tone is blunt and teasing — never
+  condescending, and never a word about body or weight. Nudges come no earlier
+  than after 4 days (2-3 workouts a week means entirely normal rest days) and
+  never after 21 days: at that point the app would rather stay silent than
+  become a guilty conscience.
+
+- **No reminder for someone who has already trained today.** Verified: cron
+  skipped the reminder when today's workout was logged, and sent it when the
+  workout was 5 days old.
+
+- **If a hall-mate has trained, the rivalry text is used instead.** The
+  reminder then becomes "Ib has logged a workout in the hall. Will it stand
+  unanswered?" rather than a generic reminder (section 8).
+
+- **Push first, email as fallback.** Without a registered device the message
+  goes by email, so a reminder never disappears in silence. The message is
+  also always stored in the app, whether or not delivery succeeds.
+
+- **Messages are chosen deterministically from a seed**, so the same day does
+  not change text on every render.
+
+- **Cron refuses to run without `CRON_SECRET`.** The endpoint sends messages
+  to real people, so it fails closed rather than defaulting to open.
+  All the work is idempotent — if it runs too often, nothing happens.
+
+- **iOS requires installation before push.** `pushSupport()` distinguishes
+  between "not supported" and "add the app to your home screen first", because
+  the former would be outright misleading on an iPhone.
+
+## Phase 6 — Gamification
+
+- **Badges are recomputed from history, not on events.** Instead of counting
+  up when something happens, all badges are evaluated against the entire
+  training history. That way an offline replay, a corrected set or a missed
+  event can never leave a user with a wrong badge — the data is the answer key.
+
+- **Criteria live in data (`criteria_json`).** The code only knows the
+  criterion *types* (number of workouts, records, week streak, before-X-o'clock,
+  the whole library), so new badges can be seeded without a new deploy.
+
+- **Rank is computed from history, also for others in the hall.** The stored
+  `rank_level` column is only updated when *that* user opens the app; the
+  leaderboard would therefore show a hall-mate with a stale rank (caught in
+  the browser: Ib stood as "Thræl" with exactly the same numbers as Kristian's
+  "Jarl"). The leaderboard therefore derives the rank from data.
+
+- **Attendance weighs heaviest in rank points** (2 per workout, 1 per record,
+  3 per week in the streak). Showing up is what the app rewards — not being
+  the strongest.
+
+- **The leaderboard shares only aggregates.** Only totals, streak and the
+  week's count leave the server, never raw set logs, so a private profile can
+  still join the friendly rivalry (section 2).
+
+## Phase 5 — Statistics
+
+- **All statistics are pure functions.** `src/lib/domain/stats.ts` knows
+  neither database nor React, so every number the user sees is unit-tested
+  (31 tests). The UI layer only formats what the functions return.
+
+- **Weeks start on Monday, dates are local.** ISO weeks are what Danes expect,
+  and day keys are built from local fields — otherwise a workout at 23:30
+  would land on the wrong day in the statistics.
+
+- **The streak is not broken by a week in progress.** If you trained last
+  week but not yet this week, the streak still counts: the week is not over
+  yet. It is a motivation app, not a judge.
+
+- **Consistency is measured per week and cannot be "saved up".** Five workouts
+  in one week do not offset seven empty weeks — each week contributes at most
+  its target. Showing up evenly is the point (section 13).
+
+- **Muscle volume is credited to every primary muscle.** It measures
+  *exposure*, not physiology, and is precise enough to make "lots of push,
+  little pull" visible. Imbalance is only flagged at 10 sets or more, so early
+  numbers do not scare anyone.
+
+- **Strength standards are rough and indicative.** Machines vary wildly
+  between manufacturers, so the level is shown as an indication relative to
+  body weight — never as an answer key.
+
+- **Fun units are chosen so the number can be imagined.** The unit is scaled
+  to a number between 1 and 100 ("9.8 × city bus" rather than "0.03 × blue
+  whale").
+
+- **Demo history as a script.** `npm run db:seed:history` generates ~12 weeks
+  of realistic training with deterministic randomness, so statistics, badges
+  and Valhal can be seen and tested before any real data exists.
+
+- **CSV with semicolon and BOM.** Danish Excel expects semicolon as the
+  separator, and without a BOM, æ/ø/å turn into gibberish.
+
+- **Recharts traps (found by verification in the browser):** `<Line>` must be
+  a *direct* child of `<LineChart>` — wrapped in a React fragment the curve is
+  not drawn, with no error message at all. And the y-axis `domain` is computed
+  explicitly instead of the `"dataMin - 5"` string form, which gave an empty
+  plot.
+
+## Addition — language choice & exercise display
+
+*(Requested along the way: "choice of language or English only" + "illustration
+or pictures of the exercise".)*
+
+- **Language is a user setting, not a build flag.** Danish and English live as
+  a file each in `/locales`. The choice is stored both on the user
+  (`locale_pref`) and in a cookie, so the login, invitation and installation
+  pages — which are shown *before* you are logged in — also hit the right
+  language. The user's saved choice wins over the cookie when logged in.
+
+- **The exercise content is translated too, not just the buttons.** An English
+  UI with Danish exercise names would be half a job, so exercises have
+  `name_en`, `instructions_steps_en`, `cues_en` and `safer_variant_en`, and the
+  seven-plus finished templates have `name_en`/`description_en`. Everything
+  falls back to Danish if a translation is missing — the library never shows
+  blank fields. The user's *own* workouts are not translated: they are called
+  what the user wrote.
+
+- **Illustration or photo per user.** Exercises have an optional `image_url`;
+  the setting `media_pref` chooses between line drawing and photo. The
+  illustration is always the fallback — it works offline, requires no network
+  and exists for every exercise. A photo that cannot be fetched falls back
+  silently to the drawing.
+
+- **Never import a directory from a client component.** `@/lib/i18n` (the
+  directory) gave a useless runtime error (`Cannot read properties of
+  undefined`), because the directory also contains `server.ts` with
+  `server-only`. Shared i18n code therefore lives in `@/lib/i18n/core` and is
+  always imported with the full path.
+
+- **The service worker is not registered in development.** It caches
+  `/_next/static/` cache-first; in dev, chunk names change all the time, so a
+  cached chunk stops matching the HTML and hydration dies. An already
+  installed worker is actively unregistered in dev.
+
+## Phase 3 — Core logging
+
+- **Client-generated ids make sync idempotent.** Every set gets a uuid in the
+  browser *before* it is sent. The server rejects duplicates on id, so a queue
+  replayed twice (offline → online, or two tabs) never double-logs or hands
+  out the same record again. Verified in tests and in the browser.
+
+- **Offline queue in IndexedDB, not in the service worker.** iOS Safari lacks
+  Background Sync; the queue therefore lives in IndexedDB and is drained by
+  the app (on mount, on `online`, and after every write). Order is preserved:
+  the queue stops at the first network error instead of skipping ahead.
+
+- **4xx drops a queue entry, 5xx retries.** A permanently rejected call (e.g.
+  a deleted session) must not block all later sets behind it. After 8 futile
+  attempts the entry is given up, so the queue does not become "poisoned".
+
+- **PR detection happens server-side in the same call as the insert.** The
+  rules exist in one place (`prCandidatesForSet`/`newRecords`), and the client
+  afterwards only asks "did it break a record?" — so celebration and data are
+  never in disagreement. A record must be beaten *strictly*, so you do not
+  celebrate repeating your own best.
+
+- **The Epley formula for estimated 1RM.** Common gym standard and reasonable
+  in the 1–12 rep range Uruz aims at. Always shown as an *estimate*.
+
+- **Weight suggestions are rounded to something that exists in the gym.**
+  2.5 kg steps above 20 kg, 1 kg below — otherwise the app suggests 61.7 kg,
+  which no machine can be set to.
+
+## Phase 2 — Auth & users
+
+- **Opaque server sessions in an httpOnly cookie.** Instead of a JWT in the
+  client, a random token is stored in `auth_sessions` and set as an httpOnly,
+  SameSite=Lax cookie (secure in production). That makes "log out on all
+  devices" trivial (delete the user's rows) and keeps tokens out of
+  JavaScript.
+
+- **Passkeys via `@simplewebauthn` v13, not Supabase Auth.** Supabase's own
+  WebAuthn support is not uniformly available; `@simplewebauthn` works the
+  same on both backends and keeps auth behind our own `AuthProvider` surface,
+  as the instruction requires (section 3). Magic link is the built-in
+  fallback.
+
+- **No leakage of account existence.** `/api/auth/magic/request` always
+  answers `{ok:true}`, and passkey login options return valid options even for
+  unknown emails. Only real, active users actually get a link sent.
+
+- **Magic tokens are single-use.** The token is marked used on redemption;
+  reuse is rejected (verified). Lifetime 30 min, invitations 14 days.
+
+- **First run seeds the library.** `/api/auth/first-run` creates hall + admin
+  *and* runs the content seed, so a fresh production setup has exercises and
+  templates from the first login without running scripts.
+
+- **Passkey registration is optional at onboarding.** The user is already
+  logged in via session, so "Continue" skips it — otherwise a device without
+  an authenticator could lock itself out.
+
+## Phase 1 — Foundation
+
+- **`Startprogram.html` did not exist in the directory.** The instruction
+  refers to it as the source of exercise content, but the file was not
+  present. The exercise content (steps, cues, safer variants) is therefore
+  written from the description in section 15 and ordinary, cautious training
+  guidance. Gladly replaced with the actual content if the file turns up.
+
+- **Two data layers behind one interface.** The app runs by default on a
+  built-in **`node:sqlite`** store (Node 26) — zero external dependencies, so
+  the app works immediately and can be tested locally. The production target
+  is **Supabase Postgres with Row Level Security** (delivered as migrations +
+  policies + adapter). All data access goes through `@/lib/db`, so the backend
+  can be swapped without touching the UI. Reasoning: the instruction requires
+  Supabase/RLS *and* that the app is trivial to run for a non-technical person
+  — the two concerns are reconciled by making the backend swappable.
+
+- **RLS in production; repository scoping in dev.** Row Level Security belongs
+  to Postgres/Supabase. The local sqlite layer has no RLS; instead the
+  repository layer enforces the same access rules (a user sees only their own
+  raw logs, admin sees the whole hall). The DoD requirement for RLS is met by
+  the Postgres policies.
+
+- **Tailwind v4 (CSS-first).** Semantic color variables on two axes
+  (dark/light × norse/plain) set via `data-mode`/`data-theme` on `<html>`. An
+  inline script sets the theme before first paint to avoid a flash.
+
+- **`tsx` for scripts.** Seed/reset/gen scripts share code with the app (path
+  alias `@/*`, extensionless `.ts` imports). Node's raw type stripping does
+  not resolve these; `tsx` does, and is a standard tool.
+
+- **Icons without image dependencies.** The PWA icons are generated by a
+  small, pure PNG encoder (Node's built-in `zlib` + CRC) that rasterizes the
+  ᚢ rune. No `sharp`/`canvas` native build dependency.
+
+- **Demo users in seed (optional).** `npm run db:seed` adds content only
+  (exercises, templates, badges). `npm run db:seed:demo` additionally creates
+  admin (Kristian) + a pending invitation for Ib (code `IBIBIBIB`), so the app
+  can be explored right away (section 15). A clean production setup instead
+  uses admin-first onboarding at first run.
+
+- **Offline queue client-side.** iOS Safari lacks Background Sync, so the
+  set logging's offline queue lives in IndexedDB on the client and is drained
+  when the network is back. The service worker handles app-shell caching
+  only. (Built in phase 3.)

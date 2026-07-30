@@ -1,219 +1,230 @@
 # Handoff — Uruz ᚢ
 
-Status og overleveringsnoter, skrevet 30. juli 2026.
-Til dig selv om tre måneder, eller til den næste der rører projektet.
+Status and handover notes, written 30 July 2026, updated the same night
+(built-in scheduler, translations, archive verified in a browser).
+For yourself in three months, or for the next person who touches the project.
 
-Den forrige udgave var fra 28. juli. Der er sket tyve commits siden, og noget af
-det ændrer **hvor tingene kører** — læs afsnittet om værterne først, også hvis
-du springer resten over.
+The previous edition was from 28 July. Twenty commits have happened since, and some of
+it changes **where things run** — read the section on the hosts first, even if
+you skip the rest.
 
 ---
 
-## Hvad det er
+## What it is
 
-En træningsapp (PWA) til iPhone og web. Lynhurtig sæt-logning der virker uden
-internet, ærlig statistik, en AI-coach (Mimir) der kan tilpasse træningen til
-skavanker, og et gamification-lag i nordisk klædning.
+A training app (PWA) for iPhone and web. Lightning-fast set logging that works without
+internet, honest statistics, an AI coach (Mimir) that can adapt training to
+injuries and niggles, and a gamification layer in Norse dress.
 
-Kører som en **Rune** i Yggdrasil Panel. Fri software under **AGPL-3.0**.
+Runs as a **Rune** in Yggdrasil Panel. Free software under **AGPL-3.0**.
 
 | | |
 |---|---|
-| **Kode** | https://github.com/kristianwind/uruz (offentligt) |
+| **Code** | https://github.com/kristianwind/uruz (public) |
 | **Image** | `ghcr.io/kristianwind/uruz:latest` (multi-arch) |
-| **App i drift** | https://uruz.yggdrasilpanel.com |
-| **Website** | https://uruz-training.com — engelsk forside, dansk på `/da.html` |
-| **Tests** | 179, alle grønne |
-| **Standardsprog** | Engelsk. Den enkeltes valg vinder altid. |
+| **App in production** | https://uruz.yggdrasilpanel.com |
+| **Website** | https://uruz-training.com — English front page, Danish at `/da.html` |
+| **Tests** | 179, all green |
+| **Default language** | English. The individual's choice always wins. |
 
 ---
 
-## ⚠️ Værterne — det der har kostet mest
+## ⚠️ The hosts — what has cost the most
 
-**De to ting kører ikke længere på samme maskine.**
+**The two things no longer run on the same machine.**
 
-| Hvad | Vært | Server-id | Port |
+| What | Host | Server id | Port |
 |---|---|---|---|
 | **uruz-training.com** | `100.80.130.8` (`kw01`) | `994bd145-1418-4f2c-bb14-ca19dbf3d10c` | 25023 |
-| **Uruz-appen** | `100.92.81.54` (`.164`) | `0b0bf9c4-80a1-418e-8df5-bb19788be31d` | 25012 |
+| **The Uruz app** | `100.92.81.54` (`.164`) | `0b0bf9c4-80a1-418e-8df5-bb19788be31d` | 25012 |
 
-Sitet flyttede **29. juli**. Den gamle container på `.164` (`ygg-66e5a45d`) står
-stoppet med sine gamle filer stadig i datamappen.
+The site moved on **29 July**. The old container on `.164` (`ygg-66e5a45d`) sits
+stopped with its old files still in the data directory.
 
-**Deployer du til den gamle vært, lykkes det.** Hvert trin svarer 200, filerne
-lander med rigtig ejer — og intet af det bliver synligt nogen steder. Det skete
-tre gange på én aften, før nogen opdagede det.
+**If you deploy to the old host, it succeeds.** Every step answers 200, the files
+land with the right owner — and none of it becomes visible anywhere. That happened
+three times in one evening before anyone noticed.
 
-**Hvorfor det ikke blev opdaget:** Cloudflare serverede forsiden fra cache, så
-den svarede 200 hele tiden. Det var kun en *ny* sti — `/docs/…` — der afslørede
-det, fordi der ikke var noget cachet at falde tilbage på.
+**Why it wasn't noticed:** Cloudflare served the front page from cache, so
+it answered 200 the whole time. It was only a *new* path — `/docs/…` — that revealed
+it, because there was nothing cached to fall back on.
 
-> **Verificér altid mod origin, aldrig kun gennem Cloudflare.** Et cachet svar
-> fra en stoppet container ser nøjagtig ud som en sund server.
+> **Always verify against origin, never only through Cloudflare.** A cached response
+> from a stopped container looks exactly like a healthy server.
 
-Den fulde deploy-opskrift står i `CLAUDE.md` og er rettet.
-
----
-
-## Hvad der er sket siden sidst
-
-**Login har fået to nye veje ind.** Kodeord (scrypt, rate-limitet, kræver det
-gamle ved skift) og login-link på e-mail, der nu virker rigtigt. Passkeys kan
-navngives, ses med "sidst brugt", og slettes — men sletning kræver
-genautentificering og nægter at fjerne din sidste vej ind.
-
-**E-mail virker.** SMTP2GO på `mail-eu.smtp2go.com:2525`. Verificeret ved at
-sende et rigtigt login-link: loggen fik nul nye linjer, hvilket er hvad et
-vellykket send ser ud som — appen skriver kun, når den *ikke* kan sende.
-
-**Engelsk er standardsproget**, inklusive sidetitler, manifest og beskrivelser.
-E-mails følger dog modtagerens eget valg, ikke standarden — en side på engelsk
-før nogen har sagt andet er et rimeligt gæt, en mail til en navngiven person er
-det ikke.
-
-**Appen bruger skærmen på desktop og iPad.** Sidebjælke fra 768 px, indhold i
-spalter, øvelseskø ved siden af logge-skærmen. Telefonen er verificeret uændret
-— otte skærme fotograferet før og efter, nul afvigende pixels.
-
-**Det første rigtige træningspas afslørede fire ting**, alle rettet: vægten går
-0,5 ad gangen (hold knappen for at gentage), sæt-rækken har fået et blyant-ikon
-så man kan se at den kan rettes, en træning vises før den startes, og der er nu
-et arkiv over tidligere træninger hvor sæt kan rettes og hele træninger slettes.
-
-**Dokumentation.** To brugervejledninger i `docs/guides/`, udgivet på
-uruz-training.com/docs af `npm run gen:docs`. README er engelsk med den danske
-bevaret som `README.da.md`.
+The full deploy recipe is in `CLAUDE.md` and has been corrected.
 
 ---
 
-## Hvad der er verificeret — og hvad der ikke er
+## What has happened since last time
 
-### Verificeret mod virkeligheden
+**Login has gained two new ways in.** Password (scrypt, rate-limited, requires the
+old one when changing) and login link by e-mail, which now works properly. Passkeys can
+be named, viewed with "last used", and deleted — but deletion requires
+re-authentication and refuses to remove your last way in.
 
-- **En rigtig træning i centret.** Kristian trænede 30. juli. Det var den
-  vigtigste manglende test, og den afslørede fire fejl der nu er rettet.
-- **Fire brugere er på.** Invitationsflowet er prøvet af andre end den der
-  byggede det.
-- **E-mail går ud** gennem SMTP2GO, målt mod den kørende server.
-- **Passkey-sletning** i alle fire tilfælde: 409 på sidste nøgle uden anden vej
-  ind, 403 på forkert kodeord, 404 på ukendt id, 200 med nøglen faktisk væk.
-- **Databasemigrationer** — `name` og `last_used_at` blev tilføjet til en
-  eksisterende database ved opstart, set med egne øjne.
-- **SMTP-koden** mod en rigtig SMTP-samtale, ikke en mock.
-- **Ankre i dokumentationen** mod `api.github.com/markdown/raw`.
+**E-mail works.** SMTP2GO on `mail-eu.smtp2go.com:2525`. Verified by
+sending a real login link: the log got zero new lines, which is what a
+successful send looks like — the app only writes when it *cannot* send.
 
-### Ikke verificeret
+**English is the default language**, including page titles, manifest and descriptions.
+E-mails, however, follow the recipient's own choice, not the default — a page in English
+before anyone has said otherwise is a reasonable guess, a mail to a named person is
+not.
 
-- **Face ID på en fysisk iPhone.** Stadig. Alt omkring det er testet, men selve
-  flowet er aldrig set lykkes. Nu er der ingen risiko ved at prøve: kodeord og
-  e-mail virker begge som vej ind.
-- **Arkivet i en browser.** Ruten svarer, koden er typechecket og bygget, men
-  Mac'en løb tør for hukommelse og en dev-server kunne ikke startes. Sidens
-  udseende er aldrig set.
-- **Web push på iOS.** Kræver appen på hjemmeskærmen. Aldrig set en notifikation
-  lande.
-- **Supabase-backenden.** Skema og RLS er skrevet, men **adapteren findes ikke**
-  — `DATA_BACKEND` optræder ikke i koden. Appen kører kun på SQLite.
+**The app uses the screen on desktop and iPad.** Sidebar from 768 px, content in
+columns, exercise queue next to the logging screen. The phone is verified unchanged
+— eight screens photographed before and after, zero deviating pixels.
 
----
+**The first real workout revealed four things**, all fixed: the weight moves
+0.5 at a time (hold the button to repeat), the set row has gained a pencil icon
+so you can see it can be edited, a workout is shown before it is started, and there is now
+an archive of past workouts where sets can be edited and whole workouts deleted.
 
-## 🚧 Det næste
-
-**En genstart mangler.** De to knapper på Træn-siden (`7e9def9`) er den eneste
-app-kodeændring der ikke er ude. Alt andet siden sidste genstart er
-dokumentation og website.
-
-**Reminders sender stadig ingenting.** `/api/cron` bliver aldrig kaldt. Kræver
-`CRON_SECRET` og en schedule hvert kvarter. Ravnene er bygget og venter.
-
-**Oversættelse.** `DECISIONS.md`, `HANDOFF.md` og `ARCHITECTURE.md` er stadig
-danske — omkring 7.700 ord. README er klaret.
-
-**Level 2** — hostet udgave. Planen ligger i `docs/COMMERCIAL.md` og er ikke
-besluttet. Første tekniske skridt er flere haller pr. installation: kun seks
-filer antager at der findes én (`getAnyHall()`). Licensen, som var det mest
-presserende, er på plads.
-
-**Kvasir.** Kristian har spurgt om Mimir skulle omdøbes. Der er argumenteret
-imod: Kvasir er allerede Yggdrasils AI-assistent — 28 filer og sin egen guide —
-og to projekter på samme maskine med hver sin assistent af samme navn bliver
-forvirrende. Ikke afgjort.
+**Documentation.** Two user guides in `docs/guides/`, published on
+uruz-training.com/docs by `npm run gen:docs`. The README is English with the Danish
+preserved as `README.da.md`.
 
 ---
 
-## Kendte skævheder
+## What is verified — and what is not
 
-- **`Startprogram.html` fandtes aldrig.** Øvelsesindholdet er skrevet ud fra
-  beskrivelsen i specifikationens afsnit 15.
-- **arm64-bygget er flaky.** SWC crasher sporadisk under QEMU. Workflowet er
-  delt, så amd64 altid bliver udgivet.
-- **Fem andre servere på `.164` står stoppet.** Om de skal køre, ved kun
-  Kristian.
-- **Mac'en løber tør for hukommelse.** Et produktionsbyg tog 17,6 minutter i
-  stedet for ti sekunder, og vitest' elleve arbejdsprocesser fik to tests til at
-  fejle på timeout — de kører grønt på 241 ms alene.
-  `npx vitest run --no-file-parallelism` virker.
+### Verified against reality
+
+- **A real workout at the gym.** Kristian trained on 30 July. It was the
+  most important missing test, and it revealed four bugs that are now fixed.
+- **Four users are on.** The invitation flow has been tried by people other than the one
+  who built it.
+- **E-mail goes out** through SMTP2GO, measured against the running server.
+- **Passkey deletion** in all four cases: 409 on the last key with no other way
+  in, 403 on wrong password, 404 on unknown id, 200 with the key actually gone.
+- **Database migrations** — `name` and `last_used_at` were added to an
+  existing database at startup, seen with own eyes.
+- **The SMTP code** against a real SMTP conversation, not a mock.
+- **Anchors in the documentation** against `api.github.com/markdown/raw`.
+- **The archive in a browser.** List and detail render on desktop and phone
+  widths. An edit was made through the UI, seen in the SQLite database, seen
+  again after a reload, and reverted the same way. (The floating circle that
+  overlaps the bottom nav in dev is Next's own dev-tools button — it does not
+  exist in production.)
+
+### Not verified
+
+- **Face ID on a physical iPhone.** Still. Everything around it is tested, but the
+  flow itself has never been seen to succeed. There is now no risk in trying: password and
+  e-mail both work as a way in.
+- **Web push on iOS.** Requires the app on the home screen. Never seen a notification
+  land.
+- **The Supabase backend.** Schema and RLS are written, but **the adapter does not exist**
+  — `DATA_BACKEND` does not appear in the code. The app runs only on SQLite.
 
 ---
 
-## Ting der er nemme at gøre forkert
+## 🚧 What's next
 
-| Fælde | Hvad der sker |
+**A restart is pending.** The two buttons on the Train page (`7e9def9`) and the
+built-in scheduler (below) are the app code changes not yet out. The panel on
+`.164` has a global **Update schedule at 05:30** that reinstalls every running
+server with the latest image, so the changes go live by themselves the next
+morning — or immediately with Servers → Uruz → Restart in the panel.
+
+**Reminders: the app now runs its own scheduler.** `instrumentation.ts` ticks
+the same idempotent work as `/api/cron` every quarter of an hour in production
+— no `CRON_SECRET`, no external schedule, nothing to configure. The startup
+log says `scheduler: built-in, every 15 min`. `CRON_SECRET` is only for
+driving it externally; `URUZ_SCHEDULER=0` turns the built-in one off. The
+first deploy with this aboard is the real test: the ravens should fly on
+their own.
+
+**Translation: done.** `DECISIONS.md`, `HANDOFF.md` and `ARCHITECTURE.md` are
+English, with the Danish originals preserved as `*.da.md` snapshots — the
+English files are the maintained ones.
+
+**Level 2** — hosted edition. The plan is in `docs/COMMERCIAL.md` and is not
+decided. The first technical step is multiple gyms per installation: only six
+files assume there is one (`getAnyHall()`). The license, which was the most
+pressing part, is in place.
+
+**Kvasir.** Kristian has asked whether Mimir should be renamed. The case has been argued
+against: Kvasir is already Yggdrasil's AI assistant — 28 files and its own guide —
+and two projects on the same machine, each with its own assistant of the same name, gets
+confusing. Not settled.
+
+---
+
+## Known warts
+
+- **`Startprogram.html` never existed.** The exercise content is written from
+  the description in section 15 of the specification.
+- **The arm64 build is flaky.** SWC crashes sporadically under QEMU. The workflow is
+  split, so amd64 always gets published.
+- **Five other servers on `.164` sit stopped.** Whether they should be running, only
+  Kristian knows.
+- **The Mac runs out of memory.** A production build took 17.6 minutes instead
+  of ten seconds, and vitest's eleven worker processes made two tests
+  fail on timeout — they run green in 241 ms alone.
+  `npx vitest run --no-file-parallelism` works.
+
+---
+
+## Things that are easy to get wrong
+
+| Trap | What happens |
 |---|---|
-| **Deploye sitet til `.164`** | Lykkes, svarer 200, ændrer ingenting. Sitet ligger på `100.80.130.8`. |
-| **Verificere kun gennem Cloudflare** | En stoppet container ser sund ud i timevis. Spørg origin. |
-| Glemme at bumpe `?v=` på CSS | Cloudflare holder stylesheets i fire timer: ny opbygning, gammelt udseende. |
-| `docker restart` for at opdatere | Genbruger samme image. Ligner en vellykket opdatering, henter intet. |
-| `next build` mens dev-serveren kører | Begge skriver `.next`. Brug `npm run build:check`. |
-| Seed-scripts mens dev-serveren kører | SQLite-lås. |
-| Tilføje en kolonne til en tabel der findes | `CREATE TABLE IF NOT EXISTS` springer den over. Kolonnen skal i `ADDED_COLUMNS` i `sqlite.ts` **og** i skemaet. |
-| `requireContext()` i en API-rute | Den kaster, og en kastet fejl bliver til 500. Brug `getContext()` og returnér 401. |
-| Redigere `website/docs/` | Genereret af `npm run gen:docs`. Ret markdown'en. |
-| Relative stier fra `/docs/` | `href="docs.css"` bliver til `/docs/docs.css`. Filen ligger i roden. |
-| Stole på en grøn test uden at tælle | En sammenligning over nul elementer er altid grøn. Tjek at der overhovedet blev målt noget. |
-| Måle i browserruden uden at kigge | Viewport kan være nul, og så er hver måling vrøvl. Tag et skærmbillede. |
+| **Deploying the site to `.164`** | Succeeds, answers 200, changes nothing. The site lives on `100.80.130.8`. |
+| **Verifying only through Cloudflare** | A stopped container looks healthy for hours. Ask origin. |
+| Forgetting to bump `?v=` on CSS | Cloudflare holds stylesheets for four hours: new build, old look. |
+| `docker restart` to update | Reuses the same image. Looks like a successful update, pulls nothing. |
+| `next build` while the dev server is running | Both write `.next`. Use `npm run build:check`. |
+| Seed scripts while the dev server is running | SQLite lock. |
+| Adding a column to a table that exists | `CREATE TABLE IF NOT EXISTS` skips it. The column must go in `ADDED_COLUMNS` in `sqlite.ts` **and** in the schema. |
+| `requireContext()` in an API route | It throws, and a thrown error becomes a 500. Use `getContext()` and return 401. |
+| Editing `website/docs/` | Generated by `npm run gen:docs`. Fix the markdown. |
+| Relative paths from `/docs/` | `href="docs.css"` becomes `/docs/docs.css`. The file lives in the root. |
+| Trusting a green test without counting | A comparison over zero elements is always green. Check that anything was measured at all. |
+| Measuring in the browser pane without looking | The viewport can be zero, and then every measurement is nonsense. Take a screenshot. |
 
-Alle er dokumenteret med begrundelse i `DECISIONS.md`.
-
----
-
-## Drift
-
-**Opdatér appen:** push til `main` → GitHub Actions bygger → genstart serveren
-**Uruz** i Yggdrasil på `.164`. En genstart henter det nye image; det gør en
-`docker restart` ikke.
-
-**Opdatér sitet:** `npm run gen:docs`, så tar/scp/pak ud på `100.80.130.8`.
-Filerne er live med det samme — nginx serverer direkte fra datamappen. Fuld
-opskrift i `CLAUDE.md`.
-
-**Backup:** `/data` i sin helhed, ikke kun `.sqlite` — WAL kan gemme de nyeste
-skrivninger.
-
-**Efter en UI-ændring** kan telefonen vise den gamle udgave: service workeren
-cacher app-skallen. Slet appen fra hjemmeskærmen og læg den på igen.
+All are documented with reasoning in `DECISIONS.md`.
 
 ---
 
-## Hvis noget er galt
+## Operations
 
-| Symptom | Kig her |
+**Update the app:** push to `main` → GitHub Actions builds → restart the server
+**Uruz** in Yggdrasil on `.164`. A restart pulls the new image; a
+`docker restart` does not.
+
+**Update the site:** `npm run gen:docs`, then tar/scp/extract on `100.80.130.8`.
+The files are live immediately — nginx serves straight from the data directory. Full
+recipe in `CLAUDE.md`.
+
+**Backup:** `/data` in its entirety, not only `.sqlite` — the WAL can hold the latest
+writes.
+
+**After a UI change** the phone may show the old version: the service worker
+caches the app shell. Delete the app from the home screen and add it again.
+
+---
+
+## If something is wrong
+
+| Symptom | Look here |
 |---|---|
-| Sitet viser gammelt indhold | Deployede du til den rigtige vært? Er containeren oppe? Er CSS-versionen bumpet? |
-| Passkey fejler | **Mig → Admin → Passkey-opsætning** |
-| Mail kommer ikke | **Mig → Admin** viser hvilken vej der bruges. Tjek at `EMAIL_FROM` er en afsender du ejer |
-| Reminders kommer ikke | Bliver `/api/cron` kaldt? |
-| Containeren starter ikke | `curl https://uruz.yggdrasilpanel.com/api/health` — den rører databasen |
-| Gamle skærme på telefonen | Service worker-cache. Geninstallér fra hjemmeskærmen. |
+| The site shows old content | Did you deploy to the right host? Is the container up? Is the CSS version bumped? |
+| Passkey fails | **Me → Admin → Passkey setup** |
+| Mail doesn't arrive | **Me → Admin** shows which path is used. Check that `EMAIL_FROM` is a sender you own |
+| Reminders don't arrive | The startup log should say `scheduler: built-in, every 15 min`. If it was disabled (`URUZ_SCHEDULER=0`), is anything calling `/api/cron`? |
+| The container won't start | `curl https://uruz.yggdrasilpanel.com/api/health` — it touches the database |
+| Old screens on the phone | Service worker cache. Reinstall from the home screen. |
 
 ---
 
-## Konventioner
+## Conventions
 
-- **Brugervendt tekst findes i begge sprog**, i `/locales/`. Aldrig hardkodet —
-  heller ikke sidetitler og e-mails. **Engelsk er standarden.**
-- **Kodekommentarer er engelske**, og forklarer *hvorfor*, ikke *hvad*.
-- **Domænelogik hører i `/lib`**, ikke i komponenter.
-- **Enhver ikke-oplagt beslutning skrives i `DECISIONS.md`** med begrundelse.
-- Tests dækker ren logik. UI verificeres i browseren — og et skærmbillede er
-  mere troværdigt end en måling.
+- **User-facing text exists in both languages**, in `/locales/`. Never hardcoded —
+  not even page titles and e-mails. **English is the default.**
+- **Code comments are in English**, and explain *why*, not *what*.
+- **Domain logic belongs in `/lib`**, not in components.
+- **Every non-obvious decision is written down in `DECISIONS.md`** with reasoning.
+- Tests cover pure logic. UI is verified in the browser — and a screenshot is
+  more trustworthy than a measurement.

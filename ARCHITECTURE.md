@@ -1,183 +1,184 @@
-# Arkitektur
+# Architecture
 
-Hvordan Uruz hænger sammen, og hvorfor det er skruet sådan sammen.
-Beslutninger med begrundelse ligger i [DECISIONS.md](DECISIONS.md).
+How Uruz fits together, and why it is put together that way.
+Decisions with rationale live in [DECISIONS.md](DECISIONS.md).
 
 ---
 
-## Det korte overblik
+## The short overview
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  UI  (React Server + Client Components)                     │
-│  src/app/**            sider og API-ruter                   │
-│  src/components/**     komponenter, ingen domæne-logik       │
+│  src/app/**            pages and API routes                 │
+│  src/components/**     components, no domain logic          │
 └───────────────┬─────────────────────────────────────────────┘
-                │  kalder kun ind i /lib
+                │  only calls into /lib
 ┌───────────────▼─────────────────────────────────────────────┐
-│  DOMÆNE  (rene funktioner — ingen I/O, fuldt testet)        │
-│  strength.ts   1RM, PR-detektion, progression               │
-│  stats.ts      al statistik                                 │
-│  gamification  badges, rang, milepæle, rangliste            │
-│  coach/        indsigter, Mimir, tilpasning af træning      │
+│  DOMAIN  (pure functions — no I/O, fully tested)            │
+│  strength.ts   1RM, PR detection, progression               │
+│  stats.ts      all statistics                               │
+│  gamification  badges, rank, milestones, leaderboard        │
+│  coach/        insights, Mimir, workout adaptation          │
 └───────────────┬─────────────────────────────────────────────┘
                 │
 ┌───────────────▼─────────────┐   ┌──────────────────────────┐
-│  DATA  src/lib/db           │   │  TJENESTER               │
+│  DATA  src/lib/db           │   │  SERVICES                │
 │  repo/*  repositories       │   │  ai/provider   (LLM)     │
-│  én flade, to backends:     │   │  notify/push   (VAPID)   │
-│   • node:sqlite  (lokalt)   │   │  notify/email  (Resend)  │
+│  one surface, two backends: │   │  notify/push   (VAPID)   │
+│   • node:sqlite  (local)    │   │  notify/email  (Resend)  │
 │   • Supabase/Postgres + RLS │   │  auth/         (passkeys)│
 └─────────────────────────────┘   └──────────────────────────┘
 ```
 
-Den bærende regel: **UI kender ikke databasen, og domænet kender ikke UI.**
-Alt der kan regnes ud, regnes ud i rene funktioner der kan unit-testes uden at
-starte hverken browser eller database.
+The load-bearing rule: **the UI does not know the database, and the domain does not know the UI.**
+Everything that can be computed is computed in pure functions that can be
+unit-tested without starting either a browser or a database.
 
 ---
 
-## Lagene
+## The layers
 
-### 1. Domænet — `src/lib/domain`, `src/lib/coach`
+### 1. The domain — `src/lib/domain`, `src/lib/coach`
 
-Rene funktioner. Ingen `fetch`, ingen database, ingen React.
+Pure functions. No `fetch`, no database, no React.
 
-| Fil | Ansvar |
+| File | Responsibility |
 |---|---|
-| `types.ts` | Datamodellen. Én sandhed om formen på alting. |
-| `strength.ts` | Estimeret 1RM (Epley), volumen, PR-detektion, de tre progressionsmodeller. |
-| `stats.ts` | Al statistik: uger, tonnage, fremmøde, muskelbalance, stimer, sjove enheder. |
-| `gamification.ts` | Badge-evaluering, rang-point, milepæle, rangliste-sortering. |
-| `coach/insights.ts` | Regelbaserede træningsindsigter (plateau, ubalance, forsømt øvelse, deload, smerte). |
-| `coach/adapt.ts` | Oversætter en skavank/et ønske til konkrete, validerede ændringer. |
+| `types.ts` | The data model. One truth about the shape of everything. |
+| `strength.ts` | Estimated 1RM (Epley), volume, PR detection, the three progression models. |
+| `stats.ts` | All statistics: weeks, tonnage, attendance, muscle balance, streaks, fun units. |
+| `gamification.ts` | Badge evaluation, rank points, milestones, leaderboard sorting. |
+| `coach/insights.ts` | Rule-based training insights (plateau, imbalance, neglected exercise, deload, pain). |
+| `coach/adapt.ts` | Translates an ailment/a wish into concrete, validated changes. |
 
-Fordi de er rene, er hvert tal brugeren ser dækket af en test. Det er også
-grunden til at Uruz kan coache **helt uden AI**: indsigterne er kode, ikke
+Because they are pure, every number the user sees is covered by a test. That is
+also why Uruz can coach **entirely without AI**: the insights are code, not
 prompt.
 
 ### 2. Data — `src/lib/db`
 
-Et repository-lag. Resten af appen importerer fra `@/lib/db` og ser aldrig en
-databasedriver.
+A repository layer. The rest of the app imports from `@/lib/db` and never sees a
+database driver.
 
-- **Lokalt:** Nodes indbyggede `node:sqlite`. Nul opsætning — derfor virker
-  `npm run dev` uden konti eller nøgler.
-- **Produktion:** Supabase/Postgres med **Row Level Security**
-  (`supabase/migrations/0002_rls.sql`). Adgangskontrol ligger i databasen, så
-  en fejl i app-koden ikke kan lække en andens træningslog.
+- **Locally:** Node's built-in `node:sqlite`. Zero setup — which is why
+  `npm run dev` works without accounts or keys.
+- **Production:** Supabase/Postgres with **Row Level Security**
+  (`supabase/migrations/0002_rls.sql`). Access control lives in the database, so
+  a bug in the app code cannot leak someone else's training log.
 
-Ranglisten i Postgres er en `security definer`-funktion der **kun** returnerer
-aggregater. En privat profil er stadig med i kappestriden uden at dele rådata.
+The leaderboard in Postgres is a `security definer` function that returns
+**only** aggregates. A private profile still takes part in the contest without
+sharing raw data.
 
-### 3. Tjenester
+### 3. Services
 
-| Modul | Noter |
+| Module | Notes |
 |---|---|
-| `ai/provider.ts` | Én `chat()` over Anthropic, OpenAI, Google, Ollama og enhver OpenAI-kompatibel server. Skrevet med `fetch` frem for SDK'er, så en nøglefri model på eget net er et førsteklasses tilfælde. Håndterer reasoning-modeller. |
-| `auth/` | Opake server-sessioner i httpOnly-cookie. Passkeys via `@simplewebauthn`, magic-link som fallback. Ligger bag én flade, så Supabase Auth kan træde i stedet. |
-| `notify/` | Web Push (VAPID) med e-mail som fallback, og ravnenes tekstbanker. |
-| `offline/` | IndexedDB-kø + synk. |
-| `i18n/` | `core.ts` (delt), `server.ts` (server), `I18nProvider` (klient). |
+| `ai/provider.ts` | One `chat()` across Anthropic, OpenAI, Google, Ollama and any OpenAI-compatible server. Written with `fetch` rather than SDKs, so a key-free model on your own network is a first-class case. Handles reasoning models. |
+| `auth/` | Opaque server sessions in an httpOnly cookie. Passkeys via `@simplewebauthn`, magic link as fallback. Sits behind a single surface, so Supabase Auth can take its place. |
+| `notify/` | Web Push (VAPID) with email as fallback, and the ravens' text banks. |
+| `offline/` | IndexedDB queue + sync. |
+| `i18n/` | `core.ts` (shared), `server.ts` (server), `I18nProvider` (client). |
 
 ---
 
-## Sådan flyder et sæt gennem systemet
+## How a set flows through the system
 
-Det er appens vigtigste vej, så den er værd at følge:
+This is the app's most important path, so it is worth following:
 
 ```
-Brugeren trykker "Log sæt"
+The user taps "Log set"
    │
-   ├─→ UI'et viser sættet MED DET SAMME (optimistisk)
+   ├─→ The UI shows the set IMMEDIATELY (optimistic)
    │
-   ├─→ Sættet får et uuid i browseren  ← gør genafspilning idempotent
+   ├─→ The set gets a uuid in the browser  ← makes replay idempotent
    │
-   ├─→ Lægges i IndexedDB-køen         ← overlever reload og flytilstand
+   ├─→ Placed in the IndexedDB queue       ← survives reload and airplane mode
    │
-   └─→ Køen tømmes mod /api/sessions/log-set
+   └─→ The queue drains against /api/sessions/log-set
           │
-          ├─→ Serveren afviser dubletter på id
-          ├─→ PR-detektion i samme kald  ← reglerne findes ét sted
-          └─→ Rekorder gemmes
+          ├─→ The server rejects duplicates on id
+          ├─→ PR detection in the same call  ← the rules live in one place
+          └─→ Records are saved
 ```
 
-Er der intet net, bliver sættet liggende i køen og sendes af sig selv, når
-forbindelsen er tilbage. Rækkefølgen bevares: køen stopper ved første
-netværksfejl frem for at springe over.
+If there is no network, the set stays in the queue and is sent by itself once
+the connection is back. Order is preserved: the queue stops at the first
+network error rather than skipping ahead.
 
 ---
 
 ## Mimir
 
 ```
-Brugerens besked ─┐
-Egne data ────────┼─→ anonymiseret sammendrag ─→ model ─→ valideret svar
-Skavanker/ønsker ─┘                                          │
-                                                             ▼
-                                              forslag brugeren godkender
+The user's message ─┐
+Their own data ─────┼─→ anonymized summary ─→ model ─→ validated reply
+Ailments/wishes ────┘                                          │
+                                                               ▼
+                                                suggestions the user approves
 ```
 
-Tre regler der ikke kan forhandles:
+Three rules that are not up for negotiation:
 
-1. **Kun anonymiserede aggregater** forlader serveren. Modellen ser tal og
-   øvelsesnavne — aldrig navn, e-mail eller id'er.
-2. **Modellen opfinder ikke øvelser.** Den vælger fra en liste af id'er, og
-   hvert id valideres mod biblioteket bagefter.
-3. **Fejler modellen, coacher appen videre** på de regelbaserede indsigter.
-   En model-nedbrud koster aldrig brugeren hans coaching.
-
----
-
-## Klar til Yggdrasil Panel
-
-Uruz er bygget til senere at kunne hænge under et større panel:
-
-- **Sti:** sæt `NEXT_PUBLIC_BASE_PATH=/uruz`, så flytter hele appen sig.
-- **Auth:** al session-håndtering går gennem `src/lib/auth/session.ts`. Skal
-  panelet levere identiteten, er det den ene fil der skal skiftes.
-- **Data:** alt hænger på `hall_id`, så flere grupper kan bo i samme
-  installation uden at se hinanden — RLS håndhæver det allerede.
-- **Domænet er UI-frit**, så statistik og coaching kan genbruges i en
-  panel-widget uden at trække React-komponenter med.
+1. **Only anonymized aggregates** leave the server. The model sees numbers and
+   exercise names — never a name, an email or ids.
+2. **The model does not invent exercises.** It picks from a list of ids, and
+   every id is validated against the library afterwards.
+3. **If the model fails, the app keeps coaching** on the rule-based insights.
+   A model outage never costs the user their coaching.
 
 ---
 
-## Test
+## Ready for Yggdrasil Panel
+
+Uruz is built so it can later hang under a larger panel:
+
+- **Path:** set `NEXT_PUBLIC_BASE_PATH=/uruz` and the whole app moves.
+- **Auth:** all session handling goes through `src/lib/auth/session.ts`. If the
+  panel is to supply the identity, that is the one file to swap.
+- **Data:** everything hangs on `hall_id`, so several groups can live in the
+  same installation without seeing each other — RLS already enforces it.
+- **The domain is UI-free**, so statistics and coaching can be reused in a
+  panel widget without dragging React components along.
+
+---
+
+## Tests
 
 ```bash
 npm test
 ```
 
-104 tests, alle på ren logik:
+104 tests, all on pure logic:
 
-| Fil | Dækker |
+| File | Covers |
 |---|---|
-| `strength.test.ts` | 1RM, volumen, PR-regler, alle tre progressionsmodeller |
-| `stats.test.ts` | Uge-grænser, stimer, konsistens, balance, sjove enheder |
-| `logging.test.ts` | Hele log-vejen mod en rigtig database, inkl. idempotent genafspilning |
-| `gamification.test.ts` | Badge-kriterier, rang, milepæle, rangliste |
-| `adapt.test.ts` | Smerte-genkendelse, sikre alternativer, anvendelse af forslag |
+| `strength.test.ts` | 1RM, volume, PR rules, all three progression models |
+| `stats.test.ts` | Week boundaries, streaks, consistency, balance, fun units |
+| `logging.test.ts` | The whole logging path against a real database, incl. idempotent replay |
+| `gamification.test.ts` | Badge criteria, rank, milestones, leaderboard |
+| `adapt.test.ts` | Pain recognition, safe alternatives, applying suggestions |
 
-Testene kører mod en midlertidig SQLite-fil, så de er hurtige og rører aldrig
-rigtige data.
+The tests run against a temporary SQLite file, so they are fast and never touch
+real data.
 
 ---
 
-## Mappestruktur
+## Folder structure
 
 ```
 src/
   app/
-    (app)/          appen bag login (træn, statistik, valhal, mig, admin …)
-    api/            API-ruter (log, coach, push, cron, export)
-    login/ welcome/ invite/    offentlige sider
+    (app)/          the app behind login (train, stats, valhal, me, admin …)
+    api/            API routes (log, coach, push, cron, export)
+    login/ welcome/ invite/    public pages
   components/
     app/ auth/ train/ library/ stats/ valhal/ coach/ admin/ exercise/ ui/
   lib/
     domain/  db/  coach/  ai/  auth/  notify/  offline/  i18n/
 locales/          da.json, en.json
-supabase/migrations/   produktions-skema + RLS
-scripts/          setup, seed, demo-historik, ikoner, VAPID
-tests/            unit- og integrationstests
+supabase/migrations/   production schema + RLS
+scripts/          setup, seed, demo history, icons, VAPID
+tests/            unit and integration tests
 ```

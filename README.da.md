@@ -194,15 +194,18 @@ invitations- og login-links virker altså stadig, mens du udvikler.
 > på et domæne du ikke sender fra, ryger mailen i filteret eller retur.
 > **Mig → Admin** viser hvilken af de tre veje der faktisk er i brug.
 
-### Reminders skal have et ur
+### Reminders har deres eget ur
 
-Reminders sendes af `/api/cron`, som skal kaldes med jævne mellemrum (hvert
-kvarter er fint). Sæt `CRON_SECRET` i `.env.local` og peg fx Vercel Cron,
-Supabase scheduled functions eller en simpel cron-linje på:
+I produktion kører appen selv sit baggrundsjob hvert kvarter — reminders
+virker uden opsætning. Vil du hellere styre det udefra (Vercel Cron, Supabase
+scheduled functions eller en simpel cron-linje), så sæt `CRON_SECRET` og kald:
 
 ```bash
 curl -H "Authorization: Bearer $CRON_SECRET" https://din-app.dk/api/cron
 ```
+
+Arbejdet er idempotent, så begge dele på én gang gør ingen skade; sæt
+`URUZ_SCHEDULER=0` hvis den eksterne skal være den eneste afsender.
 
 ---
 

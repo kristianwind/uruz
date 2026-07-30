@@ -193,15 +193,21 @@ Apple's rule, not the app's.
 
 ### The scheduler
 
-**Reminders send nothing until something calls `/api/cron`.** Set `CRON_SECRET`
-and have something hit the endpoint every fifteen minutes:
+**The app runs its own scheduler.** In production it ticks every fifteen
+minutes on its own — reminders, nudges and the weekly analysis need no setup.
+
+If you would rather drive it from an external scheduler (Vercel Cron, a
+systemd timer, plain `curl`), set `CRON_SECRET` and hit the endpoint every
+fifteen minutes:
 
 ```bash
 curl -H "Authorization: Bearer $CRON_SECRET" https://your-app.example.com/api/cron
 ```
 
 Without the secret the endpoint refuses to run. That is deliberate — it sends
-messages to real people.
+messages to real people. The work is idempotent, so the built-in scheduler and
+an external one can coexist; set `URUZ_SCHEDULER=0` if you want the external
+one to be the only driver.
 
 ---
 
@@ -253,7 +259,7 @@ or reload in the browser.
 | Container will not start | `curl https://your-app/api/health` — it touches the database, so it catches storage problems too |
 | Passkeys fail | **Me → Admin → Passkey setup**. Address and passkey domain must match, and it must be HTTPS |
 | Mail never arrives | **Me → Admin** shows which route is in use. If it says dev mode, nothing is configured. Check `EMAIL_FROM` is a sender you own |
-| Reminders never fire | Is `CRON_SECRET` set, and is anything actually calling `/api/cron`? |
+| Reminders never fire | The log should say `scheduler: built-in, every 15 min` at startup. If you disabled it (`URUZ_SCHEDULER=0`), is anything actually calling `/api/cron`? |
 | Mimir silent | **Me → Admin → AI status → Check connection** |
 | Stale screens on phones | Service worker cache — reinstall from the home screen |
 

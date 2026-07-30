@@ -189,15 +189,19 @@ sign-in links still work while you are developing.
 > points at a domain you do not send from, mail lands in spam or bounces.
 > **Me → Admin** shows which of the three routes is actually in use.
 
-### Reminders need a clock
+### Reminders keep their own clock
 
-Reminders are sent by `/api/cron`, which has to be called regularly — every
-fifteen minutes is fine. Set `CRON_SECRET` and point Vercel Cron, a Supabase
-scheduled function, or a plain cron line at:
+In production the app ticks its own scheduler every fifteen minutes — reminders
+work with no setup at all. If you would rather drive it from an external
+scheduler (Vercel Cron, a Supabase scheduled function, or a plain cron line),
+set `CRON_SECRET` and call:
 
 ```bash
 curl -H "Authorization: Bearer $CRON_SECRET" https://your-app.example.com/api/cron
 ```
+
+The work is idempotent, so both at once is harmless; set `URUZ_SCHEDULER=0` if
+the external one should be the only driver.
 
 ---
 

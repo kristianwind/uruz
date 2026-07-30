@@ -200,12 +200,17 @@ back to email.</p>
 <p>On iOS, push only works once the app has been added to the home screen. That is
 Apple&#39;s rule, not the app&#39;s.</p>
 <h3 id="the-scheduler">The scheduler</h3>
-<p><strong>Reminders send nothing until something calls <code>/api/cron</code>.</strong> Set <code>CRON_SECRET</code>
-and have something hit the endpoint every fifteen minutes:</p>
+<p><strong>The app runs its own scheduler.</strong> In production it ticks every fifteen
+minutes on its own — reminders, nudges and the weekly analysis need no setup.</p>
+<p>If you would rather drive it from an external scheduler (Vercel Cron, a
+systemd timer, plain <code>curl</code>), set <code>CRON_SECRET</code> and hit the endpoint every
+fifteen minutes:</p>
 <pre><code class="language-bash">curl -H &quot;Authorization: Bearer $CRON_SECRET&quot; https://your-app.example.com/api/cron
 </code></pre>
 <p>Without the secret the endpoint refuses to run. That is deliberate — it sends
-messages to real people.</p>
+messages to real people. The work is idempotent, so the built-in scheduler and
+an external one can coexist; set <code>URUZ_SCHEDULER=0</code> if you want the external
+one to be the only driver.</p>
 <hr>
 <h2 id="backup">Backup</h2>
 <p><strong>Everything is in <code>/data</code>.</strong> Back up the whole directory, not just the
@@ -257,7 +262,7 @@ or reload in the browser.</p>
 </tr>
 <tr>
 <td>Reminders never fire</td>
-<td>Is <code>CRON_SECRET</code> set, and is anything actually calling <code>/api/cron</code>?</td>
+<td>The log should say <code>scheduler: built-in, every 15 min</code> at startup. If you disabled it (<code>URUZ_SCHEDULER=0</code>), is anything actually calling <code>/api/cron</code>?</td>
 </tr>
 <tr>
 <td>Mimir silent</td>
