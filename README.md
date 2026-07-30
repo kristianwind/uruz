@@ -38,7 +38,24 @@ rigtige personers træning. Appen kører på dansk med `npm run gen:screenshots:
 
 ---
 
+## Vælg én af tre veje
+
+De tre måder at køre Uruz på er **alternativer, ikke trin**. Vælg én:
+
+| | Til hvem | Hvor |
+|---|---|---|
+| **Lokalt med Node** | Prøv den af, eller udvikl på den | [Kom i gang på 2 minutter](#kom-i-gang-på-2-minutter) nedenfor |
+| **Docker** | Kør den permanent på en maskine du selv har | [Drift med Docker](#drift-med-docker) |
+| **Rune i Yggdrasil Panel** | Du har allerede panelet, og vil have backup og opdatering med | [Drift som Rune](#drift-som-rune-i-yggdrasil-panel) |
+
+Alle tre kører nøjagtig samme app med samme data. Du kan begynde lokalt og
+flytte den senere — databasen er én fil, du kan tage med.
+
+---
+
 ## Kom i gang på 2 minutter
+
+*Den lokale vej. Skal den køre permanent, så tag Docker eller Yggdrasil i stedet.*
 
 Du skal have [Node.js](https://nodejs.org) version 22 eller nyere. Åbn en
 terminal i mappen med projektet og skriv:
@@ -184,6 +201,23 @@ Supabase scheduled functions eller en simpel cron-linje på:
 ```bash
 curl -H "Authorization: Bearer $CRON_SECRET" https://din-app.dk/api/cron
 ```
+
+---
+
+## Drift med Docker
+
+*Én maskine, én container, ingen panel.*
+
+```bash
+docker run -d --name uruz -p 3000:3000 -v uruz-data:/data \
+  ghcr.io/kristianwind/uruz:latest
+```
+
+Imaget bygges til både `amd64` og `arm64`, så det kører også på en Raspberry Pi.
+`/data` er alt — SQLite-filen og dens skrivelog. Monter den et sted du tager
+backup af.
+
+Den fulde opskrift står i **[Hosting Uruz yourself](docs/guides/self-hosting.md)**.
 
 ---
 

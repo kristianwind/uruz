@@ -25,6 +25,16 @@ scheduler are all things you can add later, or never.
 
 ## Three ways to run it
 
+**These are alternatives, not steps.** Pick one — all three run the same app
+against the same data, and you can move between them later, because the database
+is a single file you can carry.
+
+| | For whom |
+|---|---|
+| **Node, locally** | Trying it out, or working on it |
+| **Docker** | Running it permanently on a machine you have |
+| **A Rune in Yggdrasil Panel** | You already run the panel, and want its backups and updates |
+
 ### On your own machine, to try it
 
 ```bash
