@@ -248,6 +248,17 @@ Lokalt kører Uruz på en indbygget SQLite-fil — nul opsætning. Til produktio
 
 ## Dokumentation
 
+**Brugervejledninger** (engelsk, som appens standardsprog):
+
+- **[Sådan bruger du Uruz](docs/guides/using-uruz.md)** — for den der træner.
+  Log ind, læg den på telefonen, log en træning, ret et sæt, arkivet, byg dine
+  egne træninger, Mimir, Valhal, reminders og hvordan du får dine data ud.
+- **[Hos­t den selv](docs/guides/self-hosting.md)** — for den der kører serveren.
+  Tre måder at køre den på, e-mail, AI, notifikationer, backup, opdatering og
+  de fælder der er lette at falde i.
+
+**Baggrund:**
+
 - **[HANDOFF.md](HANDOFF.md)** — status, hvad der er verificeret, og hvad der ikke er.
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** — hvordan det hænger sammen, og hvorfor.
 - **[DECISIONS.md](DECISIONS.md)** — hver ikke-oplagt beslutning og dens begrundelse.
