@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/app/PageHeader";
 import { Card, CardTitle, CardMuted } from "@/components/ui/Card";
-import { ChevronRightIcon, BoltIcon, ClockIcon } from "@/components/ui/icons";
+import { Button } from "@/components/ui/Button";
+import { ChevronRightIcon, BoltIcon, ClockIcon, PlusIcon } from "@/components/ui/icons";
 import { getContext } from "@/lib/auth/session";
 import { listTemplates, getWorkoutExercises, getWorkout } from "@/lib/db/repo/workouts";
 import { getActiveSession } from "@/lib/db/repo/sessions";
@@ -103,18 +104,22 @@ export default async function TrainPage() {
             );
           })}
         </ul>
-        <Link
-          href="/library"
-          className="mt-4 flex items-center justify-center gap-1 py-2 text-sm font-medium text-accent"
-        >
-          {t("library.buildYourOwn")} <ChevronRightIcon size={16} />
-        </Link>
-      <Link
-        href="/train/history"
-        className="mt-2 flex items-center justify-center gap-1 py-3 text-sm font-medium text-muted"
-      >
-        {t("train.history")} <ChevronRightIcon size={16} />
-      </Link>
+        {/* Two real buttons, not two lines of text. Both were centred links in
+            the same grey as the rest of the page, at the bottom of a scroll —
+            "Past workouts" is the only way to a logged workout, and it read as
+            a footnote. */}
+        <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:max-w-2xl">
+          <Link href="/train/history">
+            <Button variant="secondary" size="lg" fullWidth>
+              <ClockIcon size={18} /> {t("train.history")}
+            </Button>
+          </Link>
+          <Link href="/library">
+            <Button variant="secondary" size="lg" fullWidth>
+              <PlusIcon size={18} /> {t("library.buildYourOwn")}
+            </Button>
+          </Link>
+        </div>
       </section>
     </div>
   );
