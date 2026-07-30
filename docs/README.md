@@ -37,6 +37,15 @@ deployed.
 
 ---
 
+## On the website
+
+The two guides are also published at
+[uruz-training.com/docs](https://uruz-training.com/docs/using-uruz.html).
+
+Those pages are generated from these files by `npm run gen:docs`, run by hand
+and committed — the site is static files with no build step, and that is worth
+keeping. Edit the markdown, never `website/docs/`.
+
 ## A note on language
 
 These guides are in English, matching the app's default language, the front page

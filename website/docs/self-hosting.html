@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hosting Uruz yourself — the operator's guide · Uruz ᚢ</title>
+<meta name="description" content="Three ways to run Uruz, being reachable over HTTPS, email, the AI coach, notifications, backup, updating, and the traps that are easy to fall into.">
+<meta name="theme-color" content="#0b1016">
+<meta property="og:title" content="Hosting Uruz yourself — the operator's guide">
+<meta property="og:description" content="Three ways to run Uruz, being reachable over HTTPS, email, the AI coach, notifications, backup, updating, and the traps that are easy to fall into.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://uruz-training.com/docs/self-hosting.html">
+<link rel="icon" href="../img/favicon-32.png">
+<link rel="canonical" href="https://uruz-training.com/docs/self-hosting.html">
+<link rel="stylesheet" href="../styles.css?v=20260728b">
+<link rel="stylesheet" href="docs.css?v=20260730">
+<script>document.documentElement.classList.remove("no-js")</script>
+</head>
+<body>
+<a class="skip" href="#doc">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../"><span class="rune">ᚢ</span> Uruz</a>
+    <nav class="nav-links doc-nav">
+        <a href="using-uruz.html">Using Uruz</a>
+        <b aria-current="page">Hosting it yourself</b>
+    </nav>
+    <div class="nav-end">
+      <a class="btn ghost" href="https://github.com/kristianwind/uruz">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap doc-wrap" id="doc">
+  <nav class="doc-toc" aria-label="On this page">
+    <p class="doc-toc-title">On this page</p>
+    <ul>
+          <li><a href="#what-you-need">What you need</a></li>
+          <li><a href="#three-ways-to-run-it">Three ways to run it</a></li>
+          <li><a href="#being-reachable">Being reachable</a></li>
+          <li><a href="#configuration">Configuration</a></li>
+          <li><a href="#backup">Backup</a></li>
+          <li><a href="#updating">Updating</a></li>
+          <li><a href="#when-something-is-wrong">When something is wrong</a></li>
+          <li><a href="#a-few-things-that-are-easy-to-get-wrong">A few things that are easy to get wrong</a></li>
+          <li><a href="#security-honestly">Security, honestly</a></li>
+    </ul>
+  </nav>
+  <article class="doc">
+<h1 id="hosting-uruz-yourself">Hosting Uruz yourself</h1>
+<p>Uruz is free software under <a href="https://github.com/kristianwind/uruz/blob/main/LICENSE">AGPL-3.0</a>. You can run it for
+yourself, your training partner or your gym, and nobody can take that away.</p>
+<p>This is the operator&#39;s guide. If you just want to train, read
+<a href="using-uruz.html">using Uruz</a>.</p>
+<hr>
+<h2 id="what-you-need">What you need</h2>
+<p>Almost nothing. One machine that can run a container, or Node 22 and a terminal.</p>
+<p><strong>There is no database to install.</strong> Uruz stores everything in a single SQLite
+file using Node&#39;s built-in driver — no Postgres, no Redis, no queue. That is a
+deliberate limit: a training log for a handful of people does not need a
+cluster, and every piece of infrastructure you do not have is one you cannot be
+woken up by.</p>
+<p><strong>Everything else is optional.</strong> The AI coach, notifications, email and the
+scheduler are all things you can add later, or never.</p>
+<hr>
+<h2 id="three-ways-to-run-it">Three ways to run it</h2>
+<h3 id="on-your-own-machine-to-try-it">On your own machine, to try it</h3>
+<pre><code class="language-bash">npm install
+</code></pre>
+<pre><code class="language-bash">npm run setup
+</code></pre>
+<pre><code class="language-bash">npm run dev
+</code></pre>
+<p>Open <strong><a href="http://localhost:3000">http://localhost:3000</a></strong>. The first screen asks you to create the
+administrator account — that is you.</p>
+<p>Want it populated so you can see what the statistics look like?</p>
+<pre><code class="language-bash">npm run db:seed:demo &amp;&amp; npm run db:seed:history
+</code></pre>
+<p>That creates demo users and about twelve weeks of plausible training.</p>
+<h3 id="with-docker">With Docker</h3>
+<pre><code class="language-bash">docker run -d \
+  --name uruz \
+  -p 3000:3000 \
+  -v uruz-data:/data \
+  ghcr.io/kristianwind/uruz:latest
+</code></pre>
+<p>The image is built for <code>linux/amd64</code> and <code>linux/arm64</code>, so it runs on a Raspberry
+Pi as well as a server. <code>/data</code> is where everything lives — the SQLite file and
+its write-ahead log. Mount it somewhere you back up.</p>
+<h3 id="as-a-rune-in-yggdrasil-panel">As a Rune in Yggdrasil Panel</h3>
+<p><a href="https://yggdrasilpanel.com">Yggdrasil Panel</a> turns a server into something you
+can point and click at, and Uruz is packaged as one of its <em>runes</em>: an app the
+panel can plant, with its own data directory, backups and environment.</p>
+<ol>
+<li><strong>Runes → Carve a rune</strong> → import <a href="https://github.com/kristianwind/uruz/blob/main/yggdrasil/uruz.yaml"><code>yggdrasil/uruz.yaml</code></a></li>
+<li>Create a server from the rune and give it a subdomain</li>
+<li>Fill in whichever fields you want — all of them are optional</li>
+</ol>
+<blockquote>
+<p>The panel keeps its own copy of a rune. Editing the file in the repository
+changes nothing until you import it again.</p>
+</blockquote>
+<hr>
+<h2 id="being-reachable">Being reachable</h2>
+<p>Uruz needs to know the address it is served on. It is used for sign-in links and
+for the passkey domain, and getting it wrong breaks both in ways that are hard
+to trace.</p>
+<p><strong>You usually do not have to configure it.</strong> Behind a reverse proxy — Nginx
+Proxy Manager, a Cloudflare Tunnel, Caddy — Uruz reads <code>x-forwarded-host</code> and
+<code>x-forwarded-proto</code> from the request and works it out. Set
+<code>NEXT_PUBLIC_APP_URL</code> only if you want to pin it; an explicit value always wins.</p>
+<p><strong>Passkeys need HTTPS.</strong> Browsers refuse them otherwise, and they refuse quietly:
+the failure happens on the device and the server never hears about it. The one
+exception is <code>localhost</code>, which browsers treat as secure so local development
+works.</p>
+<p><strong>Me → Admin → Passkey setup</strong> shows the address and the passkey domain the app
+has settled on, and says plainly when they cannot work together.</p>
+<hr>
+<h2 id="configuration">Configuration</h2>
+<p>Copy <code>.env.example</code> to <code>.env.local</code> and fill in what you want. In a container,
+these are environment variables; in Yggdrasil, they are the rune&#39;s fields.</p>
+<h3 id="email">Email</h3>
+<p>Uruz sends sign-in links, invitations and reminders. There are two ways, and
+one fallback.</p>
+<p><strong>SMTP</strong> — any mail server. Your host&#39;s, your company&#39;s, a transactional
+service, or Gmail with an app password.</p>
+<pre><code class="language-bash">SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=uruz@example.com
+SMTP_PASSWORD=…
+EMAIL_FROM=&quot;Uruz &lt;uruz@example.com&gt;&quot;
+</code></pre>
+<p>Port 587 starts in plaintext and upgrades with STARTTLS; 465 is TLS from the
+first byte. Uruz works that out from the port — set <code>SMTP_SECURE=true|false</code>
+only if your server is unusual.</p>
+<p><strong>Resend</strong> — an API key instead of a mail server: set <code>RESEND_API_KEY</code> and
+<code>EMAIL_FROM</code>. If both are configured, SMTP wins.</p>
+<p><strong>Neither</strong> — messages are written to the container log instead, links and all.
+That is enough to complete a sign-in while you are setting things up.</p>
+<blockquote>
+<p><strong>This fallback is not a place to stay.</strong> A sign-in link in a log is a working
+key to somebody&#39;s account for anyone who can read logs. Configure mail before
+anyone else uses the installation.</p>
+</blockquote>
+<p>Most providers reject a sender they do not consider yours. If <code>EMAIL_FROM</code>
+points at a domain you do not send from, mail lands in spam or bounces.</p>
+<p><strong>Me → Admin</strong> shows which of the three routes is actually in use.</p>
+<h3 id="the-ai-coach">The AI coach</h3>
+<p>Uruz is not tied to one vendor. Set <code>AI_PROVIDER</code> to <code>anthropic</code>, <code>openai</code>,
+<code>google</code>, <code>ollama</code> or <code>custom</code>.</p>
+<pre><code class="language-bash"># A model on your own network — no API key needed
+AI_PROVIDER=custom
+AI_BASE_URL=http://your-server.lan:8080/v1
+AI_MODEL=gemma-4-26b-qat
+</code></pre>
+<pre><code class="language-bash"># Or a hosted one
+AI_PROVIDER=anthropic
+AI_MODEL=claude-sonnet-5
+AI_API_KEY=sk-ant-…
+</code></pre>
+<p>Without a model, Uruz still coaches — the suggestions are rule-based instead of
+written by a language model, which is the intended fallback rather than a
+degraded mode.</p>
+<p>Check the connection under <strong>Me → Admin → AI status</strong>.</p>
+<blockquote>
+<p>Worth knowing for your users&#39; sake: with a model on your own hardware,
+nothing about anyone&#39;s training leaves the building. With a hosted provider,
+their questions and constraints go to that provider. Say which one you run.</p>
+</blockquote>
+<h3 id="notifications">Notifications</h3>
+<pre><code class="language-bash">npm run gen:vapid
+</code></pre>
+<p>Put the two keys it prints into your configuration. Without them, reminders fall
+back to email.</p>
+<p>On iOS, push only works once the app has been added to the home screen. That is
+Apple&#39;s rule, not the app&#39;s.</p>
+<h3 id="the-scheduler">The scheduler</h3>
+<p><strong>Reminders send nothing until something calls <code>/api/cron</code>.</strong> Set <code>CRON_SECRET</code>
+and have something hit the endpoint every fifteen minutes:</p>
+<pre><code class="language-bash">curl -H &quot;Authorization: Bearer $CRON_SECRET&quot; https://your-app.example.com/api/cron
+</code></pre>
+<p>Without the secret the endpoint refuses to run. That is deliberate — it sends
+messages to real people.</p>
+<hr>
+<h2 id="backup">Backup</h2>
+<p><strong>Everything is in <code>/data</code>.</strong> Back up the whole directory, not just the
+<code>.sqlite</code> file: SQLite runs in write-ahead mode, so the newest writes may still
+be in <code>uruz.sqlite-wal</code> when you copy it. A backup of the database file alone
+can silently miss the last few sets somebody logged.</p>
+<p>In Yggdrasil the rune already declares <code>backup.include: [&quot;.&quot;]</code>, which covers it.</p>
+<p>To restore, stop the container, put the directory back, and start it again.</p>
+<p>Individual users can also export their own data from <strong>Me → Export my data</strong>, in
+JSON or CSV. That is worth telling people about: it is what makes leaving
+possible, and knowing you can leave is why people stay.</p>
+<hr>
+<h2 id="updating">Updating</h2>
+<p>Pull the new image and recreate the container:</p>
+<pre><code class="language-bash">docker pull ghcr.io/kristianwind/uruz:latest
+docker stop uruz &amp;&amp; docker rm uruz &amp;&amp; docker run -d … # same flags as before
+</code></pre>
+<p>In Yggdrasil, restart the server from the panel — it re-pulls on start.</p>
+<blockquote>
+<p>A plain <code>docker restart</code> does <strong>not</strong> fetch a new image. It restarts the same
+container with the same one, which looks like a successful update and changes
+nothing.</p>
+</blockquote>
+<p><strong>The database migrates itself.</strong> New tables and columns are added on start;
+nothing is dropped or renamed, so an older data directory keeps working.</p>
+<p><strong>After a visible change, phones may show the old version.</strong> The app caches
+itself so it can work offline. Remove it from the home screen and add it again,
+or reload in the browser.</p>
+<hr>
+<h2 id="when-something-is-wrong">When something is wrong</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Where to look</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Container will not start</td>
+<td><code>curl https://your-app/api/health</code> — it touches the database, so it catches storage problems too</td>
+</tr>
+<tr>
+<td>Passkeys fail</td>
+<td><strong>Me → Admin → Passkey setup</strong>. Address and passkey domain must match, and it must be HTTPS</td>
+</tr>
+<tr>
+<td>Mail never arrives</td>
+<td><strong>Me → Admin</strong> shows which route is in use. If it says dev mode, nothing is configured. Check <code>EMAIL_FROM</code> is a sender you own</td>
+</tr>
+<tr>
+<td>Reminders never fire</td>
+<td>Is <code>CRON_SECRET</code> set, and is anything actually calling <code>/api/cron</code>?</td>
+</tr>
+<tr>
+<td>Mimir silent</td>
+<td><strong>Me → Admin → AI status → Check connection</strong></td>
+</tr>
+<tr>
+<td>Stale screens on phones</td>
+<td>Service worker cache — reinstall from the home screen</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="a-few-things-that-are-easy-to-get-wrong">A few things that are easy to get wrong</h2>
+<p>These are written down because they were got wrong first.</p>
+<p><strong>Running <code>next build</code> while the dev server is running</strong> corrupts <code>.next</code> —
+both write to it. Use <code>npm run build:check</code>, which builds somewhere else.</p>
+<p><strong>Running the seed scripts while the dev server is running</strong> hits a SQLite lock.
+Stop the server first.</p>
+<p><strong>Assuming a rune update changes an existing server.</strong> Yggdrasil seeds a rune&#39;s
+defaults first and lays the server&#39;s <em>saved</em> environment on top, so an old
+default stays put on a server that already exists.</p>
+<p><strong>Trusting a plain restart to update.</strong> See above — it does not.</p>
+<hr>
+<h2 id="security-honestly">Security, honestly</h2>
+<p>Uruz is early software written for a handful of people, and it says so on the
+front page. What it does do:</p>
+<ul>
+<li>Sessions are opaque tokens in the database, not signed blobs — revoking one
+actually revokes it</li>
+<li>Passwords are scrypt with per-password salts, and the cost parameters travel
+with the hash so they can be raised later</li>
+<li>Sign-in attempts are rate-limited per account and per address</li>
+<li>Changing a password ends every other session</li>
+<li>Removing a passkey asks for your password first, and refuses to remove your
+last way in</li>
+<li>The last administrator cannot be deactivated</li>
+<li>Sign-in links are single-use and expire in 30 minutes</li>
+</ul>
+<p>What it does not do: multi-tenancy. One installation is one hall. If you want
+two groups that cannot see each other, run two installations — that is cheap
+with containers, and the isolation is then physical rather than a policy
+somebody could get wrong.</p>
+<p><strong>If you host this for other people</strong>, know that a training log with bodyweight
+and injuries is closer to health data than to ordinary account data, and in the
+EU that carries obligations. Say what you store, where it goes, and what happens
+to it when someone leaves.</p>
+
+    <hr>
+    <p class="doc-foot">
+      This page is generated from
+      <a href="https://github.com/kristianwind/uruz/blob/main/docs/guides/self-hosting.md"><code>docs/guides/self-hosting.md</code></a>.
+      Corrections are welcome as a pull request.
+    </p>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <div class="brand" style="margin-bottom:6px"><span class="rune">ᚢ</span> Uruz</div>
+      <div>Build strength, one rune at a time.</div>
+    </div>
+    <div style="text-align:right">
+      <a href="https://github.com/kristianwind/uruz">GitHub</a> ·
+      <a href="https://yggdrasilpanel.com">Yggdrasil Panel</a> ·
+      <a href="../">Home</a>
+    </div>
+  </div>
+  <div class="wrap">
+    <p class="foot-note">
+      ⚠️ Early development &amp; built with Claude Code. Provided as-is, with no warranty and no liability whatsoever — you use it entirely at your own risk. Free software under <a href="https://github.com/kristianwind/uruz/blob/main/LICENSE">AGPL-3.0</a>.
+    </p>
+  </div>
+</footer>
+</body>
+</html>

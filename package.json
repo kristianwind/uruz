@@ -21,7 +21,8 @@
     "gen:icons": "tsx scripts/gen-icons.ts",
     "gen:vapid": "tsx scripts/gen-vapid.ts",
     "gen:screenshots": "URUZ_SHOT_LOCALE=en tsx scripts/screenshots.ts",
-    "gen:screenshots:da": "URUZ_SHOT_LOCALE=da URUZ_SHOT_PORT=3201 tsx scripts/screenshots.ts"
+    "gen:screenshots:da": "URUZ_SHOT_LOCALE=da URUZ_SHOT_PORT=3201 tsx scripts/screenshots.ts",
+    "gen:docs": "tsx scripts/docs-to-html.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.68.0",
@@ -48,6 +49,7 @@
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@types/web-push": "^3.6.4",
+    "marked": "^18.0.7",
     "puppeteer-core": "^25.4.0",
     "tailwindcss": "^4.1.0",
     "tsx": "^4.23.1",

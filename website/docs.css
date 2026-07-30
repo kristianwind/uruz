@@ -1,0 +1,144 @@
+/* Documentation pages.
+ *
+ * Loaded on top of styles.css, which already carries the colours, the type and
+ * the header/footer. This file only adds what a long read needs: a measure that
+ * does not run across the whole screen, a table of contents that follows on a
+ * wide one, and code that is legible.
+ *
+ * Bump the ?v= on the <link> in scripts/docs-to-html.ts when this changes —
+ * Cloudflare holds stylesheets for four hours, and a new layout with old
+ * styling looks like a bug rather than a cache. */
+
+.doc-wrap {
+  display: block;
+  padding-top: 28px;
+  padding-bottom: 64px;
+}
+
+.doc {
+  max-width: 46rem; /* ~75 characters — a line you can come back to */
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+
+.doc h1 {
+  font-size: clamp(1.9rem, 5vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+}
+
+.doc h2 {
+  font-size: 1.45rem;
+  letter-spacing: -0.01em;
+  margin: 44px 0 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.doc h3 {
+  font-size: 1.12rem;
+  margin: 28px 0 8px;
+  color: var(--text);
+}
+
+/* The header is sticky, so an anchor would otherwise land underneath it. */
+.doc h1, .doc h2, .doc h3 { scroll-margin-top: 84px; }
+
+.doc p, .doc li { color: var(--muted); }
+.doc strong { color: var(--text); font-weight: 650; }
+.doc a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+.doc ul, .doc ol { padding-left: 1.25rem; margin: 12px 0; }
+.doc li { margin: 6px 0; }
+.doc li::marker { color: var(--faint); }
+
+.doc code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 5px;
+  color: var(--text);
+}
+
+.doc pre {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  overflow-x: auto; /* a long command scrolls itself, not the page */
+  margin: 16px 0;
+}
+.doc pre code { background: none; border: 0; padding: 0; font-size: 0.86rem; line-height: 1.6; }
+
+.doc blockquote {
+  margin: 18px 0;
+  padding: 12px 16px;
+  border-left: 3px solid var(--accent);
+  background: var(--bg-elev);
+  border-radius: 0 10px 10px 0;
+}
+.doc blockquote p:last-child { margin-bottom: 0; }
+
+/* Tables carry enumerable facts here — symptom/cause, setting/meaning. */
+.doc-table-wrap, .doc table { display: block; overflow-x: auto; }
+.doc table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.95rem; }
+.doc th, .doc td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.doc th { color: var(--text); font-weight: 650; white-space: nowrap; }
+.doc td { color: var(--muted); }
+
+.doc hr { border: 0; border-top: 1px solid var(--border); margin: 40px 0 20px; }
+
+.doc-foot { font-size: 0.9rem; color: var(--faint); }
+.doc-foot code { font-size: 0.85em; }
+
+/* ---- Table of contents -------------------------------------------------- */
+
+.doc-toc {
+  margin: 0 0 28px;
+  padding: 14px 16px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.doc-toc-title {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+}
+.doc-toc ul { list-style: none; margin: 0; padding: 0; }
+.doc-toc li { margin: 3px 0; }
+.doc-toc a { color: var(--muted); text-decoration: none; font-size: 0.94rem; }
+.doc-toc a:hover { color: var(--text); }
+
+/* On a wide screen the contents sit beside the text and stay put while you
+   read. Below that they are a box at the top, which is the right order on a
+   phone: you see where you are before you start. */
+@media (min-width: 1060px) {
+  .doc-wrap {
+    display: grid;
+    grid-template-columns: 15rem minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+  }
+  .doc-toc {
+    position: sticky;
+    top: 88px;
+    order: -1;
+    background: none;
+    border: 0;
+    padding: 0;
+  }
+  .doc { margin: 0; }
+}
+
+/* The two guides sit where the section links do on the front page. */
+@media (max-width: 800px) {
+  .doc-nav { display: flex; gap: 14px; font-size: 0.86rem; }
+  .doc-nav b { color: var(--accent); }
+}

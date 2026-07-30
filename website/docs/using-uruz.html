@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Using Uruz — for the person training · Uruz ᚢ</title>
+<meta name="description" content="How to sign in, install Uruz on your phone, log a workout, correct a set, use the archive, build your own workouts, and get your data out.">
+<meta name="theme-color" content="#0b1016">
+<meta property="og:title" content="Using Uruz — for the person training">
+<meta property="og:description" content="How to sign in, install Uruz on your phone, log a workout, correct a set, use the archive, build your own workouts, and get your data out.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://uruz-training.com/docs/using-uruz.html">
+<link rel="icon" href="../img/favicon-32.png">
+<link rel="canonical" href="https://uruz-training.com/docs/using-uruz.html">
+<link rel="stylesheet" href="../styles.css?v=20260728b">
+<link rel="stylesheet" href="docs.css?v=20260730">
+<script>document.documentElement.classList.remove("no-js")</script>
+</head>
+<body>
+<a class="skip" href="#doc">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../"><span class="rune">ᚢ</span> Uruz</a>
+    <nav class="nav-links doc-nav">
+        <b aria-current="page">Using Uruz</b>
+        <a href="self-hosting.html">Hosting it yourself</a>
+    </nav>
+    <div class="nav-end">
+      <a class="btn ghost" href="https://github.com/kristianwind/uruz">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap doc-wrap" id="doc">
+  <nav class="doc-toc" aria-label="On this page">
+    <p class="doc-toc-title">On this page</p>
+    <ul>
+          <li><a href="#getting-in">Getting in</a></li>
+          <li><a href="#putting-it-on-your-phone">Putting it on your phone</a></li>
+          <li><a href="#a-workout-start-to-finish">A workout, start to finish</a></li>
+          <li><a href="#past-workouts">Past workouts</a></li>
+          <li><a href="#making-a-workout-your-own">Making a workout your own</a></li>
+          <li><a href="#mimir-the-coach">Mimir, the coach</a></li>
+          <li><a href="#valhalla">Valhalla</a></li>
+          <li><a href="#the-ravens">The ravens</a></li>
+          <li><a href="#training-without-signal">Training without signal</a></li>
+          <li><a href="#your-data">Your data</a></li>
+          <li><a href="#settings-worth-knowing-about">Settings worth knowing about</a></li>
+          <li><a href="#when-something-is-wrong">When something is wrong</a></li>
+    </ul>
+  </nav>
+  <article class="doc">
+<h1 id="using-uruz">Using Uruz</h1>
+<p>A guide for the person training, not the person running the server. If you want
+to host it yourself, read <a href="self-hosting.html">self-hosting</a> instead.</p>
+<hr>
+<h2 id="getting-in">Getting in</h2>
+<p>Uruz offers three ways to sign in. They all lead to the same account — you can
+use whichever works on the device in your hand.</p>
+<p><strong>A passkey</strong> is Face ID, Touch ID, or your laptop&#39;s fingerprint reader. It is
+the fastest and the safest, because there is no password to steal, and it is
+what the app suggests first. Add one under <strong>Me → Passkeys</strong>, and give it a name
+like &quot;iPhone&quot; so you can tell your keys apart later.</p>
+<p><strong>A password</strong> is the fallback. Not every device or browser can do passkeys, and
+not everyone wants to. Set one under <strong>Me → Password</strong>. It has to be at least
+ten characters; there are no rules about symbols, because length does more work
+than punctuation and forced symbols only push people towards <code>Password1!</code>.</p>
+<p><strong>A sign-in link by email</strong> needs nothing memorised. Enter your address, and a
+link arrives that signs you in. It works once and expires after 30 minutes.</p>
+<blockquote>
+<p>If you forget your password, the same email link is how you set a new one.</p>
+</blockquote>
+<h3 id="more-than-one-key">More than one key</h3>
+<p>You can have several passkeys — one per device is the sensible pattern. Under
+<strong>Me → Passkeys</strong> each one shows when it was added and when it last let you in,
+so you can remove a phone you no longer have.</p>
+<p>Removing a key asks for your password first. A live session is not proof of who
+you are: a phone left unlocked on a bench should not be a way to strip its
+owner&#39;s keys. And Uruz refuses to remove your <em>last</em> way in — if you have no
+password and no working mail server, the key stays until you set one up.</p>
+<hr>
+<h2 id="putting-it-on-your-phone">Putting it on your phone</h2>
+<p>Uruz is a web app that installs like a real one. It gets its own icon, opens
+without a browser bar, and works offline.</p>
+<p><strong>On iPhone</strong>, open the app in <strong>Safari</strong> — only Safari can install on iOS. Tap
+the share icon at the bottom, scroll down, and choose <strong>Add to Home Screen</strong>.</p>
+<p><strong>On Android</strong>, Chrome offers to install it, or use the menu → <strong>Install app</strong>.</p>
+<p><strong>On a computer</strong>, Chrome and Edge show an install icon in the address bar.</p>
+<p>There is a walkthrough inside the app under <strong>Me → Install app</strong>.</p>
+<hr>
+<h2 id="a-workout-start-to-finish">A workout, start to finish</h2>
+<h3 id="choosing-one">Choosing one</h3>
+<p><strong>Train</strong> shows what you can do today. Seven ready-made workouts ship with the
+app, from a 20-minute short one to a full-body starter programme.</p>
+<p>Tapping a workout <strong>shows you what is in it</strong> — the exercises, sets, target reps
+and rest — and gives you a <strong>Start</strong> button. It does not begin immediately, so
+you can look before you commit, or change your mind.</p>
+<p><strong>Free workout</strong> starts an empty session instead: pick exercises as you go. Good
+for a day when you are improvising, or when the gym is busy and you take what is
+free.</p>
+<p>If you left a workout unfinished, <strong>Resume</strong> appears at the top.</p>
+<h3 id="logging-a-set">Logging a set</h3>
+<p>The logging screen shows one exercise at a time, with the drawing of it and
+<strong>How to do it</strong> next to the name. Knowing what a movement is called is not the
+same as knowing the movement, and the instructions are right there rather than
+in a library you would have to leave the workout to reach.</p>
+<p>The weight and reps are <strong>already filled in</strong> — from your last session, or from
+what the progression suggests. Most of the time you just tap <strong>Log set</strong>.</p>
+<p><strong>The +/− buttons move half a kilo.</strong> Machines land on halves, and on stacks
+with increments nothing like one plate. If you need to travel further, <strong>hold
+the button down</strong> — it repeats, faster the longer you hold. You can also tap the
+number itself and type it.</p>
+<p><strong>Warm-up</strong> marks a set as a warm-up. It is logged, but it does not count
+towards your volume, your records or your targets.</p>
+<p>When you beat a previous best, the set is marked and the app says so.</p>
+<h3 id="the-rest-timer">The rest timer</h3>
+<p>Logging a working set starts the rest timer automatically, at whatever the
+workout specifies. <strong>+30s</strong> and <strong>−30s</strong> adjust it, and you can skip it.</p>
+<p><strong>The screen stays on</strong> while you are on the logging screen — ninety seconds of
+rest is long enough for a phone to lock, and unlocking with chalk on your hands
+is a nuisance. It stops the moment you leave the screen.</p>
+<blockquote>
+<p>On an iPhone in Low Power Mode, iOS refuses to keep the screen on no matter
+what an app asks. If the screen sleeps anyway, that is usually why.</p>
+</blockquote>
+<h3 id="correcting-a-set">Correcting a set</h3>
+<p><strong>Tap the set.</strong> The row has a pencil on it and opens into fields for weight and
+reps, with a <strong>Delete</strong> button.</p>
+<p>This works both during the workout and afterwards, from the archive.</p>
+<h3 id="finishing">Finishing</h3>
+<p><strong>Finish workout</strong> ends the session and asks how it went — mood, effort, your
+bodyweight, and a note if you want one. All of it is optional, and all of it
+feeds the statistics later.</p>
+<hr>
+<h2 id="past-workouts">Past workouts</h2>
+<p><strong>Train → Past workouts</strong> lists everything you have finished, with the date,
+how many sets and how long it took.</p>
+<p>Open one and you get the sets grouped by exercise, editable exactly as they were
+during the workout. At the bottom, <strong>Delete workout</strong> removes the whole session
+and every set in it, after asking once.</p>
+<p>Your personal records survive a deleted workout. The weight was still lifted —
+it would be wrong to take a rank back because you tidied up a mis-logged day.</p>
+<hr>
+<h2 id="making-a-workout-your-own">Making a workout your own</h2>
+<p>From a workout&#39;s page:</p>
+<p><strong>Duplicate &amp; adjust</strong> makes a copy named &quot;… (copy)&quot; and opens it in the
+builder. The seven built-in workouts are templates and cannot be edited in
+place — a copy is the right way, so the originals stay intact for everyone in
+the hall.</p>
+<p><strong>Edit</strong> appears on workouts you made yourself.</p>
+<p>In the builder you can add exercises from the library, remove them, move them up
+and down, set target sets, reps and rest per exercise, and give the whole thing
+a new name before saving.</p>
+<hr>
+<h2 id="mimir-the-coach">Mimir, the coach</h2>
+<p>Mimir is the app&#39;s AI coach. He is optional: without a model configured, Uruz
+still gives you concrete suggestions — they are just rule-based rather than
+written by a language model.</p>
+<p><strong>Weekly analysis</strong> looks at what you have actually done and says something
+useful about it, rather than congratulating you for existing.</p>
+<p><strong>Ask Mimir</strong> takes a question in your own words. &quot;I only have 25 minutes today,
+what do I do?&quot; is a good one.</p>
+<p><strong>Tell him about a niggle or a wish</strong> — this is the part worth knowing about. A
+sore shoulder, a bad knee, &quot;I want to focus on my back for a while&quot;. He adapts
+the training around it, and he remembers: mention a shoulder today, and a
+question next week about something else still takes it into account.</p>
+<blockquote>
+<p>Mimir is a training coach, not a doctor. He gives no dietary advice, never
+comments on your body or your weight, and points you to a doctor or
+physiotherapist when something hurts. That is built into his instructions and
+cannot be switched off — not even with the &quot;tough&quot; tone, which only makes him
+blunter, never unkind.</p>
+</blockquote>
+<hr>
+<h2 id="valhalla">Valhalla</h2>
+<p>The friendly-rivalry corner. Everyone in your hall appears on the leaderboard,
+sorted by attendance, volume, streak or this week.</p>
+<p><strong>Ranks</strong> go from <strong>Thrall</strong> through <strong>Dreng</strong>, <strong>Karl</strong>, <strong>Berserker</strong> and
+<strong>Jarl</strong> to <strong>Einherjar</strong>, earned by training rather than by lifting heavy —
+consistency is what the app rewards.</p>
+<p><strong>Runes and badges</strong> mark milestones: your first workout, ten, fifty, a hundred;
+your first record; five weeks unbroken; training before 7 in the morning; having
+tried every exercise in the library.</p>
+<p>If you would rather not share your numbers, <strong>Me → Private profile</strong> keeps your
+volume to yourself while still letting you appear in the hall.</p>
+<hr>
+<h2 id="the-ravens">The ravens</h2>
+<p>Huginn and Muninn are the reminders. They nudge you on your training days,
+praise a good session, and give you a gentle push if you have been away.</p>
+<p>Set your training days and the time of day under <strong>Me → Reminders</strong>. Notifications
+can arrive as push messages on your phone, or by email if push is not set up.</p>
+<p>The tone follows your <strong>coach tone</strong> setting: gentle or tough.</p>
+<blockquote>
+<p>Reminders only go out if whoever runs the server has set up a scheduler. If
+you never get any, that is the first thing to ask about.</p>
+</blockquote>
+<hr>
+<h2 id="training-without-signal">Training without signal</h2>
+<p>Uruz works in a basement with no bars.</p>
+<p>Everything you log is saved on the device first and synced when the connection
+comes back. A banner tells you when you are offline and when it is catching up.
+Nothing is lost, and you do not have to think about it.</p>
+<p>The only things that need a connection are Mimir, the leaderboard, and anything
+that involves other people.</p>
+<hr>
+<h2 id="your-data">Your data</h2>
+<p><strong>Me → Export my data</strong> gives you everything as JSON or CSV — every workout,
+every set, every record. It is yours, and it is a real export, not a summary.</p>
+<p><strong>Me → Delete my data</strong> removes your account and everything in it. It asks you
+to type your own name first, because it cannot be undone.</p>
+<p>If Uruz is hosted for you rather than by you, the export is also how you leave:
+take the file, run the app yourself, and carry on.</p>
+<hr>
+<h2 id="settings-worth-knowing-about">Settings worth knowing about</h2>
+<p><strong>Me → Settings</strong> holds the things that change how the app looks and behaves:</p>
+<ul>
+<li><strong>Theme</strong> — Norse, or plain numbers if you would rather skip the mythology</li>
+<li><strong>Colour</strong> — dark or light</li>
+<li><strong>Language</strong> — English or Danish, including the exercise instructions</li>
+<li><strong>Exercise visuals</strong> — the line drawings, or photographs where they exist</li>
+<li><strong>Lock to portrait</strong> — where the browser allows it</li>
+</ul>
+<p>On an iPhone, no web app can lock the screen rotation; that switch lives in
+iOS&#39;s own Control Centre. Uruz says so rather than showing a toggle that does
+nothing.</p>
+<hr>
+<h2 id="when-something-is-wrong">When something is wrong</h2>
+<table>
+<thead>
+<tr>
+<th>What you see</th>
+<th>What it usually is</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Face ID fails</td>
+<td>The address the app is reached on has to match its passkey domain, and it has to be HTTPS. Whoever runs the server can see both under <strong>Me → Admin → Passkey setup</strong>.</td>
+</tr>
+<tr>
+<td>Mimir does not answer</td>
+<td>No model is configured, or it cannot be reached. The app falls back to rule-based suggestions — that is intended, not broken.</td>
+</tr>
+<tr>
+<td>No reminders arrive</td>
+<td>The server&#39;s scheduler is not calling the app. Ask whoever runs it.</td>
+</tr>
+<tr>
+<td>An old screen after an update</td>
+<td>The app caches itself so it works offline. Remove it from your home screen and add it again, or reload in Safari.</td>
+</tr>
+<tr>
+<td>A sign-in link never arrives</td>
+<td>Check spam. If it still does not, the server may have no mail configured — ask.</td>
+</tr>
+</tbody></table>
+
+    <hr>
+    <p class="doc-foot">
+      This page is generated from
+      <a href="https://github.com/kristianwind/uruz/blob/main/docs/guides/using-uruz.md"><code>docs/guides/using-uruz.md</code></a>.
+      Corrections are welcome as a pull request.
+    </p>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <div class="brand" style="margin-bottom:6px"><span class="rune">ᚢ</span> Uruz</div>
+      <div>Build strength, one rune at a time.</div>
+    </div>
+    <div style="text-align:right">
+      <a href="https://github.com/kristianwind/uruz">GitHub</a> ·
+      <a href="https://yggdrasilpanel.com">Yggdrasil Panel</a> ·
+      <a href="../">Home</a>
+    </div>
+  </div>
+  <div class="wrap">
+    <p class="foot-note">
+      ⚠️ Early development &amp; built with Claude Code. Provided as-is, with no warranty and no liability whatsoever — you use it entirely at your own risk. Free software under <a href="https://github.com/kristianwind/uruz/blob/main/LICENSE">AGPL-3.0</a>.
+    </p>
+  </div>
+</footer>
+</body>
+</html>

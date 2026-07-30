@@ -21,6 +21,8 @@ npx serve website
 | `da.html` | Dansk udgave |
 | `en.html` | Viderestilling til forsiden — `/en.html` var udgivet, før engelsk blev standard |
 | `styles.css` | Al styling, delt af begge sider |
+| `docs.css` | Kun til dokumentationssiderne |
+| `docs/` | **Genereret** af `npm run gen:docs` — redigér ikke i hånden |
 | `img/` | Danske skærmbilleder + favicon |
 | `img/en/` | Engelske skærmbilleder |
 
@@ -81,6 +83,27 @@ På en telefon lukker et script menuen ved indlæsning og gør `<summary>` til e
 burger. Uden JavaScript bliver menuen stående åben, og linkene lægger sig under
 headeren: mere at rulle, men hvert link kan stadig nås. Det er den rigtige måde
 for det her at fejle på.
+
+
+## Dokumentationssiderne er genererede
+
+`website/docs/*.html` skrives af `npm run gen:docs` ud fra markdown-filerne i
+`docs/guides/`. **Redigér dem ikke i hånden** — næste kørsel overskriver dem.
+Ret markdown'en, kør scriptet, og commit begge dele.
+
+Der er med vilje ingen byggekæde på serveren og ingen i CI: `website/` er en
+mappe med statiske filer, der pakkes op på en nginx-container, og det bliver den
+ved med at være. Konverteren kører på din maskine.
+
+Modellen er lånt fra Yggdrasil, hvor den er vokset til fjorten sider med søgning
+og indholdsfortegnelse. Rådet derfra var ikke at bygge en rigtig generator, før
+vedligeholdet gør ondt — kilden er ren markdown uden frontmatter, så den kan
+skiftes ud senere uden at røre indholdet.
+
+Ét fund værd at kende: **markdown-motorens ankre er ikke GitHubs.** Samme fil
+læses begge steder, så et `#link` skal ramme begge. `githubSlug()` i scriptet
+efterligner GitHubs regler, og de er verificeret mod `api.github.com/markdown/raw`
+— ikke mod hukommelsen.
 
 ## Husk at bumpe CSS-versionen
 
