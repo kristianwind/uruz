@@ -133,6 +133,14 @@ function page(
     .map((h) => `<li><a href="#${h.slug}">${escapeHtml(h.text)}</a></li>`)
     .join("\n          ");
 
+  // The other guide, inside the contents box. On a phone the header cannot
+  // hold two titles as well as the brand, so it drops them — and this is where
+  // the way across has to be instead.
+  const other = others.find((p) => p.out !== meta.out);
+  const crossLink = other
+    ? `<p class="doc-toc-other"><a href="${other.out}">${other.nav} →</a></p>`
+    : "";
+
   return `<!doctype html>
 <html lang="en" class="no-js">
 <head>
@@ -148,7 +156,7 @@ function page(
 <link rel="icon" href="../img/favicon-32.png">
 <link rel="canonical" href="https://uruz-training.com/docs/${meta.out}">
 <link rel="stylesheet" href="../styles.css?v=20260728b">
-<link rel="stylesheet" href="docs.css?v=20260730">
+<link rel="stylesheet" href="../docs.css?v=20260730c">
 <script>document.documentElement.classList.remove("no-js")</script>
 </head>
 <body>
@@ -172,6 +180,7 @@ function page(
     <ul>
           ${toc}
     </ul>
+    ${crossLink}
   </nav>
   <article class="doc">
 ${body}

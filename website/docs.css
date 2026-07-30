@@ -45,7 +45,10 @@
 /* The header is sticky, so an anchor would otherwise land underneath it. */
 .doc h1, .doc h2, .doc h3 { scroll-margin-top: 84px; }
 
-.doc p, .doc li { color: var(--muted); }
+/* styles.css resets paragraph margins for the marketing page, where every
+   block is positioned by hand. A long read needs the space back. */
+.doc p { margin: 0 0 14px; color: var(--muted); }
+.doc li { color: var(--muted); }
 .doc strong { color: var(--text); font-weight: 650; }
 .doc a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
@@ -137,8 +140,16 @@
   .doc { margin: 0; }
 }
 
-/* The two guides sit where the section links do on the front page. */
+.doc-toc-other {
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.doc-toc-other a { color: var(--accent); text-decoration: none; font-size: 0.94rem; font-weight: 600; }
+
+/* A phone header cannot hold the brand, two guide titles and a button — the
+   titles wrapped onto two lines each and collided. Below 800px they drop out,
+   and the link across lives in the contents box instead. */
 @media (max-width: 800px) {
-  .doc-nav { display: flex; gap: 14px; font-size: 0.86rem; }
-  .doc-nav b { color: var(--accent); }
+  .doc-nav { display: none; }
 }
