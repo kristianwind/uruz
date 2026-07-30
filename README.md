@@ -20,6 +20,7 @@ Den kan også køre helt for sig selv med `docker run` eller lokalt med `npm run
 >
 > ⚠️ **Early development & built with Claude Code.** Provided as-is, with no
 > warranty and no liability whatsoever — you use it entirely at your own risk.
+> Free software under **[AGPL-3.0](LICENSE)**.
 
 ---
 
@@ -262,6 +263,26 @@ Mimir er en træningscoach, ikke en læge. Han giver ikke kostråd, kommenterer
 aldrig på krop eller vægt, og henviser til læge eller fysioterapeut ved smerte.
 Det er bygget ind i hans instruktioner og kan ikke slås fra — heller ikke med
 den "hårde" tone, som kun gør ham mere kontant, aldrig nedladende.
+
+---
+
+## Licens
+
+Uruz er fri software under
+**[GNU Affero General Public License v3.0](LICENSE)**.
+
+Kør den, læs den, del den, ændr den. Det er *Affero*-delen der betyder noget for
+en app som denne: ændrer du den, og bruger andre din udgave over et netværk, har
+de krav på din kildekode. At køre den — ændret eller ej — for dig selv, dine
+venner eller din træningsmakker medfører ingen forpligtelser ud over at lade
+noterne stå. At sælge hosting bygget på en lukket gren gør.
+
+Valgt frem for MIT, fordi den koster ingenting i praksis og holder døren åben
+for at sige nej til en lukket kopi senere. Fravalgt open core — hvor nogle
+funktioner kun findes i en betalt udgave — fordi det er præcis mekanikken der
+gør den åbne udgave til en rest. De to spor skal være den samme app.
+
+Ophavsret © 2026 Kristian Wind.
 
 ---
 
