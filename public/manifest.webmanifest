@@ -1,8 +1,8 @@
 {
-  "name": "Uruz — styrketræning",
+  "name": "Uruz — strength training",
   "short_name": "Uruz",
-  "description": "Byg styrke, én rune ad gangen. Log træning, få coaching og stig i rang.",
-  "lang": "da",
+  "description": "Build strength, one rune at a time. Log your training, get coaching, and rise through the ranks.",
+  "lang": "en",
   "dir": "ltr",
   "start_url": "/?source=pwa",
   "scope": "/",
@@ -19,15 +19,15 @@
   ],
   "shortcuts": [
     {
-      "name": "Start dagens træning",
-      "short_name": "Træn",
-      "description": "Genoptag eller start seneste træning",
+      "name": "Start today's workout",
+      "short_name": "Train",
+      "description": "Resume or start your latest workout",
       "url": "/train?source=shortcut",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Statistik",
-      "short_name": "Statistik",
+      "name": "Stats",
+      "short_name": "Stats",
       "url": "/stats?source=shortcut"
     }
   ]

@@ -10,7 +10,9 @@ export const metadata: Metadata = {
     default: "Uruz ᚢ",
     template: "%s · Uruz",
   },
-  description: "Byg styrke, én rune ad gangen.",
+  // Static, so it cannot follow the signed-in user — it is what a stranger
+  // and a link preview see, which is the same audience the default is for.
+  description: "Build strength, one rune at a time.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,

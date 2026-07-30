@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requireContext } from "@/lib/auth/session";
+import { getContext } from "@/lib/auth/session";
 import { deleteSessionOwned } from "@/lib/db/repo/sessions";
 
 export const runtime = "nodejs";
@@ -16,7 +16,12 @@ const Body = z.object({ sessionId: z.string().min(1) });
  * way round: deleting a mis-logged session should not quietly revoke a rank.
  */
 export async function POST(req: Request) {
-  const ctx = await requireContext();
+  // getContext, not requireContext: the latter throws, and a thrown error out
+  // of a route handler becomes a 500. An unauthenticated caller deserves a 401
+  // — and every other route under /api/sessions already answers that way.
+  const ctx = await getContext();
+  if (!ctx) return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
+
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
 
