@@ -1,7 +1,8 @@
 # Handoff — Uruz ᚢ
 
-Status and handover notes, written 30 July 2026, updated the same night
-(built-in scheduler, translations, archive verified in a browser).
+Status and handover notes, written 30 July 2026, updated 31 July (built-in
+scheduler, translations, archive verified, admin can delete members, passkeys
+can be replaced — and Face ID finally seen working on a real iPhone).
 For yourself in three months, or for the next person who touches the project.
 
 The previous edition was from 28 July. Twenty commits have happened since, and some of
@@ -107,12 +108,18 @@ preserved as `README.da.md`.
   again after a reload, and reverted the same way. (The floating circle that
   overlaps the bottom nav in dev is Next's own dev-tools button — it does not
   exist in production.)
+- **Face ID on a physical iPhone — it works.** 31 July: a passkey named
+  "iPhone" was registered on the running server at 05:08:54Z, and its
+  `last_used_at` reads 05:09:21Z — signed out and back in with the key,
+  twenty-seven seconds later. This was the oldest unverified item in the
+  project.
+- **The built-in scheduler runs in production.** The log says
+  `scheduler: built-in, every 15 min` at boot, and a tick has since reported
+  `sent 0 notification(s), ran 3 weekly analysis/analyses` — Mimir's weekly
+  analyses ran on their own, with nothing external calling anything.
 
 ### Not verified
 
-- **Face ID on a physical iPhone.** Still. Everything around it is tested, but the
-  flow itself has never been seen to succeed. There is now no risk in trying: password and
-  e-mail both work as a way in.
 - **Web push on iOS.** Requires the app on the home screen. Never seen a notification
   land.
 - **The Supabase backend.** Schema and RLS are written, but **the adapter does not exist**
@@ -122,20 +129,22 @@ preserved as `README.da.md`.
 
 ## 🚧 What's next
 
-**Deploys ride the 05:30 update.** The panel on `.164` has a global **Update
-schedule at 05:30** that reinstalls every running server with the latest
-image — so anything pushed before then goes live by itself in the morning,
-and Servers → Uruz → Restart in the panel is only for "now". The two Train
-page buttons (`7e9def9`) went out with the 05:30 run on 31 July; the built-in
-scheduler and the admin/passkey fixes ride the next one.
+**Nothing is waiting to be deployed.** Everything through 31 July is out and
+running. Two ways things go live: the panel's global **Update schedule at
+05:30** reinstalls every running server with the latest image on its own, and
+Servers → Uruz → Restart in the panel does it now. A `docker restart` does
+neither — it reuses the image it already has.
 
-**Reminders: the app now runs its own scheduler.** `instrumentation.ts` ticks
-the same idempotent work as `/api/cron` every quarter of an hour in production
-— no `CRON_SECRET`, no external schedule, nothing to configure. The startup
-log says `scheduler: built-in, every 15 min`. `CRON_SECRET` is only for
-driving it externally; `URUZ_SCHEDULER=0` turns the built-in one off. The
-first deploy with this aboard is the real test: the ravens should fly on
-their own.
+**Reminders send by themselves now.** `instrumentation.ts` ticks the same
+idempotent work as `/api/cron` every quarter of an hour in production — no
+`CRON_SECRET`, no external schedule, nothing to configure. `CRON_SECRET` is
+only for driving it externally; `URUZ_SCHEDULER=0` turns the built-in one off.
+Verified in production, see above.
+
+**Two dead passkeys are still on the account.** Both unnamed, created 28 July,
+`last_used_at` never — the ones that could not be removed before. With a
+working key on the account now, they delete like anything else: **Me**, remove,
+straight after a sign-in. Worth doing, so the list only holds keys that work.
 
 **Translation: done.** `DECISIONS.md`, `HANDOFF.md` and `ARCHITECTURE.md` are
 English, with the Danish originals preserved as `*.da.md` snapshots — the
