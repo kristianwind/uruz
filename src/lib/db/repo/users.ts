@@ -96,6 +96,16 @@ export function updateUser(id: string, patch: UserPatch): User | null {
   return getUser(id);
 }
 
+/**
+ * Remove a user and, through ON DELETE CASCADE, everything that hangs off the
+ * row: sessions, sets, records, badges, coach messages, reminders and push
+ * subscriptions. True when a row was actually deleted.
+ */
+export function deleteUser(id: string): boolean {
+  const res = getDb().prepare("DELETE FROM users WHERE id = ?").run(id);
+  return Number(res.changes) > 0;
+}
+
 export function countAdmins(hallId: string): number {
   const row = getDb()
     .prepare("SELECT COUNT(*) AS n FROM users WHERE hall_id = ? AND role = 'admin' AND is_active = 1")

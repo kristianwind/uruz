@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireContext } from "@/lib/auth/session";
-import { updateUser, getUser, countAdmins } from "@/lib/db/repo/users";
+import { updateUser, getUser, countAdmins, deleteUser } from "@/lib/db/repo/users";
 import {
   createInvitation,
   setInvitationStatus,
@@ -103,6 +103,36 @@ export async function setUserActiveAction(userId: string, isActive: boolean): Pr
   updateUser(userId, { isActive });
   writeAudit(ctx.hall.id, ctx.user.id, isActive ? "user_activated" : "user_deactivated", userId);
   revalidatePath("/admin");
+}
+
+/**
+ * Delete a member and all their data, permanently.
+ *
+ * Typing the member's display name is the same deliberate speed bump as
+ * deleting your own account: this is irreversible, and an admin page is a
+ * place where a mis-tap must not be able to erase someone's training history.
+ * Your own account is deleted under Me, not here — that flow also signs you
+ * out properly.
+ */
+export async function deleteUserAction(userId: string, confirmName: string): Promise<void> {
+  const ctx = await requireAdmin();
+  const target = getUser(userId);
+  if (!target || target.hallId !== ctx.hall.id) throw new Error("NOT_FOUND");
+  if (target.id === ctx.user.id) throw new Error("IS_SELF");
+  if (confirmName !== target.displayName) throw new Error("CONFIRM_MISMATCH");
+
+  // Same protection as everywhere else: the hall keeps at least one admin.
+  if (target.role === "admin" && countAdmins(ctx.hall.id) <= 1) {
+    throw new Error("LAST_ADMIN");
+  }
+
+  // Audit first: the entry must exist even though the user row is going away.
+  writeAudit(ctx.hall.id, ctx.user.id, "user_deleted_by_admin", userId, {
+    email: target.email,
+  });
+  deleteUser(userId);
+  revalidatePath("/admin");
+  revalidatePath("/valhal");
 }
 
 const RoleSchema = z.enum(["admin", "member", "coach"]);

@@ -4,6 +4,33 @@ A running log of non-obvious choices and assumptions made while building
 Uruz, per the instruction in section 0 ("note the assumption in `DECISIONS.md`").
 Newest first within each phase.
 
+## Addition — what the first team of users hit
+
+- **An admin can now delete a member — with the member's name typed out.**
+  The feature simply did not exist: only deactivate and role change did, and
+  the sole deletion path was deleting *yourself* under Me. Deleting a member
+  erases their whole training history, so it borrows the self-deletion's
+  speed bump (type the display name) rather than a yes/no dialog — an admin
+  page must not be a place where a mis-tap can erase a person. Your own row
+  shows no delete button: deleting yourself belongs to the Me flow, which
+  also signs you out properly. The audit entry is written *before* the row
+  goes, because afterwards there is no row to attribute it to.
+
+- **A freshly opened session counts as proof of presence.** Removing a passkey
+  demanded the account password or a live assertion from another key. An
+  account with no password whose only passkey is broken could satisfy
+  neither — the dead key was undeletable, and `excludeCredentials` then also
+  blocked registering a replacement on the same device. The way out: a
+  session opened within the last ten minutes now counts as re-authentication
+  by itself (the GitHub "sudo mode" model). Sign in with an e-mail link,
+  remove the key straight away. The bench-phone threat this rule guards
+  against is an *old* session; a minutes-old one proves someone just came
+  through the front door. Two side effects, both deliberate: an account
+  *with* a password may now also re-authenticate with a key (a key is no
+  weaker than a password), and a bare probe with no proof attached no longer
+  spends rate-limit budget — it guesses at nothing, so it must not lock out
+  the person about to type their real password.
+
 ## Addition — the ravens fly by themselves
 
 - **The scheduler lives in the app, not in the host.** Reminders never fired

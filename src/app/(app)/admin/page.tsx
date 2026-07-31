@@ -22,6 +22,7 @@ import { isPushConfigured } from "@/lib/notify/push";
 import { emailProvider } from "@/lib/notify/email";
 import { getT } from "@/lib/i18n/server";
 import {
+  deleteUserAction,
   inviteUserAction,
   renameHallAction,
   revokeInvitationAction,
@@ -153,6 +154,7 @@ export default async function AdminPage() {
               user={u}
               onSetActive={setUserActiveAction}
               onSetRole={setUserRoleAction}
+              onDelete={deleteUserAction}
             />
           ))}
         </ul>

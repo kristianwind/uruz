@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { canRemoveCredential } from "@/lib/auth/credential-removal";
+import {
+  canRemoveCredential,
+  sessionIsFresh,
+  FRESH_SESSION_MS,
+} from "@/lib/auth/credential-removal";
 
 /**
  * The rule that stands between tidying up and being locked out of your own
@@ -43,5 +47,33 @@ describe("canRemoveCredential", () => {
     expect(
       canRemoveCredential({ credentialCount: 1, hasPassword: true, canSendEmail: false }).allowed,
     ).toBe(true);
+  });
+});
+
+describe("sessionIsFresh", () => {
+  const now = Date.parse("2026-07-31T12:00:00.000Z");
+  const minutesAgo = (m: number) => new Date(now - m * 60_000).toISOString();
+
+  it("counts a just-opened session as fresh", () => {
+    expect(sessionIsFresh(minutesAgo(1), now)).toBe(true);
+  });
+
+  it("counts a session at the edge of the window as fresh", () => {
+    expect(sessionIsFresh(new Date(now - FRESH_SESSION_MS).toISOString(), now)).toBe(true);
+  });
+
+  it("rejects an older session — the phone on the bench", () => {
+    expect(sessionIsFresh(minutesAgo(11), now)).toBe(false);
+    expect(sessionIsFresh(minutesAgo(60 * 24), now)).toBe(false);
+  });
+
+  it("rejects when there is no session row to date", () => {
+    // Dev autologin has no auth_sessions row; that must not count as presence.
+    expect(sessionIsFresh(null, now)).toBe(false);
+  });
+
+  it("rejects garbage and future timestamps", () => {
+    expect(sessionIsFresh("not a date", now)).toBe(false);
+    expect(sessionIsFresh(minutesAgo(-5), now)).toBe(false);
   });
 });

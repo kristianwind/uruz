@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getContext } from "@/lib/auth/session";
+import { getContext, getSessionCreatedAt } from "@/lib/auth/session";
 import {
   countUserCredentials,
   deleteCredential,
@@ -10,7 +10,7 @@ import {
 } from "@/lib/db/repo/auth";
 import { verifyPassword } from "@/lib/auth/password";
 import { verifyAuthentication } from "@/lib/auth/webauthn";
-import { canRemoveCredential } from "@/lib/auth/credential-removal";
+import { canRemoveCredential, sessionIsFresh } from "@/lib/auth/credential-removal";
 import { emailProvider } from "@/lib/notify/email";
 import { signIn } from "@/lib/auth/cookies";
 import { loginLimiter, clientKey } from "@/lib/auth/rate-limit";
@@ -33,7 +33,12 @@ const Body = z.object({
  * 1. **It asks who you are again.** A live session is not proof: a phone left
  *    unlocked on a bench should not be a route to stripping its owner's keys.
  *    This is the same reason changing a password requires the old one — a
- *    passkey is the same kind of key.
+ *    passkey is the same kind of key. One exception: a session opened within
+ *    the last few minutes *is* recent proof of presence (whoever holds it just
+ *    came through the front door), so it counts on its own. Without that, an
+ *    account whose only passkey is broken and has no password could never be
+ *    rid of the dead key — the fresh-login window is how it escapes: sign in
+ *    with an e-mail link, remove the key straight away.
  * 2. **It refuses to remove your last way in.** See `credential-removal`.
  * 3. **It ends the sessions the key opened.** Removing a key because a device
  *    was lost is pointless if that device's session keeps working. We do not
@@ -75,15 +80,32 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     return NextResponse.json({ error: decision.refusal }, { status: 409 });
   }
 
-  const reauthenticated = hash
-    ? await verifyPassword(parsed.data.currentPassword ?? "", hash)
-    : // No password to ask for, so prove it with a key instead.
-      parsed.data.assertion
-      ? (await verifyAuthentication(ctx.user.email, parsed.data.assertion as never)) === ctx.user.id
-      : false;
+  // A session opened minutes ago is itself recent proof of presence; only
+  // older sessions have to prove it again with a password or a key.
+  let reauthenticated = sessionIsFresh(await getSessionCreatedAt(), Date.now());
+
+  if (!reauthenticated && hash && parsed.data.currentPassword) {
+    reauthenticated = await verifyPassword(parsed.data.currentPassword, hash);
+  }
+  if (!reauthenticated && parsed.data.assertion) {
+    // A malformed assertion is a failed re-authentication, not a server error.
+    try {
+      reauthenticated =
+        (await verifyAuthentication(ctx.user.email, parsed.data.assertion as never)) ===
+        ctx.user.id;
+    } catch {
+      reauthenticated = false;
+    }
+  }
 
   if (!reauthenticated) {
-    loginLimiter.fail(limitKey);
+    // Only an actual wrong guess spends an attempt. A bare probe — the client
+    // asking "is my session fresh enough?" with nothing attached — guessed at
+    // nothing and learns nothing, so it must not eat into the budget of
+    // someone who then has to type their real password.
+    if (parsed.data.currentPassword || parsed.data.assertion) {
+      loginLimiter.fail(limitKey);
+    }
     return NextResponse.json({ error: "reauth_required" }, { status: 403 });
   }
   loginLimiter.reset(limitKey);

@@ -122,11 +122,12 @@ preserved as `README.da.md`.
 
 ## 🚧 What's next
 
-**A restart is pending.** The two buttons on the Train page (`7e9def9`) and the
-built-in scheduler (below) are the app code changes not yet out. The panel on
-`.164` has a global **Update schedule at 05:30** that reinstalls every running
-server with the latest image, so the changes go live by themselves the next
-morning — or immediately with Servers → Uruz → Restart in the panel.
+**Deploys ride the 05:30 update.** The panel on `.164` has a global **Update
+schedule at 05:30** that reinstalls every running server with the latest
+image — so anything pushed before then goes live by itself in the morning,
+and Servers → Uruz → Restart in the panel is only for "now". The two Train
+page buttons (`7e9def9`) went out with the 05:30 run on 31 July; the built-in
+scheduler and the admin/passkey fixes ride the next one.
 
 **Reminders: the app now runs its own scheduler.** `instrumentation.ts` ticks
 the same idempotent work as `/api/cron` every quarter of an hour in production

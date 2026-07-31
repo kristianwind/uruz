@@ -68,3 +68,18 @@ export async function requireContext(): Promise<AppContext> {
   if (!ctx) throw new Error("UNAUTHENTICATED");
   return ctx;
 }
+
+/**
+ * When the current session was opened, or null when there is no real session
+ * row (dev autologin has none). Lets sensitive routes treat a just-opened
+ * session as proof of presence — see `sessionIsFresh` in credential-removal.
+ */
+export async function getSessionCreatedAt(): Promise<string | null> {
+  const store = await cookies();
+  const token = store.get(SESSION_COOKIE)?.value;
+  if (!token) return null;
+  const row = getDb()
+    .prepare("SELECT created_at FROM auth_sessions WHERE token = ?")
+    .get(token) as Row | undefined;
+  return row ? String(row.created_at) : null;
+}

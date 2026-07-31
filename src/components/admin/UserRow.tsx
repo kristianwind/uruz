@@ -3,6 +3,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useT } from "@/components/app/I18nProvider";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 export interface AdminUserView {
@@ -16,20 +18,24 @@ export interface AdminUserView {
   isSelf: boolean;
 }
 
-/** One member row with role and active-state controls. */
+/** One member row with role, active-state and delete controls. */
 export function UserRow({
   user,
   onSetActive,
   onSetRole,
+  onDelete,
 }: {
   user: AdminUserView;
   onSetActive: (userId: string, isActive: boolean) => Promise<void>;
   onSetRole: (userId: string, role: string) => Promise<void>;
+  onDelete: (userId: string, confirmName: string) => Promise<void>;
 }) {
   const t = useT();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [confirmName, setConfirmName] = useState("");
 
   const run = (fn: () => Promise<void>) =>
     startTransition(async () => {
@@ -96,7 +102,64 @@ export function UserRow({
         >
           {user.isActive ? t("admin.deactivate") : t("admin.activate")}
         </button>
+        {/* Your own account is deleted under Me, where sign-out is handled. */}
+        {!user.isSelf && !deleting && (
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => {
+              setError(null);
+              setDeleting(true);
+            }}
+            className="h-9 shrink-0 rounded-lg px-3 text-xs font-semibold text-danger"
+          >
+            {t("admin.deleteUser")}
+          </button>
+        )}
       </div>
+
+      {deleting && (
+        <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
+          {/* Deleting a member erases their entire training history, so it
+              takes typing the name — a mis-tap must not be able to do this. */}
+          <p className="text-sm text-danger">{t("admin.deleteUserWarn")}</p>
+          <Input
+            label={t("admin.deleteUserType", { name: user.displayName })}
+            name="confirmName"
+            autoComplete="off"
+            value={confirmName}
+            onChange={(e) => setConfirmName(e.target.value)}
+          />
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="danger"
+              size="sm"
+              disabled={pending || confirmName !== user.displayName}
+              onClick={() =>
+                run(async () => {
+                  await onDelete(user.id, confirmName);
+                  setDeleting(false);
+                  setConfirmName("");
+                })
+              }
+            >
+              {pending ? t("common.saving") : t("admin.deleteUser")}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={pending}
+              onClick={() => {
+                setDeleting(false);
+                setConfirmName("");
+                setError(null);
+              }}
+            >
+              {t("common.cancel")}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {error && <p className="mt-2 text-xs text-danger">{error}</p>}
     </li>

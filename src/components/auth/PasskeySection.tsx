@@ -74,16 +74,33 @@ export function PasskeySection({
     setBusy(true);
     setError(null);
     try {
-      // Proof of presence: the password when there is one, otherwise a fresh
-      // assertion from any key still on the account.
-      const assertion = hasPassword ? undefined : await reauthenticate(email);
-      if (!hasPassword && !assertion) return setError(t("auth.passkeyCancelled"));
+      const attempt = (body: { currentPassword?: string; assertion?: unknown }) =>
+        fetch(`/api/auth/passkey/credentials/${encodeURIComponent(id)}`, {
+          method: "DELETE",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(body),
+        });
 
-      const res = await fetch(`/api/auth/passkey/credentials/${encodeURIComponent(id)}`, {
-        method: "DELETE",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ currentPassword: password || undefined, assertion }),
-      });
+      // First try with what we have — a freshly opened session needs no more
+      // proof, so this succeeds without bothering anyone for a password or a
+      // Face ID prompt. Only an older session falls through to re-auth below.
+      let res = await attempt({ currentPassword: password || undefined });
+
+      const errorOf = async (r: Response) =>
+        ((await r.json().catch(() => null)) as { error?: string } | null)?.error;
+
+      let code = res.ok ? undefined : await errorOf(res);
+
+      if (code === "reauth_required" && !hasPassword) {
+        // No password to type, session not fresh: prove it with any key still
+        // on the account. This is the one path that needs the authenticator —
+        // and if that key is exactly the broken one being removed, the way
+        // out is a fresh sign-in (e-mail link), which the error text says.
+        const assertion = await reauthenticate(email);
+        if (!assertion) return setError(t("me.passkeyFreshLogin"));
+        res = await attempt({ assertion });
+        code = res.ok ? undefined : await errorOf(res);
+      }
 
       if (res.ok) {
         setRemovingId(null);
@@ -92,17 +109,20 @@ export function PasskeySection({
         router.refresh();
         return;
       }
-      const data = (await res.json().catch(() => null)) as { error?: string } | null;
       setError(
-        data?.error === "last_way_in"
+        code === "last_way_in"
           ? t("me.passkeyLastWayIn")
-          : data?.error === "not_found"
+          : code === "not_found"
             ? t("me.passkeyGone")
-            : data?.error === "reauth_required"
-              ? hasPassword
-                ? t("auth.passwordWrong")
-                : t("me.passkeyReauthKey")
-              : t("errors.generic"),
+            : code === "rate_limited"
+              ? t("me.passkeyRateLimited")
+              : code === "reauth_required"
+                ? hasPassword
+                  ? password
+                    ? t("auth.passwordWrong")
+                    : t("me.passkeyReauth")
+                  : t("me.passkeyFreshLogin")
+                : t("errors.generic"),
       );
     } catch {
       setError(t("errors.generic"));
@@ -173,7 +193,7 @@ export function PasskeySection({
                     <Button
                       variant="danger"
                       size="sm"
-                      disabled={busy || (hasPassword && !password)}
+                      disabled={busy}
                       onClick={() => remove(k.id)}
                     >
                       {busy ? t("common.saving") : t("me.passkeyRemove")}

@@ -36,6 +36,31 @@ export interface RemovalDecision {
   refusal?: RemovalRefusal;
 }
 
+/**
+ * Is a session recent enough to count as proof of presence on its own?
+ *
+ * The re-authentication requirement exists because an *old* session is not
+ * proof of anything — a phone left unlocked on a bench. A session opened
+ * minutes ago is different: whoever holds it just passed the front door
+ * (passkey, password or e-mail link). Counting that as presence is what
+ * breaks the trap where an account's only passkey is broken *and* has no
+ * password — sign in with a fresh e-mail link, and the dead key can go.
+ */
+export const FRESH_SESSION_MS = 10 * 60 * 1000;
+
+export function sessionIsFresh(
+  createdAtIso: string | null,
+  nowMs: number,
+  windowMs: number = FRESH_SESSION_MS,
+): boolean {
+  if (!createdAtIso) return false;
+  const created = new Date(createdAtIso).getTime();
+  if (Number.isNaN(created)) return false;
+  // A creation time in the future is a broken clock, not proof of presence.
+  if (created > nowMs) return false;
+  return nowMs - created <= windowMs;
+}
+
 export function canRemoveCredential(ctx: RemovalContext): RemovalDecision {
   if (ctx.credentialCount <= 0) return { allowed: false, refusal: "not_found" };
 
