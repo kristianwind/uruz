@@ -4,6 +4,29 @@ A running log of non-obvious choices and assumptions made while building
 Uruz, per the instruction in section 0 ("note the assumption in `DECISIONS.md`").
 Newest first within each phase.
 
+## Addition — sets are the unit, and weight is never hidden
+
+- **A workout is sets × reps, and the screen now says so.** The target line
+  read "Target: 12–20 reps" and never mentioned that the workout wanted three
+  of them; `targetSets` reached the logging screen and was used for nothing.
+  So one logged set looked like a finished exercise. It now reads "Target: 3
+  sets × 12–20 reps", with a live "Set 2 of 3" above the log button. Warm-ups
+  do not count towards it — three working sets means three real ones. Free
+  training has no prescription, so there it simply counts ("Set 2") rather
+  than inventing a target to measure you against.
+
+- **The weight control is shown for bodyweight exercises too.** It was hidden
+  for anything flagged `is_bodyweight`, but the save path branched only on
+  *timed*, so the working weight was submitted anyway — a crunch logged 41 kg
+  that nobody could see or change, and with no history it would have logged
+  the seed default of 20. Two ways to fix it, and the deciding fact came from
+  the person using it: he does crunches **on a machine**. So the weight is
+  real, and hiding the field was the error, not storing the number. The field
+  is now always shown (0 = no load), and the seed for a bodyweight exercise is
+  0 rather than 20. The rule this leaves behind: **never store a value the
+  screen does not show.** A hidden field is not a simplification, it is a
+  number nobody chose.
+
 ## Addition — what the first team of users hit
 
 - **An admin can now delete a member — with the member's name typed out.**

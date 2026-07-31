@@ -89,7 +89,11 @@ export function ActiveWorkout({
 
   // Working values for the next set, seeded from the progression suggestion or
   // last session so the common case is a single tap on "Log sæt".
-  const seedWeight = current?.suggestion?.weight ?? current?.lastWeight ?? 20;
+  // 0 for an exercise the library calls bodyweight: it may still be done on a
+  // machine or holding a plate, but the starting point is "no extra load" —
+  // never a number nobody chose.
+  const seedWeight =
+    current?.suggestion?.weight ?? current?.lastWeight ?? (current?.isBodyweight ? 0 : 20);
   const seedReps =
     current?.suggestion?.reps ?? current?.lastReps[0] ?? current?.targetRepsMin ?? 10;
   const seedSeconds = current?.lastSeconds ?? current?.targetSeconds ?? 30;
@@ -112,6 +116,12 @@ export function ActiveWorkout({
   const setsForCurrent = useMemo(
     () => sets.filter((s) => s.exerciseId === current?.exerciseId),
     [sets, current?.exerciseId],
+  );
+  // Warm-ups are not part of the prescription — three working sets means three
+  // real ones, so counting a warm-up towards them would end the exercise early.
+  const workingSets = useMemo(
+    () => setsForCurrent.filter((s) => !s.isWarmup).length,
+    [setsForCurrent],
   );
 
   const logSet = useCallback(async () => {
@@ -200,10 +210,19 @@ export function ActiveWorkout({
     );
   }
 
+  // A workout asks for sets × reps, so the target has to say so. Naming only
+  // the reps was why a three-set exercise looked finished after one.
   const targetLabel = isTimed
-    ? t("train.targetHold", { sec: current.targetSeconds ?? seconds })
+    ? t("train.targetHold", {
+        sets: current.targetSets,
+        sec: current.targetSeconds ?? seconds,
+      })
     : current.targetRepsMin && current.targetRepsMax
-      ? t("train.targetReps", { min: current.targetRepsMin, max: current.targetRepsMax })
+      ? t("train.targetReps", {
+          sets: current.targetSets,
+          min: current.targetRepsMin,
+          max: current.targetRepsMax,
+        })
       : "";
 
   return (
@@ -286,18 +305,19 @@ export function ActiveWorkout({
             />
           ) : (
             <>
-              {!current.isBodyweight && (
-                <Stepper
-                  label={t("common.kg")}
-                  value={weight}
-                  onChange={setWeight}
-                  // Half a kilo: what the machines actually land on. Hold to
-                  // move faster — see Stepper.
-                  step={0.5}
-                  max={1000}
-                  className="flex-1"
-                />
-              )}
+              {/* Shown even for "bodyweight" exercises: a crunch is done on a
+                  machine as often as on the floor, and the weight was being
+                  logged either way — it was just invisible. 0 means none. */}
+              <Stepper
+                label={t("common.kg")}
+                value={weight}
+                onChange={setWeight}
+                // Half a kilo: what the machines actually land on. Hold to
+                // move faster — see Stepper.
+                step={0.5}
+                max={1000}
+                className="flex-1"
+              />
               <Stepper
                 label={t("common.reps")}
                 value={reps}
@@ -310,8 +330,23 @@ export function ActiveWorkout({
           )}
         </div>
 
+        {/* How far through the sets you are. The workout knows it wants three;
+            without saying so, one logged set looks like a finished exercise. */}
+        <p className="mt-3 text-sm font-medium text-muted">
+          {/* Free training has no prescription, so it counts rather than
+              pretending a target somebody chose. */}
+          {current.workoutExerciseId === null
+            ? t("train.setsCount", { next: workingSets + 1 })
+            : workingSets >= current.targetSets
+              ? t("train.setsDone", { total: current.targetSets })
+              : t("train.setsProgress", {
+                  next: workingSets + 1,
+                  total: current.targetSets,
+                })}
+        </p>
+
         {/* Log + warm-up toggle */}
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-2 flex items-center gap-2">
           <Button size="lg" fullWidth onClick={logSet} className="flex-1">
             <CheckIcon size={20} /> {t("train.logSet")}
           </Button>
