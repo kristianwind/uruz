@@ -120,10 +120,26 @@ preserved as `README.da.md`.
 
 ### Not verified
 
+- **The logging screen's five newest changes, on a screen.** The stopwatch for
+  held sets, the cardio fields (metres / watts / time / resistance), adding an
+  exercise mid-workout, the record on sets two and three, and the prefill for
+  exercises no template lists. Typechecked, covered by unit tests, and CI built
+  the whole app green — but the Mac spent the entire session at 9 GB of swap,
+  the dev server froze at 0% CPU without ever compiling a page, and a
+  production build stalled for twenty minutes. **So none of it has been
+  looked at.** First thing to do with a machine that has memory: open a
+  workout, log three increasing sets, and check the record appears on more
+  than the first.
 - **Web push on iOS.** Requires the app on the home screen. Never seen a notification
   land.
 - **The Supabase backend.** Schema and RLS are written, but **the adapter does not exist**
-  — `DATA_BACKEND` does not appear in the code. The app runs only on SQLite.
+  — `DATA_BACKEND` does not appear in the code (verified). The app runs only on SQLite.
+  This is the open architectural fork: one SQLite instance per installation, or Postgres
+  with RLS and several halls in one database. Kristian's position is that the hosted
+  question waits until the programme is mature and has been tried by someone who knows
+  training — but the longer the app grows on SQLite alone, the more the adapter costs.
+  Breaking the single-hall assumption is cheap by comparison: only six files call
+  `getAnyHall()`.
 
 ---
 
