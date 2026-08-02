@@ -13,6 +13,8 @@ const Body = z.object({
   weight: z.number().min(0).max(1000).nullable().optional(),
   reps: z.number().int().min(0).max(1000).nullable().optional(),
   seconds: z.number().int().min(0).max(86400).nullable().optional(),
+  distanceM: z.number().int().min(0).max(1_000_000).nullable().optional(),
+  watts: z.number().int().min(0).max(2000).nullable().optional(),
   isWarmup: z.boolean().optional(),
   rir: z.number().int().min(0).max(10).nullable().optional(),
 });

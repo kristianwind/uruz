@@ -50,6 +50,8 @@ function set(exerciseId: string, weight: number, reps: number, extra: Partial<Se
     weight,
     reps,
     seconds: null,
+    distanceM: null,
+    watts: null,
     isWarmup: false,
     isPr: false,
     rir: null,

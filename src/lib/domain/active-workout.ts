@@ -1,11 +1,12 @@
 import "server-only";
 import { getWorkout, getWorkoutExercises } from "@/lib/db/repo/workouts";
-import { getExercisesByIds } from "@/lib/db/repo/exercises";
+import { getExercisesByIds, listExercises } from "@/lib/db/repo/exercises";
 import { getLastPerformance, listSessionSets } from "@/lib/db/repo/sessions";
 import { suggestProgression } from "./strength";
-import { exerciseName } from "./localize";
+import { exerciseName, localizeExercise } from "./localize";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/core";
 import type { ActiveExercise, LoggedSet } from "@/components/train/ActiveWorkout";
+import type { LibraryEntry } from "@/components/train/FreeWorkout";
 
 /**
  * Assemble everything the active-workout screen needs in one pass: the exercise
@@ -66,11 +67,47 @@ export function buildActiveExercises(
         lastWeight: last?.weight ?? null,
         lastReps: last?.reps ?? [],
         lastSeconds: last?.seconds ?? null,
+        lastDistanceM: last?.distanceM ?? null,
+        lastWatts: last?.watts ?? null,
         suggestion: suggestion
           ? { weight: suggestion.weight, reps: suggestion.reps, reason: suggestion.reason }
           : null,
       },
     ];
+  });
+}
+
+/**
+ * The whole library in the shape the picker needs — carrying each exercise's
+ * last performance, so an exercise picked mid-workout (free training, or added
+ * to a template) starts from what you lifted last time instead of from a
+ * default. Remembering only worked for exercises a template listed up front,
+ * which meant free training forgot everything you had ever done.
+ */
+export function buildLibraryEntries(
+  userId: string,
+  currentSessionId: string,
+  locale: Locale = DEFAULT_LOCALE,
+): LibraryEntry[] {
+  return listExercises().map((ex) => {
+    const loc = localizeExercise(ex, locale);
+    const last = getLastPerformance(userId, ex.id, currentSessionId);
+    return {
+      id: ex.id,
+      name: loc.name,
+      unit: ex.unit,
+      isBodyweight: ex.isBodyweight,
+      category: ex.category,
+      svgKey: loc.svgKey,
+      imageUrl: loc.imageUrl,
+      steps: loc.steps,
+      cues: loc.cues,
+      lastWeight: last?.weight ?? null,
+      lastReps: last?.reps ?? [],
+      lastSeconds: last?.seconds ?? null,
+      lastDistanceM: last?.distanceM ?? null,
+      lastWatts: last?.watts ?? null,
+    };
   });
 }
 
@@ -83,6 +120,8 @@ export function loadSessionSets(sessionId: string): LoggedSet[] {
     weight: s.weight,
     reps: s.reps,
     seconds: s.seconds,
+    distanceM: s.distanceM,
+    watts: s.watts,
     isWarmup: s.isWarmup,
     isPr: s.isPr,
   }));

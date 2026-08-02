@@ -147,6 +147,9 @@ CREATE TABLE IF NOT EXISTS set_logs (
   weight      REAL,
   reps        INTEGER,
   seconds     INTEGER,
+  -- Cardio: a rowing machine measures a set in metres and watts, not kilos.
+  distance_m  INTEGER,
+  watts       INTEGER,
   is_warmup   INTEGER NOT NULL DEFAULT 0,
   is_pr       INTEGER NOT NULL DEFAULT 0,
   rir         INTEGER,

@@ -34,12 +34,24 @@ export function useSync() {
     }
   }, []);
 
-  /** Queue a write and immediately attempt to send it. */
+  /**
+   * Queue a write and send it.
+   *
+   * The send is awaited, not fired and forgotten: a caller that asks the server
+   * about what it just wrote has to be able to rely on it having arrived. The
+   * PR check did exactly that and lost the race every time — the set was still
+   * sitting in IndexedDB when the server was asked whether it beat a record, so
+   * only the sets logged while an earlier flush happened to be in flight ever
+   * got their celebration.
+   *
+   * This costs nothing on screen: the optimistic update has already painted the
+   * set, and offline `flushQueue` returns immediately without a request.
+   */
   const push = useCallback(
     async (op: QueuedOp) => {
       await enqueue(op);
       await refresh();
-      void flush();
+      await flush();
     },
     [flush, refresh],
   );

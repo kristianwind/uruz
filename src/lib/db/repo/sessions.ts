@@ -120,6 +120,8 @@ export interface LogSetInput {
   weight?: number | null;
   reps?: number | null;
   seconds?: number | null;
+  distanceM?: number | null;
+  watts?: number | null;
   isWarmup?: boolean;
   rir?: number | null;
 }
@@ -152,6 +154,8 @@ export function logSet(userId: string, input: LogSetInput): LogSetResult {
     weight: input.weight ?? null,
     reps: input.reps ?? null,
     seconds: input.seconds ?? null,
+    distanceM: input.distanceM ?? null,
+    watts: input.watts ?? null,
     isWarmup,
   });
   const current = currentBests(userId, input.exerciseId);
@@ -159,8 +163,8 @@ export function logSet(userId: string, input: LogSetInput): LogSetResult {
 
   db.prepare(
     `INSERT INTO set_logs
-      (id, session_id, exercise_id, set_index, weight, reps, seconds, is_warmup, is_pr, rir, logged_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+      (id, session_id, exercise_id, set_index, weight, reps, seconds, distance_m, watts, is_warmup, is_pr, rir, logged_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
   ).run(
     id,
     input.sessionId,
@@ -169,6 +173,8 @@ export function logSet(userId: string, input: LogSetInput): LogSetResult {
     input.weight ?? null,
     input.reps ?? null,
     input.seconds ?? null,
+    input.distanceM ?? null,
+    input.watts ?? null,
     fromBool(isWarmup),
     fromBool(beaten.length > 0),
     input.rir ?? null,
@@ -186,6 +192,8 @@ export interface UpdateSetInput {
   weight?: number | null;
   reps?: number | null;
   seconds?: number | null;
+  distanceM?: number | null;
+  watts?: number | null;
   isWarmup?: boolean;
   rir?: number | null;
 }
@@ -196,6 +204,8 @@ export function updateSet(id: string, patch: UpdateSetInput): SetLog | null {
     weight: "weight",
     reps: "reps",
     seconds: "seconds",
+    distanceM: "distance_m",
+    watts: "watts",
     isWarmup: "is_warmup",
     rir: "rir",
   };
@@ -274,6 +284,8 @@ export interface LastPerformance {
   weight: number | null;
   reps: number[];
   seconds: number | null;
+  distanceM: number | null;
+  watts: number | null;
   rir: number | null;
   performedAt: string;
 }
@@ -312,6 +324,8 @@ export function getLastPerformance(
     weight: sets[0].weight,
     reps: sets.map((s) => s.reps ?? 0),
     seconds: sets[0].seconds,
+    distanceM: sets[0].distanceM,
+    watts: sets[0].watts,
     rir: sets[sets.length - 1].rir,
     performedAt: String(sessionRow.started_at),
   };

@@ -52,6 +52,8 @@ export function getDb(): DatabaseSync {
 const ADDED_COLUMNS: Array<{ table: string; column: string; definition: string }> = [
   { table: "credentials", column: "name", definition: "TEXT" },
   { table: "credentials", column: "last_used_at", definition: "TEXT" },
+  { table: "set_logs", column: "distance_m", definition: "INTEGER" },
+  { table: "set_logs", column: "watts", definition: "INTEGER" },
 ];
 
 function applyColumnAdditions(db: DatabaseSync): void {

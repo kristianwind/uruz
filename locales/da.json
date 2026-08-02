@@ -51,7 +51,10 @@
     "retry": "Prøv igen",
     "offline": "Offline",
     "syncing": "Synkroniserer …",
-    "synced": "Synkroniseret"
+    "synced": "Synkroniseret",
+    "metres": "m",
+    "watt": "watt",
+    "resistance": "modstand"
   },
   "train": {
     "title": "Træn",
@@ -88,6 +91,8 @@
     "targetHold": "Mål: {{sets}} sæt × {{sec}} sek",
     "setsProgress": "Sæt {{next}} af {{total}}",
     "setsCount": "Sæt {{next}}",
+    "startTiming": "Start tid",
+    "stopTiming": "Stop",
     "setsDone": "Alle {{total}} sæt er logget",
     "suggestUp": "Prøv {{weight}} kg næste gang",
     "history": "Tidligere træninger",

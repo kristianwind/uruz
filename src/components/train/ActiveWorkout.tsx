@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Stepper } from "./Stepper";
 import { RestTimer } from "./RestTimer";
+import { Stopwatch } from "./Stopwatch";
 import { PRToast } from "./PRToast";
 import { SetRow } from "./SetRow";
 import { ExerciseGuide } from "./ExerciseGuide";
@@ -19,7 +20,9 @@ import {
   ChevronRightIcon,
   CheckIcon,
   CloudOffIcon,
+  PlusIcon,
 } from "@/components/ui/icons";
+import { ExercisePicker, toActive, type LibraryEntry } from "./ExercisePicker";
 
 /** One exercise as presented to the logging screen. */
 export interface ActiveExercise {
@@ -42,6 +45,8 @@ export interface ActiveExercise {
   lastWeight: number | null;
   lastReps: number[];
   lastSeconds: number | null;
+  lastDistanceM: number | null;
+  lastWatts: number | null;
   /** Suggestion from the progression engine, if any. */
   suggestion: { weight: number; reps: number; reason: string } | null;
 }
@@ -54,6 +59,8 @@ export interface LoggedSet {
   weight: number | null;
   reps: number | null;
   seconds: number | null;
+  distanceM: number | null;
+  watts: number | null;
   isWarmup: boolean;
   isPr: boolean;
 }
@@ -63,12 +70,15 @@ export function ActiveWorkout({
   workoutName,
   exercises,
   initialSets,
+  library = [],
   mediaPref = "illustration",
 }: {
   sessionId: string;
   workoutName: string;
   exercises: ActiveExercise[];
   initialSets: LoggedSet[];
+  /** The library, so an exercise can be added without leaving the workout. */
+  library?: LibraryEntry[];
   mediaPref?: MediaPref;
 }) {
   const t = useT();
@@ -80,12 +90,23 @@ export function ActiveWorkout({
 
   const [index, setIndex] = useState(0);
   const [sets, setSets] = useState<LoggedSet[]>(initialSets);
+  // Exercises added during the session. A plan meets the gym: a machine is
+  // taken, something extra gets done. They live only in this screen's state —
+  // a set records its own exercise id, so nothing has to be written back to
+  // the template to log against them.
+  const [added, setAdded] = useState<ActiveExercise[]>([]);
+  const [picking, setPicking] = useState(false);
   const [prName, setPrName] = useState<string | null>(null);
   const [restStartedAt, setRestStartedAt] = useState<number | null>(null);
   const [restSeconds, setRestSeconds] = useState(90);
 
-  const current = exercises[index];
+  // The template's exercises followed by anything added on the day.
+  const queue = useMemo(() => [...exercises, ...added], [exercises, added]);
+  const current = queue[index];
   const isTimed = current?.unit === "sek";
+  // Cardio is measured in metres and watts. It used to fall through to the
+  // weight/reps branch, so a rowing machine asked for kilos and repetitions.
+  const isCardio = current?.unit === "km";
 
   // Working values for the next set, seeded from the progression suggestion or
   // last session so the common case is a single tap on "Log sæt".
@@ -97,10 +118,14 @@ export function ActiveWorkout({
   const seedReps =
     current?.suggestion?.reps ?? current?.lastReps[0] ?? current?.targetRepsMin ?? 10;
   const seedSeconds = current?.lastSeconds ?? current?.targetSeconds ?? 30;
+  const seedDistance = current?.lastDistanceM ?? 0;
+  const seedWatts = current?.lastWatts ?? 0;
 
   const [weight, setWeight] = useState(seedWeight);
   const [reps, setReps] = useState(seedReps);
   const [seconds, setSeconds] = useState(seedSeconds);
+  const [distanceM, setDistanceM] = useState(seedDistance);
+  const [watts, setWatts] = useState(seedWatts);
   const [isWarmup, setIsWarmup] = useState(false);
   // Track which exercise the working values belong to, so switching exercises
   // reseeds them without an effect (avoids a flash of the previous values).
@@ -110,6 +135,8 @@ export function ActiveWorkout({
     setWeight(seedWeight);
     setReps(seedReps);
     setSeconds(seedSeconds);
+    setDistanceM(seedDistance);
+    setWatts(seedWatts);
     setIsWarmup(false);
   }
 
@@ -132,9 +159,16 @@ export function ActiveWorkout({
       sessionId,
       exerciseId: current.exerciseId,
       setIndex: setsForCurrent.length,
+      // Each kind of exercise sends only the numbers it actually has. A rowing
+      // set has no reps; a plank has no weight — and a field the screen never
+      // showed must never be sent along quietly.
+      // Cardio keeps `weight` as the machine's resistance setting — the one
+      // number a rowing machine has that is not distance, power or time.
       weight: isTimed ? null : weight,
-      reps: isTimed ? null : reps,
-      seconds: isTimed ? seconds : null,
+      reps: isTimed || isCardio ? null : reps,
+      seconds: isTimed || isCardio ? seconds : null,
+      distanceM: isCardio ? distanceM : null,
+      watts: isCardio ? watts : null,
       isWarmup,
       rir: null,
     };
@@ -149,6 +183,8 @@ export function ActiveWorkout({
         weight: payload.weight,
         reps: payload.reps,
         seconds: payload.seconds,
+        distanceM: payload.distanceM,
+        watts: payload.watts,
         isWarmup,
         isPr: false,
       },
@@ -173,6 +209,8 @@ export function ActiveWorkout({
       });
       if (res.ok) {
         const data = await res.json();
+        // `pending` means the set had not reached the server yet, so the answer
+        // is "don't know", not "no record". Say nothing rather than deny one.
         if (data.isPr) {
           setPrName(current.name);
           setSets((prev) => prev.map((s) => (s.id === id ? { ...s, isPr: true } : s)));
@@ -181,7 +219,20 @@ export function ActiveWorkout({
     } catch {
       /* offline — no celebration now, the record still lands on sync */
     }
-  }, [current, sessionId, setsForCurrent.length, weight, reps, seconds, isWarmup, isTimed, push]);
+  }, [
+    current,
+    sessionId,
+    setsForCurrent.length,
+    weight,
+    reps,
+    seconds,
+    distanceM,
+    watts,
+    isWarmup,
+    isTimed,
+    isCardio,
+    push,
+  ]);
 
   const removeSet = useCallback(
     async (setId: string) => {
@@ -225,6 +276,22 @@ export function ActiveWorkout({
         })
       : "";
 
+  if (picking) {
+    return (
+      <ExercisePicker
+        library={library}
+        exclude={queue.map((q) => q.exerciseId)}
+        onPick={(entry) => {
+          setAdded((prev) => [...prev, toActive(entry)]);
+          // Go straight to what was just added — you picked it to do it now.
+          setIndex(queue.length);
+          setPicking(false);
+        }}
+        onCancel={() => setPicking(false)}
+      />
+    );
+  }
+
   return (
     /* On a phone this is the single column it has always been. From 1024px the
        queue moves to a rail on the right — what is coming next is worth seeing
@@ -244,10 +311,10 @@ export function ActiveWorkout({
           )}
         </div>
         <p className="mt-0.5 text-sm text-muted">
-          {t("train.exerciseOfTotal", { current: index + 1, total: exercises.length })}
+          {t("train.exerciseOfTotal", { current: index + 1, total: queue.length })}
         </p>
         <div className="mt-2 flex gap-1" aria-hidden="true">
-          {exercises.map((ex, i) => (
+          {queue.map((ex, i) => (
             <span
               key={ex.exerciseId}
               className={cn(
@@ -292,9 +359,50 @@ export function ActiveWorkout({
           </p>
         )}
 
-        {/* Steppers */}
-        <div className="mt-4 flex gap-3">
-          {isTimed ? (
+        {/* A held or rowed set is timed while it happens; the field below
+            stays editable for the times you counted yourself. */}
+        {(isTimed || isCardio) && (
+          <div className="mt-4">
+            <Stopwatch value={seconds} onChange={setSeconds} />
+          </div>
+        )}
+
+        {/* Steppers. Cardio has four numbers, which do not fit one row on a
+            phone — a machine reports distance, power, time and its resistance
+            setting, and any of them may be the one you care about. */}
+        <div className={cn("mt-4", isCardio ? "grid grid-cols-2 gap-3" : "flex gap-3")}>
+          {isCardio ? (
+            <>
+              <Stepper
+                label={t("common.metres")}
+                value={distanceM}
+                onChange={setDistanceM}
+                step={50}
+                max={100000}
+              />
+              <Stepper
+                label={t("common.watt")}
+                value={watts}
+                onChange={setWatts}
+                step={5}
+                max={2000}
+              />
+              <Stepper
+                label={t("common.sec")}
+                value={seconds}
+                onChange={setSeconds}
+                step={5}
+                max={86400}
+              />
+              <Stepper
+                label={t("common.resistance")}
+                value={weight}
+                onChange={setWeight}
+                step={1}
+                max={100}
+              />
+            </>
+          ) : isTimed ? (
             <Stepper
               label={t("common.sec")}
               value={seconds}
@@ -401,7 +509,7 @@ export function ActiveWorkout({
         >
           <ChevronLeftIcon size={20} />
         </Button>
-        {index < exercises.length - 1 ? (
+        {index < queue.length - 1 ? (
           <Button
             variant="secondary"
             fullWidth
@@ -422,6 +530,15 @@ export function ActiveWorkout({
         )}
       </nav>
 
+      {/* Add an exercise on the day. Kept below the navigation because it is
+          the rarer choice, and above "finish" because it is the one that
+          undoes a premature ending. */}
+      {library.length > 0 && (
+        <Button variant="ghost" onClick={() => setPicking(true)}>
+          <PlusIcon size={18} /> {t("train.addExercise")}
+        </Button>
+      )}
+
       <Button
         variant="ghost"
         onClick={() => router.push(`/train/finish/${sessionId}`)}
@@ -432,7 +549,7 @@ export function ActiveWorkout({
       </div>
 
       <ExerciseQueue
-        exercises={exercises}
+        exercises={queue}
         index={index}
         sets={sets}
         onPick={setIndex}

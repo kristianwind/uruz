@@ -31,6 +31,8 @@ export interface LogSetPayload {
   weight?: number | null;
   reps?: number | null;
   seconds?: number | null;
+  distanceM?: number | null;
+  watts?: number | null;
   isWarmup?: boolean;
   rir?: number | null;
 }
@@ -40,6 +42,8 @@ export interface UpdateSetPayload {
   weight?: number | null;
   reps?: number | null;
   seconds?: number | null;
+  distanceM?: number | null;
+  watts?: number | null;
   isWarmup?: boolean;
   rir?: number | null;
 }

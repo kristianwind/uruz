@@ -26,11 +26,23 @@ export function SetRow({
   const t = useT();
   const [open, setOpen] = useState(false);
 
-  const summary = isTimed
-    ? `${set.seconds ?? 0} ${t("common.sec")}`
-    : set.weight
-      ? `${set.weight} ${t("common.kg")} × ${set.reps ?? 0}`
-      : `${set.reps ?? 0} ${t("common.reps")}`;
+  // Cardio is recognised by what the set actually holds rather than by a flag
+  // threaded through every caller: a rowed set has metres or watts, and never
+  // kilos or repetitions.
+  const isCardio = !!(set.distanceM || set.watts);
+  const summary = isCardio
+    ? [
+        set.distanceM ? `${set.distanceM} ${t("common.metres")}` : null,
+        set.watts ? `${set.watts} ${t("common.watt")}` : null,
+        set.seconds ? `${set.seconds} ${t("common.sec")}` : null,
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : isTimed
+      ? `${set.seconds ?? 0} ${t("common.sec")}`
+      : set.weight
+        ? `${set.weight} ${t("common.kg")} × ${set.reps ?? 0}`
+        : `${set.reps ?? 0} ${t("common.reps")}`;
 
   return (
     <li

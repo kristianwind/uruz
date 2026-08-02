@@ -125,6 +125,8 @@ export const mapSetLog = (r: Row): SetLog => ({
   weight: toNum(r.weight),
   reps: toNum(r.reps),
   seconds: toNum(r.seconds),
+  distanceM: toNum(r.distance_m),
+  watts: toNum(r.watts),
   isWarmup: toBool(r.is_warmup),
   isPr: toBool(r.is_pr),
   rir: toNum(r.rir),

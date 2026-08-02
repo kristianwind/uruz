@@ -56,12 +56,23 @@ export interface PRCandidate {
  * and single-set volume. A timed set (plank) can beat max hold. Warm-ups never
  * count.
  */
-export function prCandidatesForSet(set: Pick<SetLog, "weight" | "reps" | "seconds" | "isWarmup">): PRCandidate[] {
+export function prCandidatesForSet(
+  set: Pick<SetLog, "weight" | "reps" | "seconds" | "isWarmup"> &
+    Partial<Pick<SetLog, "distanceM" | "watts">>,
+): PRCandidate[] {
   if (set.isWarmup) return [];
   const out: PRCandidate[] = [];
 
   if (set.seconds && set.seconds > 0) {
     out.push({ type: "max_hold", value: set.seconds });
+  }
+  // Cardio: further and harder are both records worth having, and neither is
+  // captured by weight × reps.
+  if (set.distanceM && set.distanceM > 0) {
+    out.push({ type: "max_distance", value: set.distanceM });
+  }
+  if (set.watts && set.watts > 0) {
+    out.push({ type: "max_watts", value: set.watts });
   }
   if (set.weight && set.weight > 0 && set.reps && set.reps > 0) {
     out.push({ type: "max_weight", value: set.weight });

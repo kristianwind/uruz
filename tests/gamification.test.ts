@@ -33,6 +33,8 @@ function sws(startedAt: string, opts: { pr?: boolean; weight?: number; reps?: nu
     weight: opts.weight ?? 60,
     reps: opts.reps ?? 10,
     seconds: null,
+    distanceM: null,
+    watts: null,
     isWarmup: false,
     isPr: opts.pr ?? false,
     rir: null,

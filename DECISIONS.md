@@ -4,6 +4,50 @@ A running log of non-obvious choices and assumptions made while building
 Uruz, per the instruction in section 0 ("note the assumption in `DECISIONS.md`").
 Newest first within each phase.
 
+## Addition — every exercise gets the numbers it actually has
+
+- **The record celebration was asking before the set had been saved.** Only the
+  first set of an exercise ever got "New record", however much heavier the
+  later ones were. The rule itself was never wrong — a test that logs three
+  increasing sets proves all three are recorded — but `push()` in the offline
+  queue awaited only the *IndexedDB* write and fired the network send with
+  `void flush()`. The PR check then asked the server about a set still sitting
+  in the queue, and `/api/sessions/pr-check` answered `pending: true`, which
+  the client read as "no record". Whether a celebration appeared came down to
+  whether an earlier flush happened to be in flight. `push()` now awaits the
+  send. This costs nothing on screen — the optimistic update has already
+  painted the set, and offline the flush returns immediately. **The general
+  shape of the bug: an await that looks like it covers the work, but stops one
+  step short of it.**
+
+- **Cardio is metres and watts, not kilos and repetitions.** A rowing machine
+  is `unit: "km"`, and the logging screen branched only on *timed* vs
+  *everything else* — so it asked for kilos and reps, and the set it produced
+  described nothing that happened. Rowing and cycling now log distance, watts
+  and time (`distance_m`, `watts` on `set_logs`), and both can set a record:
+  further and harder are achievements that weight × reps cannot express.
+
+- **Held sets are timed, not remembered.** A plank ended with typing the
+  seconds afterwards, which is guessing — nobody counts accurately while
+  shaking. A stopwatch times the set as it happens and drops the reading into
+  the field, which stays editable for the times you did count. It is anchored
+  on a timestamp rather than a counter, so a phone that sleeps mid-plank still
+  reports the real elapsed time.
+
+- **An exercise can be added to a workout while training it.** A plan meets a
+  gym where a machine is taken, and previously only free training could pick
+  from the library. The same picker now serves both. Added exercises live in
+  the screen's state and are never written back to the template: the day's
+  substitution is not a change to the plan, and a set records its own exercise
+  id, so nothing needs to be. They carry no prescription either, so the screen
+  counts their sets rather than measuring them against a target nobody chose.
+
+- **Remembering your last numbers now covers exercises the template never
+  listed.** The prefill was built per template row, so free training — and
+  anything added mid-session — opened on defaults, having forgotten everything
+  you had ever done. The library itself now carries each exercise's last
+  weight, reps, seconds, distance and watts.
+
 ## Addition — sets are the unit, and weight is never hidden
 
 - **A workout is sets × reps, and the screen now says so.** The target line

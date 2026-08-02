@@ -26,7 +26,9 @@ export type PRType =
   | "max_weight"
   | "max_reps"
   | "max_volume"
-  | "max_hold";
+  | "max_hold"
+  | "max_distance"
+  | "max_watts";
 
 export type BadgeTier = "bronze" | "soelv" | "guld";
 export type CoachMessageKind =
@@ -146,6 +148,9 @@ export interface SetLog {
   weight: number | null;
   reps: number | null;
   seconds: number | null;
+  /** Cardio only: metres covered and average watts. */
+  distanceM: number | null;
+  watts: number | null;
   isWarmup: boolean;
   isPr: boolean;
   rir: number | null;
