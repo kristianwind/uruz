@@ -135,11 +135,14 @@ preserved as `README.da.md`.
 - **The Supabase backend.** Schema and RLS are written, but **the adapter does not exist**
   — `DATA_BACKEND` does not appear in the code (verified). The app runs only on SQLite.
   This is the open architectural fork: one SQLite instance per installation, or Postgres
-  with RLS and several halls in one database. Kristian's position is that the hosted
-  question waits until the programme is mature and has been tried by someone who knows
-  training — but the longer the app grows on SQLite alone, the more the adapter costs.
-  Breaking the single-hall assumption is cheap by comparison: only six files call
-  `getAnyHall()`.
+  with RLS and several halls in one database. The longer the app grows on SQLite alone,
+  the more the adapter costs. Breaking the single-hall assumption is cheap by comparison:
+  only six files call `getAnyHall()`.
+  A claim reached this session — via another Claude session, **not from Kristian
+  directly, and never confirmed by him** — that the hosted decision waits until the
+  programme is mature and has been tried by someone who knows training. It sounds
+  plausible and it is recorded here for what it is: hearsay. Ask him before planning
+  around it.
 
 ---
 
