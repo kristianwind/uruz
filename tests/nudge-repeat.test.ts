@@ -30,7 +30,7 @@ const { runScheduledNotifications } = await import("@/lib/notify/dispatch");
 
 describe("gentle nudges", () => {
   it("sends one nudge, not one per scheduler tick", async () => {
-    const hall = createHall({ name: "Hallen" });
+    const hall = createHall("Hallen");
     const user = createUser({
       hallId: hall.id,
       email: "medlem@example.dk",
