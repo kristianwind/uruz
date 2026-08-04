@@ -138,11 +138,11 @@ preserved as `README.da.md`.
   with RLS and several halls in one database. The longer the app grows on SQLite alone,
   the more the adapter costs. Breaking the single-hall assumption is cheap by comparison:
   only six files call `getAnyHall()`.
-  A claim reached this session — via another Claude session, **not from Kristian
-  directly, and never confirmed by him** — that the hosted decision waits until the
-  programme is mature and has been tried by someone who knows training. It sounds
-  plausible and it is recorded here for what it is: hearsay. Ask him before planning
-  around it.
+  **Kristian's position, relayed 31 July through his controller session and confirmed
+  by him on 4 August:** the hosted decision waits until the programme is mature and has
+  been tried by someone who knows training. He is a beginner himself, so the judgement
+  is deliberately not his alone. Nothing here is urgent — but the adapter gets more
+  expensive the longer the app grows on SQLite alone.
 
 ---
 
