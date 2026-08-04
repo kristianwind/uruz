@@ -113,6 +113,12 @@ preserved as `README.da.md`.
   `last_used_at` reads 05:09:21Z — signed out and back in with the key,
   twenty-seven seconds later. This was the oldest unverified item in the
   project.
+- **The record now appears on sets two and three.** Confirmed by Kristian in the
+  gym on 4 August — the one of the five newest changes that had never been seen
+  on a screen. The bug was a race in the offline queue: the app asked the server
+  "was that a record?" before the set had finished syncing, so only the first
+  set of a session, logged while the queue was empty, ever got the answer back
+  in time.
 - **The built-in scheduler runs in production.** The log says
   `scheduler: built-in, every 15 min` at boot, and a tick has since reported
   `sent 0 notification(s), ran 3 weekly analysis/analyses` — Mimir's weekly
@@ -120,16 +126,14 @@ preserved as `README.da.md`.
 
 ### Not verified
 
-- **The logging screen's five newest changes, on a screen.** The stopwatch for
-  held sets, the cardio fields (metres / watts / time / resistance), adding an
-  exercise mid-workout, the record on sets two and three, and the prefill for
-  exercises no template lists. Typechecked, covered by unit tests, and CI built
-  the whole app green — but the Mac spent the entire session at 9 GB of swap,
-  the dev server froze at 0% CPU without ever compiling a page, and a
-  production build stalled for twenty minutes. **So none of it has been
-  looked at.** First thing to do with a machine that has memory: open a
-  workout, log three increasing sets, and check the record appears on more
-  than the first.
+- **Four of the five newest logging-screen changes.** The stopwatch for held
+  sets, the cardio fields (metres / watts / time / resistance), adding an
+  exercise mid-workout, and the prefill for exercises no template lists.
+  Typechecked, unit-tested, and built green by CI — but never opened on a
+  screen: the Mac spent that session at 9 GB of swap, the dev server froze at
+  0% CPU without compiling a page, and a production build stalled for twenty
+  minutes. (The fifth, the record on sets two and three, **is** confirmed —
+  see above.)
 - **Web push on iOS.** Requires the app on the home screen. Never seen a notification
   land.
 - **The Supabase backend.** Schema and RLS are written, but **the adapter does not exist**
@@ -147,6 +151,15 @@ preserved as `README.da.md`.
 ---
 
 ## 🚧 What's next
+
+**Moving around workouts, and editing them, is still awkward.** Kristian's own
+words after training on 4 August: it is "still not easy". He wants to use it a
+few more times before saying what exactly is wrong, so **do not redesign
+anything yet** — wait for the specifics. Worth knowing that the last time he
+described a rough edge this loosely ("a couple of workouts don't make sense"),
+it turned out to be two separate real bugs, one of them a hidden value being
+written to the database. Ask what he was trying to do and where it stalled;
+don't guess from the code.
 
 **Nothing is waiting to be deployed.** Everything through 31 July is out and
 running. Two ways things go live: the panel's global **Update schedule at
