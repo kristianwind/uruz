@@ -43,7 +43,7 @@ const exercise = upsertExercise({
   slug: "biceps",
   nameDa: "Biceps curl",
   nameEn: "Biceps curl",
-  category: "overkrop",
+  category: "traek",
   primaryMuscles: ["biceps"],
   equipment: "haandvaegt",
   unit: "kg",
