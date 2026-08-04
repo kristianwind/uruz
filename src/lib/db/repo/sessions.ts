@@ -19,14 +19,53 @@ export function getSession(id: string): Session | null {
   return row ? mapSession(row) : null;
 }
 
-/** The user's currently-open session, if any (started but not ended). */
+/**
+ * The user's currently-open session, if any (started but not ended).
+ *
+ * Closes an abandoned one first. Without that, a session forgotten on Thursday
+ * was still "in progress" on Sunday: the Train page offered to resume it, and
+ * anything logged afterwards landed in the old workout — which is how one
+ * session ended up spanning five days and 37 sets.
+ */
 export function getActiveSession(userId: string): Session | null {
+  closeAbandonedSession(userId);
   const row = getDb()
     .prepare(
       "SELECT * FROM sessions WHERE user_id = ? AND ended_at IS NULL ORDER BY started_at DESC LIMIT 1",
     )
     .get(userId) as Row | undefined;
   return row ? mapSession(row) : null;
+}
+
+/**
+ * End any open session whose last activity is older than the abandon window,
+ * timestamped at that last activity. Returns how many were closed.
+ *
+ * Deliberately does not delete empty ones: a session with no sets is worth
+ * nothing, but it is still the person's own record and not ours to remove.
+ */
+export function closeAbandonedSession(userId: string, now = new Date()): number {
+  const cutoff = new Date(now.getTime() - ABANDONED_AFTER_MS).toISOString();
+  const rows = getDb()
+    .prepare(
+      `SELECT s.id,
+              COALESCE((SELECT MAX(logged_at) FROM set_logs sl WHERE sl.session_id = s.id),
+                       s.started_at) AS last_activity
+       FROM sessions s
+       WHERE s.user_id = ? AND s.ended_at IS NULL`,
+    )
+    .all(userId) as Row[];
+
+  let closed = 0;
+  for (const r of rows) {
+    const lastActivity = String(r.last_activity);
+    if (lastActivity >= cutoff) continue; // still warm — leave it running
+    getDb()
+      .prepare("UPDATE sessions SET ended_at = ? WHERE id = ? AND ended_at IS NULL")
+      .run(lastActivity, String(r.id));
+    closed++;
+  }
+  return closed;
 }
 
 export function listSessions(userId: string, limit = 50): Session[] {
@@ -62,13 +101,49 @@ export interface FinishSessionInput {
   note?: string | null;
 }
 
+/**
+ * How long a session may sit untouched before it counts as abandoned rather
+ * than in progress. Long enough that a genuinely long session — a slow leg day
+ * with a sauna afterwards — is never cut short; short enough that a workout
+ * forgotten overnight is not still "open" the next morning.
+ */
+export const ABANDONED_AFTER_MS = 3 * 60 * 60 * 1000;
+
+/**
+ * When training actually stopped — not when the finish button was pressed.
+ *
+ * Pressing finish used to stamp the current time unconditionally. Forget to
+ * end a session, come back three days later, press finish, and the archive
+ * recorded 4101 minutes of training. The last logged set is the honest
+ * evidence of when the work ended, so an abandoned session is closed there.
+ * A session finished while still warm is unaffected and still ends now, which
+ * keeps the cooldown after the final set inside the recorded time.
+ */
+function honestEndTime(id: string, now: Date): string {
+  const row = getDb()
+    .prepare(
+      `SELECT s.started_at,
+              (SELECT MAX(logged_at) FROM set_logs sl WHERE sl.session_id = s.id) AS last_set
+       FROM sessions s WHERE s.id = ?`,
+    )
+    .get(id) as Row | undefined;
+  if (!row) return now.toISOString();
+
+  const lastActivity = new Date(String(row.last_set ?? row.started_at)).getTime();
+  if (Number.isNaN(lastActivity)) return now.toISOString();
+  if (now.getTime() - lastActivity > ABANDONED_AFTER_MS) {
+    return new Date(lastActivity).toISOString();
+  }
+  return now.toISOString();
+}
+
 export function finishSession(id: string, input: FinishSessionInput = {}): Session | null {
   getDb()
     .prepare(
       "UPDATE sessions SET ended_at = ?, mood = ?, rpe = ?, bodyweight = ?, note = ? WHERE id = ?",
     )
     .run(
-      nowIso(),
+      honestEndTime(id, new Date()),
       input.mood ?? null,
       input.rpe ?? null,
       input.bodyweight ?? null,
