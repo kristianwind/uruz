@@ -11,7 +11,7 @@ import { getUser, listHallUsers } from "@/lib/db/repo/users";
 import { getAnyHall } from "@/lib/db/repo/halls";
 import { loadUserData } from "@/lib/domain/gamification-service";
 import { weekStreak, dayKey } from "@/lib/domain/stats";
-import { addCoachMessage } from "@/lib/db/repo/coach";
+import { addCoachMessage, latestCoachMessage } from "@/lib/db/repo/coach";
 import { getLocale } from "@/lib/i18n/server";
 import type { User } from "@/lib/domain/types";
 
@@ -67,6 +67,28 @@ async function deliver(
   }
 
   return { userId: user.id, kind, channel: "none", ...message };
+}
+
+/**
+ * How quiet it stays after a nudge. Comfortably longer than a day, so the
+ * guard cannot be defeated by a tick landing either side of midnight, and
+ * comfortably shorter than the week between two nudge-eligible days.
+ */
+export const NUDGE_QUIET_MS = 36 * 60 * 60 * 1000;
+
+/**
+ * Did this user already get a nudge recently?
+ *
+ * Asks the stored coach message rather than any in-memory state: the scheduler
+ * runs every 15 minutes in a process that may have restarted since, so the
+ * database is the only thing that remembers.
+ */
+function nudgedWithin(userId: string, now: Date, windowMs: number): boolean {
+  const last = latestCoachMessage(userId, "ris");
+  if (!last) return false;
+  const sent = new Date(last.createdAt).getTime();
+  if (Number.isNaN(sent)) return false;
+  return now.getTime() - sent < windowMs;
 }
 
 /** Days since the user's last completed session, or null if they never trained. */
@@ -138,6 +160,11 @@ export async function runScheduledNotifications(now = new Date()): Promise<Dispa
       // Only nudge once a week, and never on top of a reminder sent above.
       if (days % 7 !== 0) continue;
       if (results.some((r) => r.userId === user.id)) continue;
+      // …and only once, full stop. `days % 7` reads like a weekly gate but it
+      // is constant for a whole day, so on day 7 it let *every* run through:
+      // one nudge per scheduler tick, 96 a day, to a real person's inbox. The
+      // only honest guard is what we actually sent, so ask the record.
+      if (nudgedWithin(user.id, now, NUDGE_QUIET_MS)) continue;
 
       const locale = await getLocale(user.localePref);
       const message = ravenMessage("nudge", {
