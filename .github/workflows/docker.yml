@@ -26,7 +26,35 @@ env:
   IMAGE_NAME: ${{ github.repository_owner }}/uruz
 
 jobs:
+  # Typer og tests først. Uden dette trin blev de 185 tests kun kørt, når nogen
+  # huskede det — og det var præcis dét, der lod en fejl slippe ud, som sendte
+  # 69 mails til et rigtigt medlem på et døgn. Bygget afhænger af dette job, så
+  # en rød test betyder at intet image bliver udgivet.
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Skal følge Dockerfile: node:sqlite (indbygget) kræver Node 24+.
+          node-version: 24
+          cache: npm
+
+      - name: Installér afhængigheder
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Kør tests
+        run: npm test
+
   build:
+    needs: test
     strategy:
       fail-fast: false
       matrix:
@@ -94,8 +122,9 @@ jobs:
 
   merge:
     needs: build
-    # Runs even when arm64 failed, so amd64 still gets published.
-    if: always()
+    # Runs even when arm64 failed, so amd64 still gets published — but not when
+    # the tests failed, which cancels `build` and must stop publication too.
+    if: always() && needs.build.result != 'skipped'
     runs-on: ubuntu-latest
     permissions:
       contents: read
