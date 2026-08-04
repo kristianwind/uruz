@@ -48,6 +48,35 @@ Newest first within each phase.
   you had ever done. The library itself now carries each exercise's last
   weight, reps, seconds, distance and watts.
 
+## Addition — a scheduler must ask what it already sent
+
+- **Sixty-nine e-mails in a day, to a real person.** A hall member's last
+  completed session was exactly seven days old, and the nudge path guarded
+  itself with `days % 7 !== 0` — which reads like "once a week" but is constant
+  for a whole day. On day seven it let *every* fifteen-minute tick through
+  instead of closing all but one. Nothing else stood in the way: unlike the
+  reminder path, which stamps `last_sent_at`, the nudge path stored no record
+  of having fired.
+
+- **The guard is now what was actually sent, not what the calendar implies.**
+  It asks the stored coach message (`latestCoachMessage(userId, "ris")`) and
+  skips if one landed within 36 hours. The database is the only thing that can
+  answer "have I already done this?" for a job that runs every quarter of an
+  hour in a process that may have restarted since — in-memory state and
+  derived-from-today's-date arithmetic both fail that test. 36 hours is
+  deliberately longer than a day, so two ticks either side of midnight cannot
+  slip through, and shorter than the week between two nudge-eligible days.
+
+- **The rule this leaves behind:** *anything that sends to a human must be
+  guarded by a record of the send, not by a condition that happens to be true
+  only briefly.* A time-derived condition is a coincidence, not a lock.
+
+- **It took a person to notice, because nothing else was watching.** The
+  workflow builds the image but runs no tests, so the 184 existing tests only
+  run when someone runs them. The regression test written here (eight ticks
+  must produce one nudge) would have caught this — if anything had executed it.
+  Worth fixing next.
+
 ## Addition — sets are the unit, and weight is never hidden
 
 - **A workout is sets × reps, and the screen now says so.** The target line
