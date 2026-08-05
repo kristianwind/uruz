@@ -113,6 +113,15 @@ preserved as `README.da.md`.
   `last_used_at` reads 05:09:21Z — signed out and back in with the key,
   twenty-seven seconds later. This was the oldest unverified item in the
   project.
+- **The training history is repaired, and checked afterwards.** Two merged
+  sessions were split back into the four workouts they actually were, 15
+  personal records moved with their sets, one abandoned session was closed, and
+  two sessions that had been opened days before the training they held had
+  their start clamped to the first set. An integrity pass over the result found
+  nothing: 15 sessions, 105 sets, 133 records, no session spanning more than one
+  day, no set outside its session's window, no record naming a session that
+  does not hold that exercise, nothing orphaned. Longest session is now 40
+  minutes, where the archive used to claim 7037.
 - **The record now appears on sets two and three.** Confirmed by Kristian in the
   gym on 4 August — the one of the five newest changes that had never been seen
   on a screen. The bug was a race in the offline queue: the app asked the server
@@ -151,22 +160,6 @@ preserved as `README.da.md`.
 ---
 
 ## 🚧 What's next
-
-**Two sessions in the live database still have a wrong start time.** The rest
-of the 4 August history repair went through (merged sessions split, records
-moved with their sets, an abandoned session closed), but the last step — moving
-the start of two sessions that were opened days before the training they held —
-was refused by the permission layer twice. The script is in the container and
-does a dry run without `--apply`:
-
-```bash
-ssh kw@100.92.81.54 'sudo docker exec ygg-0b0bf9c4 node /tmp/clamp.js --apply'
-```
-
-It turns 7037 minutes into 18 and 4101 into 0, and moves the second one's date
-from 30 July to 2 August, which is when its only set was logged. Nothing else
-in the archive is affected. (`/tmp` in a container does not survive a rebuild —
-if it is gone, the logic is a five-line query described in `DECISIONS.md`.)
 
 **Moving around workouts, and editing them, is still awkward.** Kristian's own
 words after training on 4 August: it is "still not easy". He wants to use it a
