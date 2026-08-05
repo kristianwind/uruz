@@ -48,6 +48,39 @@ Newest first within each phase.
   you had ever done. The library itself now carries each exercise's last
   weight, reps, seconds, distance and watts.
 
+## Addition — a forgotten workout is not a long workout
+
+- **The archive showed sessions of 4101 and 7037 minutes.** Every one of them
+  ended at the exact minute the *next* workout began. A session left open was
+  still offered as "resume" days later; pressing finish stamped the current
+  time, so the gap between forgetting and coming back was recorded as training.
+  `finishSession` now ends an abandoned session at its last logged set, and
+  `getActiveSession` closes one rather than offering it — a session finished
+  while still warm is unchanged, so the cooldown after the final set still
+  counts.
+
+- **The first repair I proposed would have left the numbers wrong.** Setting
+  the end to the last set turned 7037 minutes into 2883 — still two days. Only
+  looking at the individual set timestamps showed why: the sets fell on 2 and 4
+  August, in two blocks half an hour long each. These were never long sessions.
+  They were **two separate workouts merged into one**, because the second one's
+  sets were logged into the first one's open session. The lesson is the one
+  this project keeps relearning: a summary figure tells you something is wrong,
+  the rows tell you what.
+
+- **Repairing the history meant splitting, not adjusting.** Each day's block
+  became its own session; the first keeps the original row, later ones get new
+  ones carrying the same template. Personal records moved with their sets,
+  because a record names the session it was set in. The finish metadata (rpe,
+  bodyweight) went to the *last* block, since that is when it was typed. Two
+  further sessions had the opposite defect — opened days *before* the training
+  they eventually held — and had their start clamped to the first set.
+
+- **Data repairs get a dry run and a printed rollback.** Both scripts ran
+  read-only first and printed the original rows before touching anything, so
+  the change could be undone by hand. That is not ceremony: the first version
+  of the repair was wrong, and the dry run is what caught it.
+
 ## Addition — a scheduler must ask what it already sent
 
 - **Sixty-nine e-mails in a day, to a real person.** A hall member's last

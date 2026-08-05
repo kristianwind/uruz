@@ -152,6 +152,22 @@ preserved as `README.da.md`.
 
 ## 🚧 What's next
 
+**Two sessions in the live database still have a wrong start time.** The rest
+of the 4 August history repair went through (merged sessions split, records
+moved with their sets, an abandoned session closed), but the last step — moving
+the start of two sessions that were opened days before the training they held —
+was refused by the permission layer twice. The script is in the container and
+does a dry run without `--apply`:
+
+```bash
+ssh kw@100.92.81.54 'sudo docker exec ygg-0b0bf9c4 node /tmp/clamp.js --apply'
+```
+
+It turns 7037 minutes into 18 and 4101 into 0, and moves the second one's date
+from 30 July to 2 August, which is when its only set was logged. Nothing else
+in the archive is affected. (`/tmp` in a container does not survive a rebuild —
+if it is gone, the logic is a five-line query described in `DECISIONS.md`.)
+
 **Moving around workouts, and editing them, is still awkward.** Kristian's own
 words after training on 4 August: it is "still not easy". He wants to use it a
 few more times before saying what exactly is wrong, so **do not redesign
