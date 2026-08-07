@@ -29,10 +29,24 @@ export function Stopwatch({
   const [elapsed, setElapsed] = useState(0);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
+  // Last whole second handed upwards, so the reading is pushed once per second
+  // rather than five times.
+  const lastPushed = useRef(-1);
 
   useEffect(() => {
     if (startedAt === null) return;
-    const tick = () => setElapsed(Math.floor((Date.now() - startedAt) / 1000));
+    const tick = () => {
+      const secs = Math.floor((Date.now() - startedAt) / 1000);
+      setElapsed(secs);
+      // Keep the field in step with the running clock. Without this the value
+      // only arrived on Stop — and pressing "Log set" straight from a running
+      // stopwatch, which is the habit every other exercise teaches, logged
+      // whatever the field happened to say before the plank started.
+      if (secs !== lastPushed.current) {
+        lastPushed.current = secs;
+        onChangeRef.current(Math.max(1, secs));
+      }
+    };
     tick();
     const interval = setInterval(tick, 200);
     return () => clearInterval(interval);
@@ -46,6 +60,7 @@ export function Stopwatch({
     const total = Math.max(1, Math.round((Date.now() - startedAt) / 1000));
     setStartedAt(null);
     setElapsed(0);
+    lastPushed.current = -1;
     onChangeRef.current(total);
     // A short buzz confirms the reading was taken, for a phone on the floor.
     navigator.vibrate?.(60);
