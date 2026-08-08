@@ -48,6 +48,36 @@ Newest first within each phase.
   you had ever done. The library itself now carries each exercise's last
   weight, reps, seconds, distance and watts.
 
+## Addition — the row you start on
+
+- **A template row can be a warm-up.** Kristian opens every session on the
+  rowing machine, and registering it took three deliberate taps — add the
+  exercise, press "warm-up", log — every time. Forgetting the middle one was
+  silent and expensive: the light opener counted as a working set, so it could
+  claim a record and, worse, become the weight the app suggested next session.
+  Marking the row once in the builder now carries through: the toggle beside
+  "Log set" is already on when you reach that exercise.
+
+- **A warm-up row remembers its own numbers.** `getLastPerformance` deliberately
+  ignores warm-up sets, which is right for working weights and wrong for a row
+  that only ever holds warm-ups — it would have opened blank every time. It now
+  takes a flag and looks at the matching kind. The two lookups stay separate:
+  500 m of rowing must never be mistaken for a working set, in either direction.
+
+- **A warm-up row gets no progression suggestion.** The engine exists to drive
+  the weight up over time, which is the opposite of what an opener is for. A
+  warm-up starts the same way every session.
+
+- **Counting had to change with it.** The set counter deliberately excludes
+  warm-ups, so on a row where *every* set is a warm-up it would have sat on
+  "set 1 of 1" forever. On such a row it counts all of them.
+
+- **The column needed two homes.** `is_warmup` went into `SCHEMA_SQL` *and*
+  `ADDED_COLUMNS` — the schema is what a fresh database gets, the list is what a
+  running one gets, and `CREATE TABLE IF NOT EXISTS` silently skips the whole
+  statement on a table that already exists. This is written down in `HANDOFF.md`
+  as a trap precisely because it costs a production migration when missed.
+
 ## Addition — a forgotten workout is not a long workout
 
 - **The archive showed sessions of 4101 and 7037 minutes.** Every one of them

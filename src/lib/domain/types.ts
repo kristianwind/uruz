@@ -125,6 +125,8 @@ export interface WorkoutExercise {
   targetSeconds: number | null;
   restSeconds: number;
   progressionMode: ProgressionMode;
+  /** A warm-up row: logged sets are marked as warm-up automatically. */
+  isWarmup: boolean;
   notes: string | null;
 }
 

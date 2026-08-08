@@ -62,6 +62,7 @@ export default async function BuilderPage({
         targetSeconds: it.targetSeconds,
         restSeconds: it.restSeconds,
         progressionMode: it.progressionMode,
+        isWarmup: it.isWarmup,
       })),
     };
   }

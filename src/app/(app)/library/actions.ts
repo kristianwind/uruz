@@ -30,6 +30,7 @@ const ItemSchema = z.object({
   targetSeconds: z.number().int().min(1).max(3600).nullable(),
   restSeconds: z.number().int().min(0).max(900),
   progressionMode: z.enum(["double", "linear", "rir", "none"]),
+  isWarmup: z.boolean().default(false),
 });
 
 const SaveSchema = z.object({
@@ -117,6 +118,7 @@ export async function duplicateWorkoutAction(workoutId: string): Promise<string>
       targetSeconds: it.targetSeconds,
       restSeconds: it.restSeconds,
       progressionMode: it.progressionMode,
+      isWarmup: it.isWarmup,
       notes: it.notes,
     })),
   );
@@ -196,6 +198,7 @@ export async function applyAdaptationAction(input: {
     targetSeconds: it.targetSeconds,
     restSeconds: it.restSeconds,
     progressionMode: it.progressionMode,
+    isWarmup: it.isWarmup,
   }));
 
   const next = applyProposal(items, proposal);

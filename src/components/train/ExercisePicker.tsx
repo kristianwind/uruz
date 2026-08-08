@@ -106,6 +106,9 @@ export function toActive(entry: LibraryEntry): ActiveExercise {
     targetRepsMax: 12,
     targetSeconds: entry.unit === "sek" ? (entry.lastSeconds ?? 30) : null,
     restSeconds: 90,
+    // Picked by hand, so nothing has declared it a warm-up. The toggle beside
+    // "Log set" is still there for the times it is one.
+    isWarmup: false,
     svgKey: entry.svgKey,
     imageUrl: entry.imageUrl,
     steps: entry.steps,

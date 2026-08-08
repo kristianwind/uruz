@@ -108,6 +108,7 @@ export interface WorkoutExerciseInput {
   targetSeconds?: number | null;
   restSeconds?: number;
   progressionMode?: WorkoutExercise["progressionMode"];
+  isWarmup?: boolean;
   notes?: string | null;
 }
 
@@ -117,8 +118,9 @@ export function addWorkoutExercise(input: WorkoutExerciseInput): WorkoutExercise
     .prepare(
       `INSERT INTO workout_exercises
         (id, workout_id, exercise_id, ord, target_sets, target_reps_min,
-         target_reps_max, target_seconds, rest_seconds, progression_mode, notes)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+         target_reps_max, target_seconds, rest_seconds, progression_mode,
+         is_warmup, notes)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
     )
     .run(
       id,
@@ -131,6 +133,7 @@ export function addWorkoutExercise(input: WorkoutExerciseInput): WorkoutExercise
       input.targetSeconds ?? null,
       input.restSeconds ?? 90,
       input.progressionMode ?? "double",
+      fromBool(input.isWarmup ?? false),
       input.notes ?? null,
     );
   const row = getDb()

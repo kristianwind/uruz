@@ -31,9 +31,12 @@ export function buildActiveExercises(
     const ex = exercises.get(item.exerciseId);
     if (!ex) return [];
 
-    const last = getLastPerformance(userId, ex.id, currentSessionId);
+    // A warm-up row remembers its own warm-up numbers, not the working ones.
+    const last = getLastPerformance(userId, ex.id, currentSessionId, item.isWarmup);
     const suggestion =
-      last && last.weight
+      // Progression drives you heavier over time, which is the opposite of what
+      // a warm-up is for. A warm-up opens the same way every time.
+      !item.isWarmup && last && last.weight
         ? suggestProgression(item.progressionMode, {
             lastWeight: last.weight,
             lastReps: last.reps,
@@ -56,6 +59,7 @@ export function buildActiveExercises(
         targetRepsMax: item.targetRepsMax,
         targetSeconds: item.targetSeconds,
         restSeconds: item.restSeconds,
+        isWarmup: item.isWarmup,
         // Carried along so the logging screen can show what the exercise is,
         // without a round trip to the library in the middle of a workout.
         svgKey: ex.svgKey,

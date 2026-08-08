@@ -32,6 +32,8 @@ export interface BuilderItem {
   targetSeconds: number | null;
   restSeconds: number;
   progressionMode: ProgressionMode;
+  /** Opens the workout rather than counting towards it — see the toggle below. */
+  isWarmup: boolean;
 }
 
 export interface BuilderWorkout {
@@ -116,6 +118,7 @@ export function WorkoutBuilder({
         targetSeconds: timed ? 30 : null,
         restSeconds: timed ? 45 : 90,
         progressionMode: timed ? "linear" : "double",
+        isWarmup: false,
       },
     ]);
     setPicking(false);
@@ -304,6 +307,19 @@ export function WorkoutBuilder({
                   onChange={(v) => patch(i, { restSeconds: v })}
                 />
               </div>
+
+              {/* The row you start on. Marking it here means the toggle beside
+                  "Log set" is already on when you get there, and the sets stay
+                  out of your records and out of next time's suggestion. */}
+              <label className="mt-2 flex items-center gap-2 text-xs text-muted">
+                <input
+                  type="checkbox"
+                  checked={it.isWarmup}
+                  onChange={(e) => patch(i, { isWarmup: e.target.checked })}
+                  className="h-4 w-4 accent-[var(--color-accent)]"
+                />
+                {t("library.warmupRow")}
+              </label>
             </li>
           );
         })}

@@ -102,6 +102,7 @@ export const mapWorkoutExercise = (r: Row): WorkoutExercise => ({
   targetSeconds: toNum(r.target_seconds),
   restSeconds: Number(r.rest_seconds ?? 90),
   progressionMode: asStr(r.progression_mode) as WorkoutExercise["progressionMode"],
+  isWarmup: toBool(r.is_warmup),
   notes: asStrOrNull(r.notes),
 });
 

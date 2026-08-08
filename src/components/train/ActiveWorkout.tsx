@@ -36,6 +36,8 @@ export interface ActiveExercise {
   targetRepsMax: number | null;
   targetSeconds: number | null;
   restSeconds: number;
+  /** A warm-up row: its sets are marked as warm-up without being asked. */
+  isWarmup: boolean;
   /** What the exercise looks like, and how it is done — shown in place. */
   svgKey: string | null;
   imageUrl: string | null;
@@ -137,7 +139,9 @@ export function ActiveWorkout({
     setSeconds(seedSeconds);
     setDistanceM(seedDistance);
     setWatts(seedWatts);
-    setIsWarmup(false);
+    // A row the template calls a warm-up arrives already marked, so the machine
+    // you open on is one tap rather than three.
+    setIsWarmup(current.isWarmup);
   }
 
   const setsForCurrent = useMemo(
@@ -146,9 +150,14 @@ export function ActiveWorkout({
   );
   // Warm-ups are not part of the prescription — three working sets means three
   // real ones, so counting a warm-up towards them would end the exercise early.
+  // On a warm-up row every set is a warm-up, so counting only working sets
+  // would leave it stuck on "set 1 of 1" no matter how many you logged.
   const workingSets = useMemo(
-    () => setsForCurrent.filter((s) => !s.isWarmup).length,
-    [setsForCurrent],
+    () =>
+      current?.isWarmup
+        ? setsForCurrent.length
+        : setsForCurrent.filter((s) => !s.isWarmup).length,
+    [setsForCurrent, current?.isWarmup],
   );
 
   const logSet = useCallback(async () => {

@@ -373,25 +373,38 @@ export function getLastPerformance(
   userId: string,
   exerciseId: string,
   excludeSessionId?: string,
+  /**
+   * Look at warm-up sets instead of working ones. A warm-up row in a template
+   * has to remember its *own* last numbers — the 500 m you always open with —
+   * and those live in sets the working-set lookup deliberately ignores.
+   */
+  warmup = false,
 ): LastPerformance | null {
   const db = getDb();
+  const wantWarmup = fromBool(warmup);
   const sessionRow = db
     .prepare(
       `SELECT s.id, s.started_at FROM sessions s
        JOIN set_logs sl ON sl.session_id = s.id
-       WHERE s.user_id = ? AND sl.exercise_id = ? AND sl.is_warmup = 0
+       WHERE s.user_id = ? AND sl.exercise_id = ? AND sl.is_warmup = ?
          AND (? IS NULL OR s.id != ?)
        ORDER BY s.started_at DESC LIMIT 1`,
     )
-    .get(userId, exerciseId, excludeSessionId ?? null, excludeSessionId ?? "") as Row | undefined;
+    .get(
+      userId,
+      exerciseId,
+      wantWarmup,
+      excludeSessionId ?? null,
+      excludeSessionId ?? "",
+    ) as Row | undefined;
   if (!sessionRow) return null;
 
   const rows = db
     .prepare(
-      `SELECT * FROM set_logs WHERE session_id = ? AND exercise_id = ? AND is_warmup = 0
+      `SELECT * FROM set_logs WHERE session_id = ? AND exercise_id = ? AND is_warmup = ?
        ORDER BY set_index`,
     )
-    .all(String(sessionRow.id), exerciseId) as Row[];
+    .all(String(sessionRow.id), exerciseId, wantWarmup) as Row[];
   if (rows.length === 0) return null;
 
   const sets = rows.map(mapSetLog);

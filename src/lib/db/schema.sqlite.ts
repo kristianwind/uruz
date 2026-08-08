@@ -124,6 +124,10 @@ CREATE TABLE IF NOT EXISTS workout_exercises (
   target_seconds   INTEGER,
   rest_seconds     INTEGER NOT NULL DEFAULT 90,
   progression_mode TEXT NOT NULL DEFAULT 'double',
+  -- This row is a warm-up: the rowing machine you start on, not a working set.
+  -- Sets logged against it never set records and never become the suggestion
+  -- for next time, so a light opener cannot pull your working weight down.
+  is_warmup        INTEGER NOT NULL DEFAULT 0,
   notes            TEXT
 );
 
