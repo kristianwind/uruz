@@ -6,6 +6,8 @@ import { ChevronRightIcon, BoltIcon, ClockIcon, PlusIcon } from "@/components/ui
 import { getContext } from "@/lib/auth/session";
 import { listTemplates, getWorkoutExercises, getWorkout } from "@/lib/db/repo/workouts";
 import { getActiveSession } from "@/lib/db/repo/sessions";
+import { getActiveProgram, programSlots } from "@/lib/db/repo/programs";
+import { nextWorkout } from "@/lib/domain/program";
 import { getT } from "@/lib/i18n/server";
 import { workoutName } from "@/lib/domain/localize";
 
@@ -28,6 +30,13 @@ export default async function TrainPage() {
   const templates = listTemplates(ctx.hall.id);
   const active = getActiveSession(ctx.user.id);
   const activeWorkout = active?.workoutId ? getWorkout(active.workoutId) : null;
+
+  // What today actually is. This slot used to say "free training", which is the
+  // app admitting it does not know — the one question a training app has to be
+  // able to answer.
+  const program = getActiveProgram(ctx.user.id);
+  const up = program ? nextWorkout(programSlots(program.id, ctx.user.id)) : null;
+  const upNext = up ? getWorkout(up.workoutId) : null;
 
   return (
     <div>
@@ -55,18 +64,49 @@ export default async function TrainPage() {
         <h2 id="today-h" className="mb-2 text-sm font-semibold uppercase tracking-wide text-faint">
           {t("train.todaysWorkout")}
         </h2>
-        <Link href="/train/free">
-          <Card interactive className="flex items-center justify-between bg-accent-soft/40">
-            <div className="flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent text-on-accent">
-                <BoltIcon size={22} />
-              </span>
-              <div>
-                <CardTitle>{t("train.freeWorkout")}</CardTitle>
-                <CardMuted>{t("train.freeWorkoutDesc")}</CardMuted>
+        {upNext ? (
+          <Link href={`/library/workout/${upNext.id}?from=train`}>
+            <Card interactive className="flex items-center justify-between border-accent bg-accent-soft/40">
+              <div className="flex items-center gap-3">
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent text-on-accent">
+                  <BoltIcon size={22} />
+                </span>
+                <div className="min-w-0">
+                  <CardTitle className="truncate">{workoutName(upNext, t.locale)}</CardTitle>
+                  <CardMuted>
+                    {up?.reason === "never"
+                      ? t("train.programNever")
+                      : t("train.programDaysSince", { days: up?.daysSince ?? 0 })}
+                  </CardMuted>
+                </div>
               </div>
-            </div>
-            <ChevronRightIcon className="text-muted" />
+              <ChevronRightIcon className="shrink-0 text-muted" />
+            </Card>
+          </Link>
+        ) : (
+          /* No plan yet — offer to have one made rather than opening with a
+             catalogue and leaving the choosing to you. */
+          <Link href="/coach/program">
+            <Card interactive className="flex items-center justify-between border-accent bg-accent-soft/40">
+              <div className="flex items-center gap-3">
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent text-on-accent">
+                  <BoltIcon size={22} />
+                </span>
+                <div>
+                  <CardTitle>{t("train.letKvasirPlan")}</CardTitle>
+                  <CardMuted>{t("train.letKvasirPlanDesc")}</CardMuted>
+                </div>
+              </div>
+              <ChevronRightIcon className="shrink-0 text-muted" />
+            </Card>
+          </Link>
+        )}
+
+        {/* Still one tap away, just no longer pretending to be the plan. */}
+        <Link href="/train/free" className="mt-2 block">
+          <Card interactive className="flex items-center justify-between py-3">
+            <CardMuted>{t("train.freeWorkout")}</CardMuted>
+            <ChevronRightIcon className="shrink-0 text-muted" />
           </Card>
         </Link>
       </section>

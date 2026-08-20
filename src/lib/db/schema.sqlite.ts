@@ -136,6 +136,33 @@ CREATE TABLE IF NOT EXISTS workout_exercises (
   notes            TEXT
 );
 
+-- Kvasir's plan: which workouts you are on, and in what order. It points at
+-- existing workouts rather than owning its own copies, so building or dropping
+-- a plan can never touch a logged session — the plan is a running order, not
+-- the training itself.
+CREATE TABLE IF NOT EXISTS programs (
+  id           TEXT PRIMARY KEY,
+  user_id      TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name         TEXT NOT NULL,
+  goal         TEXT NOT NULL DEFAULT 'helkrop',
+  days_per_week INTEGER NOT NULL DEFAULT 3,
+  minutes      INTEGER NOT NULL DEFAULT 45,
+  note         TEXT,             -- Kvasir's own words about why it looks like this
+  -- Only one plan is live at a time; the rest are kept as history.
+  active       INTEGER NOT NULL DEFAULT 1,
+  created_at   TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS program_workouts (
+  id          TEXT PRIMARY KEY,
+  program_id  TEXT NOT NULL REFERENCES programs(id) ON DELETE CASCADE,
+  workout_id  TEXT NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
+  ord         INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE INDEX IF NOT EXISTS idx_program_user ON programs(user_id, active);
+CREATE INDEX IF NOT EXISTS idx_pw_program ON program_workouts(program_id, ord);
+
 CREATE TABLE IF NOT EXISTS sessions (
   id          TEXT PRIMARY KEY,
   user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

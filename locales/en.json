@@ -103,7 +103,11 @@
     "sessionDeleted": "The workout has been deleted.",
     "sessionSets": "{{count}} sets",
     "sessionDuration": "{{min}} min",
-    "editSets": "Tap a set to correct it."
+    "editSets": "Tap a set to correct it.",
+    "programNever": "Not tried yet — start here",
+    "programDaysSince": "Last done {{days}} days ago",
+    "letKvasirPlan": "Let Kvasir plan your training",
+    "letKvasirPlanDesc": "Answer five questions and you are set"
   },
   "library": {
     "title": "Library",
@@ -368,7 +372,18 @@
     "constraintWish": "Wish",
     "constraintResolve": "Resolved / no longer relevant",
     "addConstraint": "Add",
-    "constraintPlaceholder": "e.g. bad shoulder, or: want to train back more"
+    "constraintPlaceholder": "e.g. bad shoulder, or: want to train back more",
+    "programTitle": "Kvasir plans your training",
+    "programSubtitle": "Five questions and you have a plan",
+    "programGoal": "What are you after?",
+    "programGoalHint": "In your own words — or leave it empty.",
+    "programGoalPlaceholder": "e.g. stronger legs",
+    "programDays": "How many days a week?",
+    "programMinutes": "How long have you got each time?",
+    "programEquipment": "What equipment do you have?",
+    "programEquipmentHint": "Leave empty if you train in an ordinary gym.",
+    "programConstraintsNote": "Kvasir takes the injuries and wishes from your coach page into account.",
+    "programBuild": "Build the plan"
   },
   "ranks": {
     "thrael": "Thrall",

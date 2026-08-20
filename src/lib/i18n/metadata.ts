@@ -1,6 +1,7 @@
 import "server-only";
 import type { Metadata } from "next";
 import { getT } from "./server";
+import { getCurrentUser } from "@/lib/auth/session";
 
 /**
  * Page titles that follow the reader's language.
@@ -12,11 +13,16 @@ import { getT } from "./server";
  * app.
  *
  * `generateMetadata` is async, so it can resolve the same locale the page
- * itself renders in.
+ * itself renders in — including the signed-in user's own preference. Reading
+ * only the cookie was not enough: a Dane whose preference is stored on their
+ * account, with no cookie set, got an English tab above a Danish page.
  */
 export function localizedTitle(key: string): () => Promise<Metadata> {
   return async () => {
-    const t = await getT();
+    // Unauthenticated pages (welcome, login) have no preference to read, and
+    // getT falls back to the cookie and then the default.
+    const user = await getCurrentUser().catch(() => null);
+    const t = await getT(user?.localePref);
     return { title: t(key) };
   };
 }

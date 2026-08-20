@@ -103,7 +103,11 @@
     "sessionDeleted": "Træningen er slettet.",
     "sessionSets": "{{count}} sæt",
     "sessionDuration": "{{min}} min",
-    "editSets": "Ret sættene ved at trykke på dem."
+    "editSets": "Ret sættene ved at trykke på dem.",
+    "programNever": "Ikke prøvet endnu — start her",
+    "programDaysSince": "Sidst for {{days}} dage siden",
+    "letKvasirPlan": "Lad Kvasir lægge et program",
+    "letKvasirPlanDesc": "Svar på fem spørgsmål, så er du i gang"
   },
   "library": {
     "title": "Bibliotek",
@@ -368,7 +372,18 @@
     "constraintWish": "Ønske",
     "constraintResolve": "Løst / ikke længere aktuelt",
     "addConstraint": "Tilføj",
-    "constraintPlaceholder": "fx: dårlig skulder, eller: vil gerne træne ryg mere"
+    "constraintPlaceholder": "fx: dårlig skulder, eller: vil gerne træne ryg mere",
+    "programTitle": "Kvasir lægger dit program",
+    "programSubtitle": "Fem spørgsmål, så har du en plan",
+    "programGoal": "Hvad vil du gerne opnå?",
+    "programGoalHint": "Skriv det med dine egne ord — eller lad feltet stå tomt.",
+    "programGoalPlaceholder": "fx: blive stærkere i benene",
+    "programDays": "Hvor mange dage om ugen?",
+    "programMinutes": "Hvor lang tid har du pr. gang?",
+    "programEquipment": "Hvilket udstyr har du?",
+    "programEquipmentHint": "Lad stå tomt hvis du træner i et almindeligt center.",
+    "programConstraintsNote": "Kvasir tager hensyn til de skavanker og ønsker, du har skrevet på coach-siden.",
+    "programBuild": "Læg programmet"
   },
   "ranks": {
     "thrael": "Thræl",
