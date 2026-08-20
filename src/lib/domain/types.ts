@@ -111,6 +111,8 @@ export interface Workout {
   estimatedMinutes: number;
   isTemplate: boolean;
   createdBy: string | null;
+  /** Put away: hidden from the lists, but its history keeps its name. */
+  archivedAt: string | null;
   createdAt: string;
 }
 

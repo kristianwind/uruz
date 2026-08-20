@@ -126,7 +126,10 @@
     "saferVariant": "Sikker variant",
     "empty": "Ingen øvelser matcher filtrene.",
     "copySuffix": "kopi",
-    "adaptedSuffix": "tilpasset"
+    "adaptedSuffix": "tilpasset",
+    "removeWorkout": "Fjern træning",
+    "removeDeletes": "Den er aldrig brugt, så den slettes helt.",
+    "removeArchives": "Du har trænet den {{count}} gang(e). Den arkiveres, så dine træninger beholder deres navn — den forsvinder blot fra listerne."
   },
   "stats": {
     "title": "Statistik",

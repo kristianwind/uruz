@@ -88,6 +88,7 @@ export const mapWorkout = (r: Row): Workout => ({
   estimatedMinutes: Number(r.estimated_minutes ?? 45),
   isTemplate: toBool(r.is_template),
   createdBy: asStrOrNull(r.created_by),
+  archivedAt: asStrOrNull(r.archived_at),
   createdAt: asStr(r.created_at),
 });
 

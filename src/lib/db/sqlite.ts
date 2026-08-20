@@ -59,6 +59,7 @@ const ADDED_COLUMNS: Array<{ table: string; column: string; definition: string }
     column: "is_warmup",
     definition: "INTEGER NOT NULL DEFAULT 0",
   },
+  { table: "workouts", column: "archived_at", definition: "TEXT" },
 ];
 
 function applyColumnAdditions(db: DatabaseSync): void {

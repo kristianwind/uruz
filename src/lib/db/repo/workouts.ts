@@ -8,18 +8,42 @@ export function getWorkout(id: string): Workout | null {
 }
 
 /** Templates + the hall's own workouts, visible to everyone in the hall. */
-export function listHallWorkouts(hallId: string): Workout[] {
+export function listHallWorkouts(hallId: string, includeArchived = false): Workout[] {
   const rows = getDb()
-    .prepare("SELECT * FROM workouts WHERE hall_id = ? ORDER BY is_template DESC, name")
-    .all(hallId) as Row[];
+    .prepare(
+      `SELECT * FROM workouts WHERE hall_id = ?
+         AND (? = 1 OR archived_at IS NULL)
+       ORDER BY is_template DESC, name`,
+    )
+    .all(hallId, includeArchived ? 1 : 0) as Row[];
   return rows.map(mapWorkout);
 }
 
 export function listTemplates(hallId: string): Workout[] {
   const rows = getDb()
-    .prepare("SELECT * FROM workouts WHERE hall_id = ? AND is_template = 1 ORDER BY name")
+    .prepare(
+      "SELECT * FROM workouts WHERE hall_id = ? AND is_template = 1 AND archived_at IS NULL ORDER BY name",
+    )
     .all(hallId) as Row[];
   return rows.map(mapWorkout);
+}
+
+/** How many sessions were trained from this workout. */
+export function workoutSessionCount(id: string): number {
+  const row = getDb()
+    .prepare("SELECT COUNT(*) AS n FROM sessions WHERE workout_id = ?")
+    .get(id) as Row;
+  return Number(row.n);
+}
+
+/**
+ * Put a workout away: out of every list, but still there to name the sessions
+ * that were trained from it. Reversible — pass false to bring it back.
+ */
+export function archiveWorkout(id: string, archived = true): void {
+  getDb()
+    .prepare("UPDATE workouts SET archived_at = ? WHERE id = ?")
+    .run(archived ? nowIso() : null, id);
 }
 
 export function getWorkoutExercises(workoutId: string): WorkoutExercise[] {
@@ -93,8 +117,22 @@ export function updateWorkoutMeta(
   return getWorkout(id);
 }
 
-export function deleteWorkout(id: string): void {
+/**
+ * Remove a workout that was never trained.
+ *
+ * Refuses once a session points at it. `sessions.workout_id` is ON DELETE SET
+ * NULL, so deleting a used workout does not remove the training — it strips the
+ * name off it, and a real session in the archive turns into anonymous "free
+ * training". That is data loss you cannot see happening, which is the worst
+ * kind. Archive those instead; the caller is expected to offer that.
+ *
+ * Returns false when it refused, so a route can say why rather than claiming
+ * success for something it did not do.
+ */
+export function deleteWorkout(id: string): boolean {
+  if (workoutSessionCount(id) > 0) return false;
   getDb().prepare("DELETE FROM workouts WHERE id = ?").run(id);
+  return true;
 }
 
 export interface WorkoutExerciseInput {

@@ -6,13 +6,14 @@ import { BodyMap, muscleIntensity } from "@/components/exercise/BodyMap";
 import { ExerciseMedia } from "@/components/exercise/ExerciseMedia";
 import { ChevronLeftIcon, ClockIcon } from "@/components/ui/icons";
 import { DuplicateButton } from "@/components/library/DuplicateButton";
+import { RemoveWorkoutButton } from "@/components/library/RemoveWorkoutButton";
 import { AdaptWorkout } from "@/components/coach/AdaptWorkout";
 import { requireContext } from "@/lib/auth/session";
-import { getWorkout, getWorkoutExercises } from "@/lib/db/repo/workouts";
+import { getWorkout, getWorkoutExercises, workoutSessionCount } from "@/lib/db/repo/workouts";
 import { getExercisesByIds } from "@/lib/db/repo/exercises";
 import { localizeExercise, workoutName, workoutDescription } from "@/lib/domain/localize";
 import { getT } from "@/lib/i18n/server";
-import { duplicateWorkoutAction, applyAdaptationAction } from "../../actions";
+import { duplicateWorkoutAction, applyAdaptationAction, removeWorkoutAction } from "../../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -123,6 +124,13 @@ export default async function WorkoutDetailPage({
       {/* Tell Kvasir about an ailment or a wish and let him adjust this workout */}
       <section className="mt-6">
         <AdaptWorkout workoutId={workout.id} onApply={applyAdaptationAction} />
+
+        {/* Nothing could be taken off the list before, so lists only grew. */}
+        <RemoveWorkoutButton
+          workoutId={workout.id}
+          usedInSessions={workoutSessionCount(workout.id)}
+          action={removeWorkoutAction}
+        />
       </section>
     </div>
   );

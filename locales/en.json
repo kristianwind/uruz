@@ -126,7 +126,10 @@
     "saferVariant": "Safer variant",
     "empty": "No exercises match the filters.",
     "copySuffix": "copy",
-    "adaptedSuffix": "adapted"
+    "adaptedSuffix": "adapted",
+    "removeWorkout": "Remove workout",
+    "removeDeletes": "Never trained, so it is deleted outright.",
+    "removeArchives": "You have trained this {{count}} time(s). It is archived instead, so your sessions keep their name — it just leaves the lists."
   },
   "stats": {
     "title": "Stats",

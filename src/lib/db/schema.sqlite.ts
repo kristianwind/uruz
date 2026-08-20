@@ -110,6 +110,11 @@ CREATE TABLE IF NOT EXISTS workouts (
   estimated_minutes INTEGER NOT NULL DEFAULT 45,
   is_template       INTEGER NOT NULL DEFAULT 0,
   created_by        TEXT REFERENCES users(id) ON DELETE SET NULL,
+  -- Put away rather than deleted. A workout you have trained can never be
+  -- removed: sessions point at it with ON DELETE SET NULL, so deleting one
+  -- silently strips the name off real training history and leaves it looking
+  -- like free training. Archiving empties the lists without touching a log.
+  archived_at       TEXT,
   created_at        TEXT NOT NULL
 );
 

@@ -10,6 +10,7 @@ import {
   setWorkoutExercises,
   updateWorkoutMeta,
   deleteWorkout,
+  archiveWorkout,
 } from "@/lib/db/repo/workouts";
 import { workoutName } from "@/lib/domain/localize";
 import { applyProposal } from "@/lib/coach/adapt";
@@ -127,13 +128,40 @@ export async function duplicateWorkoutAction(workoutId: string): Promise<string>
   return copy.id;
 }
 
-/** Delete one of the hall's own workouts (never a seeded template). */
-export async function deleteWorkoutAction(workoutId: string): Promise<void> {
+/**
+ * Get a workout out of the lists.
+ *
+ * Deletes it outright only when nothing was ever trained from it. The moment a
+ * session points at it the workout is archived instead — because deleting it
+ * would leave the session behind with its name stripped off, showing up in the
+ * archive as anonymous free training. Same button, and from the outside the
+ * same result: it is gone from every list. The difference is that the training
+ * you did keeps saying what it was.
+ *
+ * Returns what actually happened, so the screen can tell the truth about it.
+ */
+export async function removeWorkoutAction(
+  workoutId: string,
+): Promise<"deleted" | "archived"> {
   const ctx = await requireContext();
   const workout = getWorkout(workoutId);
   if (!workout || workout.hallId !== ctx.hall.id) throw new Error("NOT_FOUND");
   if (workout.isTemplate && ctx.user.role !== "admin") throw new Error("FORBIDDEN");
-  deleteWorkout(workoutId);
+
+  const outcome = deleteWorkout(workoutId) ? "deleted" : "archived";
+  if (outcome === "archived") archiveWorkout(workoutId);
+
+  revalidatePath("/library");
+  revalidatePath("/train");
+  return outcome;
+}
+
+/** Bring an archived workout back into the lists. */
+export async function restoreWorkoutAction(workoutId: string): Promise<void> {
+  const ctx = await requireContext();
+  const workout = getWorkout(workoutId);
+  if (!workout || workout.hallId !== ctx.hall.id) throw new Error("NOT_FOUND");
+  archiveWorkout(workoutId, false);
   revalidatePath("/library");
   revalidatePath("/train");
 }
