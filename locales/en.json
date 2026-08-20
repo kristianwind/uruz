@@ -337,6 +337,7 @@
     "defaultHallName": "My hall"
   },
   "coach": {
+    "title": "Kvasir",
     "name": "Kvasir",
     "askTitle": "Ask Kvasir",
     "askPlaceholder": "e.g. I only have 25 min today, what should I do?",

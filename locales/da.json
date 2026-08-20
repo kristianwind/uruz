@@ -337,6 +337,7 @@
     "defaultHallName": "Min hal"
   },
   "coach": {
+    "title": "Kvasir",
     "name": "Kvasir",
     "askTitle": "Spørg Kvasir",
     "askPlaceholder": "fx: jeg har kun 25 min i dag, hvad gør jeg?",
