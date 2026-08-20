@@ -149,16 +149,16 @@ a new name before saving.
 
 ---
 
-## Mimir, the coach
+## Kvasir, the coach
 
-Mimir is the app's AI coach. He is optional: without a model configured, Uruz
+Kvasir is the app's AI coach. He is optional: without a model configured, Uruz
 still gives you concrete suggestions — they are just rule-based rather than
 written by a language model.
 
 **Weekly analysis** looks at what you have actually done and says something
 useful about it, rather than congratulating you for existing.
 
-**Ask Mimir** takes a question in your own words. "I only have 25 minutes today,
+**Ask Kvasir** takes a question in your own words. "I only have 25 minutes today,
 what do I do?" is a good one.
 
 **Tell him about a niggle or a wish** — this is the part worth knowing about. A
@@ -166,7 +166,7 @@ sore shoulder, a bad knee, "I want to focus on my back for a while". He adapts
 the training around it, and he remembers: mention a shoulder today, and a
 question next week about something else still takes it into account.
 
-> Mimir is a training coach, not a doctor. He gives no dietary advice, never
+> Kvasir is a training coach, not a doctor. He gives no dietary advice, never
 > comments on your body or your weight, and points you to a doctor or
 > physiotherapist when something hurts. That is built into his instructions and
 > cannot be switched off — not even with the "tough" tone, which only makes him
@@ -215,7 +215,7 @@ Everything you log is saved on the device first and synced when the connection
 comes back. A banner tells you when you are offline and when it is catching up.
 Nothing is lost, and you do not have to think about it.
 
-The only things that need a connection are Mimir, the leaderboard, and anything
+The only things that need a connection are Kvasir, the leaderboard, and anything
 that involves other people.
 
 ---
@@ -254,7 +254,7 @@ nothing.
 | What you see | What it usually is |
 |---|---|
 | Face ID fails | The address the app is reached on has to match its passkey domain, and it has to be HTTPS. Whoever runs the server can see both under **Me → Admin → Passkey setup**. |
-| Mimir does not answer | No model is configured, or it cannot be reached. The app falls back to rule-based suggestions — that is intended, not broken. |
+| Kvasir does not answer | No model is configured, or it cannot be reached. The app falls back to rule-based suggestions — that is intended, not broken. |
 | No reminders arrive | The server's scheduler is not calling the app. Ask whoever runs it. |
 | An old screen after an update | The app caches itself so it works offline. Remove it from your home screen and add it again, or reload in Safari. |
 | A sign-in link never arrives | Check spam. If it still does not, the server may have no mail configured — ask. |

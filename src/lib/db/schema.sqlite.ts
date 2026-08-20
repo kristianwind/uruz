@@ -261,7 +261,7 @@ CREATE TABLE IF NOT EXISTS webauthn_challenges (
   created_at TEXT NOT NULL
 );
 
--- Ailments ("skavanker") and wishes ("ønsker") the user has told Mimir about.
+-- Ailments ("skavanker") and wishes ("ønsker") the user has told Kvasir about.
 -- These persist so every later suggestion respects them, and so a sore
 -- shoulder is not forgotten the next time the workout is planned.
 CREATE TABLE IF NOT EXISTS user_constraints (

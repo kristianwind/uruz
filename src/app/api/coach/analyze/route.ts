@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getContext } from "@/lib/auth/session";
-import { analyzeWeek } from "@/lib/coach/mimir";
+import { analyzeWeek } from "@/lib/coach/kvasir";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;

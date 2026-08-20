@@ -158,7 +158,7 @@ Ikke funktioner — koden er den samme og gratis. Du sælger:
 **at det bare kører.** Backup, opdatering, HTTPS, en mailserver der virker, og
 at Face ID fungerer uden at nogen skal forstå hvad en RP ID er.
 
-**Mimir uden opsætning.** Det er dit egentlige kort. Du kører allerede en model
+**Kvasir uden opsætning.** Det er dit egentlige kort. Du kører allerede en model
 på egen hardware, så den variable omkostning er nær nul, hvor en konkurrent
 betaler pr. token. Den selvhostende kan sætte sin egen model på — men skal selv
 skaffe den.
@@ -169,7 +169,7 @@ skaffe den.
 |---|---|---|
 | Pris | 0 | et lille beløb pr. hold |
 | Kode | den samme | den samme |
-| Mimir | egen model eller egen nøgle | inkluderet |
+| Kvasir | egen model eller egen nøgle | inkluderet |
 | Backup, opdatering, mail | dit ansvar | vores |
 
 **Pr. hold, ikke pr. bruger.** Folk træner sammen — et par, en makkergruppe,
@@ -207,7 +207,7 @@ data bagefter.
 
 ### Træningsdata er tættere på helbredsdata end man tror
 
-En træningslog med kropsvægt, skavanker og hvad Mimir har fået at vide om en
+En træningslog med kropsvægt, skavanker og hvad Kvasir har fået at vide om en
 øm skulder er ikke almindelige kundedata. Under GDPR kan det falde i
 **særlige kategorier** (artikel 9), hvor kravene er skarpere.
 

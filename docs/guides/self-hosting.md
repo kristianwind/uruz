@@ -260,7 +260,7 @@ or reload in the browser.
 | Passkeys fail | **Me → Admin → Passkey setup**. Address and passkey domain must match, and it must be HTTPS |
 | Mail never arrives | **Me → Admin** shows which route is in use. If it says dev mode, nothing is configured. Check `EMAIL_FROM` is a sender you own |
 | Reminders never fire | The log should say `scheduler: built-in, every 15 min` at startup. If you disabled it (`URUZ_SCHEDULER=0`), is anything actually calling `/api/cron`? |
-| Mimir silent | **Me → Admin → AI status → Check connection** |
+| Kvasir silent | **Me → Admin → AI status → Check connection** |
 | Stale screens on phones | Service worker cache — reinstall from the home screen |
 
 ---

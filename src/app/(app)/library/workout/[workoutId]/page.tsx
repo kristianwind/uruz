@@ -120,7 +120,7 @@ export default async function WorkoutDetailPage({
         {localized.length === 0 && <CardMuted>{t("library.empty")}</CardMuted>}
       </div>
 
-      {/* Tell Mimir about an ailment or a wish and let him adjust this workout */}
+      {/* Tell Kvasir about an ailment or a wish and let him adjust this workout */}
       <section className="mt-6">
         <AdaptWorkout workoutId={workout.id} onApply={applyAdaptationAction} />
       </section>

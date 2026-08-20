@@ -14,7 +14,7 @@ const Body = z.object({
 });
 
 /**
- * Ask Mimir to adapt a workout to an ailment or a wish. Returns a proposal —
+ * Ask Kvasir to adapt a workout to an ailment or a wish. Returns a proposal —
  * nothing is changed until the user applies it.
  */
 export async function POST(req: Request) {

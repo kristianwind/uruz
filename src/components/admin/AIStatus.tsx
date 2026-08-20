@@ -17,7 +17,7 @@ interface Probe {
 /**
  * Live check that the configured model actually answers.
  *
- * Worth its own button: an AI outage is invisible from inside the app (Mimir
+ * Worth its own button: an AI outage is invisible from inside the app (Kvasir
  * quietly falls back to rule-based coaching), so an admin needs a way to ask
  * "is the model reachable right now?".
  */

@@ -1,6 +1,6 @@
 import "server-only";
 import { runScheduledNotifications } from "./dispatch";
-import { analyzeWeek } from "@/lib/coach/mimir";
+import { analyzeWeek } from "@/lib/coach/kvasir";
 import { syncGamification } from "@/lib/domain/gamification-service";
 import { listHallUsers } from "@/lib/db/repo/users";
 import { getAnyHall } from "@/lib/db/repo/halls";

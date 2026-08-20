@@ -14,12 +14,12 @@ interface Exchange {
 }
 
 /**
- * "Spørg Mimir" — a small chat against the user's own data.
+ * "Spørg Kvasir" — a small chat against the user's own data.
  *
  * Kept deliberately simple: one question at a time, no history to scroll. The
  * coach is an aid between sets, not a chat app.
  */
-export function AskMimir({ suggestions }: { suggestions: string[] }) {
+export function AskKvasir({ suggestions }: { suggestions: string[] }) {
   const t = useT();
   const [question, setQuestion] = useState("");
   const [busy, setBusy] = useState(false);

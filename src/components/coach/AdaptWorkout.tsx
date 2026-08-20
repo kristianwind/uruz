@@ -28,9 +28,9 @@ interface Proposal {
 }
 
 /**
- * "Fortæl Mimir om en skavank eller et ønske."
+ * "Fortæl Kvasir om en skavank eller et ønske."
  *
- * The user writes in plain language; Mimir proposes concrete changes, which are
+ * The user writes in plain language; Kvasir proposes concrete changes, which are
  * shown as a reviewable list. Nothing is saved until the user approves, and the
  * result is saved as a *copy* so the original programme survives.
  */

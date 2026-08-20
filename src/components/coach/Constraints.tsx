@@ -17,7 +17,7 @@ export interface ConstraintView {
 /**
  * The user's standing ailments and wishes.
  *
- * Visible and removable on purpose: Mimir silently factors these into every
+ * Visible and removable on purpose: Kvasir silently factors these into every
  * suggestion, so the user must be able to see exactly what he is taking into
  * account — and say when a niggle has passed.
  */

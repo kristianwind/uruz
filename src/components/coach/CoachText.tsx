@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 
 /**
- * Render Mimir's replies with the light markdown models naturally produce.
+ * Render Kvasir's replies with the light markdown models naturally produce.
  *
  * Deliberately tiny and allow-list based — it builds React elements rather than
  * injecting HTML, so model output can never introduce markup into the page.

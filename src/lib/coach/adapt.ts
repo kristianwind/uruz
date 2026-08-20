@@ -11,14 +11,14 @@ import type { Exercise, ProgressionMode } from "@/lib/domain/types";
  * med varsomme variant-forslag").
  *
  * The user says something in plain language — "min skulder gør ondt", "jeg vil
- * gerne have mere ryg", "jeg har kun 20 minutter" — and Mimir proposes concrete
+ * gerne have mere ryg", "jeg har kun 20 minutter" — and Kvasir proposes concrete
  * changes to the workout.
  *
  * Two hard rules:
  *   1. The model NEVER invents exercises. It may only choose from ids we give
  *      it, and every id it returns is validated against the library before the
  *      proposal is shown. An unknown id is dropped, not guessed at.
- *   2. The user always approves before anything is saved. Mimir proposes; the
+ *   2. The user always approves before anything is saved. Kvasir proposes; the
  *      human decides.
  */
 
@@ -48,7 +48,7 @@ export interface ProposedRemoval {
 }
 
 export interface AdaptationProposal {
-  /** Mimir's plain-language explanation, shown above the changes. */
+  /** Kvasir's plain-language explanation, shown above the changes. */
   message: string;
   swaps: ProposedSwap[];
   adjustments: ProposedAdjustment[];
@@ -152,7 +152,7 @@ export interface AdaptInput {
 }
 
 /**
- * Ask Mimir to adapt a specific workout to the user's request.
+ * Ask Kvasir to adapt a specific workout to the user's request.
  *
  * Returns a *proposal* — nothing is written to the workout here.
  */
@@ -233,7 +233,7 @@ export async function adaptWorkout(input: AdaptInput): Promise<AdaptationProposa
     .join("\n");
 
   const system = [
-    "Du er Mimir, træningscoach i appen Uruz. Du tilpasser en træning til brugerens skavank eller ønske.",
+    "Du er Kvasir, træningscoach i appen Uruz. Du tilpasser en træning til brugerens skavank eller ønske.",
     "",
     "Svar KUN med et JSON-objekt i dette format — ingen tekst udenfor:",
     `{
@@ -342,7 +342,7 @@ export async function adaptWorkout(input: AdaptInput): Promise<AdaptationProposa
       mentionsPain: pain,
     };
   } catch (err) {
-    console.error("Mimir adaptWorkout failed:", err instanceof AIError ? err.message : err);
+    console.error("Kvasir adaptWorkout failed:", err instanceof AIError ? err.message : err);
     return ruleProposal();
   }
 }

@@ -10,7 +10,7 @@ import { describeConstraints } from "./adapt";
 import type { CoachTone, Difficulty, User } from "@/lib/domain/types";
 
 /**
- * Mimir — the coaching service (spec §7).
+ * Kvasir — the coaching service (spec §7).
  *
  * Design rules:
  *   - Never blocks training. Every entry point returns fast or in the
@@ -23,7 +23,7 @@ import type { CoachTone, Difficulty, User } from "@/lib/domain/types";
 
 const WEEKLY_GOAL = 2;
 
-/** Guard rails that apply to every Mimir response, whatever the tone. */
+/** Guard rails that apply to every Kvasir response, whatever the tone. */
 const SAFETY_RULES = `
 Ufravigelige regler:
 - Du rådgiver KUN om styrketræning, restitution og motivation.
@@ -54,7 +54,7 @@ function toneInstruction(tone: CoachTone, level: Difficulty): string {
 
 function systemPrompt(user: User, purpose: string): string {
   return [
-    "Du er Mimir, den kloge jætte fra nordisk mytologi, som coacher i træningsappen Uruz.",
+    "Du er Kvasir, den kloge jætte fra nordisk mytologi, som coacher i træningsappen Uruz.",
     "Du taler dansk, kort og konkret. Ingen indledende høflighedsfraser.",
     toneInstruction(user.coachTone, user.difficulty),
     purpose,
@@ -136,7 +136,7 @@ export async function analyzeWeek(userId: string): Promise<CoachReply | null> {
     return { body: text, fromModel: body.trim().length > 0 };
   } catch (err) {
     // A model outage must never cost the user their coaching.
-    console.error("Mimir analyzeWeek failed:", err instanceof AIError ? err.message : err);
+    console.error("Kvasir analyzeWeek failed:", err instanceof AIError ? err.message : err);
     addCoachMessage({
       userId,
       kind: "opsummering",
@@ -166,8 +166,8 @@ export async function askCoach(userId: string, question: string): Promise<CoachR
     const insights = buildInsights(ctx);
     const body =
       insights.length > 0
-        ? `Mimir er ikke koblet til en sprogmodel lige nu, men her er hvad dine tal viser:\n\n${renderInsights(insights.slice(0, 2))}`
-        : "Mimir er ikke koblet til en sprogmodel lige nu. Log et par træninger, så kan jeg give dig konkrete forslag ud fra dine egne tal.";
+        ? `Kvasir er ikke koblet til en sprogmodel lige nu, men her er hvad dine tal viser:\n\n${renderInsights(insights.slice(0, 2))}`
+        : "Kvasir er ikke koblet til en sprogmodel lige nu. Log et par træninger, så kan jeg give dig konkrete forslag ud fra dine egne tal.";
     addCoachMessage({ userId, kind: "forslag", body, dataJson: { source: "rules", question: trimmed } });
     return { body, fromModel: false };
   }
@@ -214,9 +214,9 @@ export async function askCoach(userId: string, question: string): Promise<CoachR
     });
     return { body: text, fromModel: true };
   } catch (err) {
-    console.error("Mimir askCoach failed:", err instanceof AIError ? err.message : err);
+    console.error("Kvasir askCoach failed:", err instanceof AIError ? err.message : err);
     const body =
-      "Mimir kunne ikke nås lige nu. Prøv igen om lidt — dine træninger er gemt som de skal.";
+      "Kvasir kunne ikke nås lige nu. Prøv igen om lidt — dine træninger er gemt som de skal.";
     return { body, fromModel: false };
   }
 }

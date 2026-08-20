@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getContext } from "@/lib/auth/session";
-import { askCoach } from "@/lib/coach/mimir";
+import { askCoach } from "@/lib/coach/kvasir";
 
 export const runtime = "nodejs";
 // A local model can take a while to think; allow for it.
@@ -9,7 +9,7 @@ export const maxDuration = 120;
 
 const Body = z.object({ question: z.string().trim().min(1).max(500) });
 
-/** "Spørg Mimir" — free-text coaching question. */
+/** "Spørg Kvasir" — free-text coaching question. */
 export async function POST(req: Request) {
   const ctx = await getContext();
   if (!ctx) return NextResponse.json({ error: "unauthenticated" }, { status: 401 });

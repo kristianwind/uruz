@@ -138,7 +138,7 @@ export async function deleteWorkoutAction(workoutId: string): Promise<void> {
   revalidatePath("/train");
 }
 
-// ---- Mimir adaptation ----------------------------------------------------
+// ---- Kvasir adaptation ----------------------------------------------------
 
 const ProposalSchema = z.object({
   swaps: z.array(
@@ -174,7 +174,7 @@ const ProposalSchema = z.object({
 export type AdaptationProposalInput = z.infer<typeof ProposalSchema>;
 
 /**
- * Apply a Mimir proposal by saving an *adjusted copy* of the workout.
+ * Apply a Kvasir proposal by saving an *adjusted copy* of the workout.
  *
  * Never edits the original: the user keeps their known-good programme, and an
  * adaptation for a sore shoulder does not silently become the permanent plan.

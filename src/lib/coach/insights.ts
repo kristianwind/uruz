@@ -14,7 +14,7 @@ import { doubleProgression } from "@/lib/domain/strength";
 /**
  * Deterministic, data-derived coaching insights.
  *
- * These are the *facts* Mimir reasons about — and they are also the complete
+ * These are the *facts* Kvasir reasons about — and they are also the complete
  * fallback when no AI provider is configured. The app must give useful
  * coaching with no model at all; the LLM only makes the delivery warmer and
  * answers free-text questions.

@@ -6,7 +6,7 @@ Written for two kinds of reader, and split accordingly.
 
 **[Using Uruz](guides/using-uruz.md)** — for the person training. Signing in,
 putting it on your phone, logging a workout, correcting a set, the archive,
-building your own workouts, Mimir, Valhalla, reminders, training without signal,
+building your own workouts, Kvasir, Valhalla, reminders, training without signal,
 and getting your data out.
 
 **[Hosting Uruz yourself](guides/self-hosting.md)** — for whoever runs the

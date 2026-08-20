@@ -1,7 +1,7 @@
 import { getDb, fromBool, newId, nowIso, type Row } from "../sqlite";
 
 /**
- * Ailments and wishes the user has told Mimir about.
+ * Ailments and wishes the user has told Kvasir about.
  *
  * These are long-lived on purpose: a sore shoulder mentioned once should shape
  * every later suggestion until the user says it is better. Forgetting it would

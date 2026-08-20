@@ -1,7 +1,7 @@
 import { localizedTitle } from "@/lib/i18n/metadata";
 import { PageHeader } from "@/components/app/PageHeader";
 import { Card, CardMuted } from "@/components/ui/Card";
-import { AskMimir } from "@/components/coach/AskMimir";
+import { AskKvasir } from "@/components/coach/AskKvasir";
 import { AnalyzeButton } from "@/components/coach/AnalyzeButton";
 import { Constraints } from "@/components/coach/Constraints";
 import { CoachText } from "@/components/coach/CoachText";
@@ -46,7 +46,7 @@ export default async function CoachPage() {
       <PageHeader title={t("coach.name")} subtitle={t("coach.askTitle")} />
 
       <section>
-        <AskMimir suggestions={suggestions} />
+        <AskKvasir suggestions={suggestions} />
       </section>
 
       <Constraints
