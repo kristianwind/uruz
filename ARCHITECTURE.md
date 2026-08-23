@@ -19,7 +19,7 @@ Decisions with rationale live in [DECISIONS.md](DECISIONS.md).
 │  strength.ts   1RM, PR detection, progression               │
 │  stats.ts      all statistics                               │
 │  gamification  badges, rank, milestones, leaderboard        │
-│  coach/        insights, Mimir, workout adaptation          │
+│  coach/        insights, Kvasir, workout adaptation          │
 └───────────────┬─────────────────────────────────────────────┘
                 │
 ┌───────────────▼─────────────┐   ┌──────────────────────────┐
@@ -109,7 +109,7 @@ network error rather than skipping ahead.
 
 ---
 
-## Mimir
+## Kvasir
 
 ```
 The user's message ─┐

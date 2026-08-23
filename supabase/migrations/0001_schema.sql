@@ -186,7 +186,7 @@ create table if not exists coach_messages (
 );
 create index if not exists idx_coach_user on coach_messages(user_id, created_at desc);
 
--- Ailments and wishes Mimir must respect in every later suggestion.
+-- Ailments and wishes Kvasir must respect in every later suggestion.
 create table if not exists user_constraints (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid not null references users(id) on delete cascade,

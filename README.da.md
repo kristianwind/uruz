@@ -3,7 +3,7 @@
 *Dette er den danske udgave. [The English README](README.md) er den kanoniske.*
 
 > **Styrkerunen.** En træningsapp til iPhone og web, hvor du logger styrketræning
-> lynhurtigt, får coaching af **Mimir**, ser ærlig statistik og bliver holdt til
+> lynhurtigt, får coaching af **Kvasir**, ser ærlig statistik og bliver holdt til
 > ilden af ravnene **Huginn & Muninn**.
 
 Uruz er bygget mobil-først til brug i et fitnesscenter: store knapper, få tryk
@@ -32,8 +32,8 @@ Den kan også køre helt for sig selv med `docker run` eller lokalt med `npm run
 |:--:|:--:|:--:|
 | ![Træn](docs/screenshots/en/train.png) | ![Log et sæt](docs/screenshots/en/session.png) | ![Statistik](docs/screenshots/en/stats.png) |
 | **Træn** — dagens træning, eller vælg frit | **Log et sæt** — forudfyldt, ét tryk | **Statistik** — tonnage, fremgang, indsigter |
-| ![Valhal](docs/screenshots/en/valhal.png) | ![Mimir](docs/screenshots/en/coach.png) | ![Bibliotek](docs/screenshots/en/library.png) |
-| **Valhal** — rangliste, runer og milepæle | **Mimir** — ugens analyse og "spørg om alt" | **Bibliotek** — øvelser med trin og cues |
+| ![Valhal](docs/screenshots/en/valhal.png) | ![Kvasir](docs/screenshots/en/coach.png) | ![Bibliotek](docs/screenshots/en/library.png) |
+| **Valhal** — rangliste, runer og milepæle | **Kvasir** — ugens analyse og "spørg om alt" | **Bibliotek** — øvelser med trin og cues |
 
 <sub>Skærmbillederne er taget af `npm run gen:screenshots` med demo-data — ingen
 rigtige personers træning. Appen kører på dansk med `npm run gen:screenshots:da`.</sub>
@@ -100,7 +100,7 @@ statistik, Valhal og badges har noget at vise.
 | **Virker offline** | Alt logges lokalt først. Er der intet net i kælderen, kommer det med op — appen synkroniserer selv bagefter. Intet går tabt. |
 | **Bibliotek & builder** | 14 øvelser med tegning, trin og cues + 7 færdige træninger. Byg din egen, eller dublér en skabelon og justér den. |
 | **Statistik** | Fremgang pr. øvelse, tonnage, fremmøde-kalender, muskelbalance, rekorder — og sjove indsigter ("Du har løftet 9,8 × bybus 🚌"). |
-| **Mimir (AI-coach)** | Ugentlig analyse, "Spørg Mimir" og — vigtigst — *fortæl om en skavank eller et ønske*, så tilpasser han træningen. Virker med enhver AI-udbyder, også en model på dit eget net. |
+| **Kvasir (AI-coach)** | Ugentlig analyse, "Spørg Kvasir", et program lagt ud fra fire spørgsmål — og, vigtigst, *fortæl om en skavank eller et ønske*, så tilpasser han træningen. Virker med enhver AI-udbyder, også en model på dit eget net. Uden en model bygges planer og forslag efter regler i stedet. |
 | **Valhal** | Venlig kappestrid, runer/badges, rangorden fra Thræl til Einherjer og milepæle. |
 | **Ravnene** | Reminders på dine træningsdage, ros efter en god tur og et blidt puf hvis du har været væk. Tonen kan sættes blød eller hård. |
 | **Admin** | Invitér folk, styr roller, redigér det fælles bibliotek, se audit-log og status på AI/push/e-mail. |
@@ -125,7 +125,7 @@ Guiden findes også inde i appen under **Mig → Installér app**.
 
 ## Tilvalg: AI-coach, notifikationer og e-mail
 
-Alt herunder er valgfrit. Uruz virker uden — Mimir giver stadig konkrete,
+Alt herunder er valgfrit. Uruz virker uden — Kvasir giver stadig konkrete,
 data-baserede forslag, de er bare regelbaserede i stedet for formuleret af en
 sprogmodel.
 
@@ -135,7 +135,7 @@ Kopiér `.env.example` til `.env.local` og udfyld det, du vil bruge:
 cp .env.example .env.local
 ```
 
-### Mimir (AI)
+### Kvasir (AI)
 
 Uruz er **ikke bundet til én leverandør**. Sæt `AI_PROVIDER` til `anthropic`,
 `openai`, `google`, `ollama` eller `custom`.
@@ -291,7 +291,7 @@ Lokalt kører Uruz på en indbygget SQLite-fil — nul opsætning. Til produktio
 
 - **[Sådan bruger du Uruz](docs/guides/using-uruz.md)** — for den der træner.
   Log ind, læg den på telefonen, log en træning, ret et sæt, arkivet, byg dine
-  egne træninger, Mimir, Valhal, reminders og hvordan du får dine data ud.
+  egne træninger, Kvasir, Valhal, reminders og hvordan du får dine data ud.
 - **[Hos­t den selv](docs/guides/self-hosting.md)** — for den der kører serveren.
   Tre måder at køre den på, e-mail, AI, notifikationer, backup, opdatering og
   de fælder der er lette at falde i.
@@ -307,9 +307,9 @@ Lokalt kører Uruz på en indbygget SQLite-fil — nul opsætning. Til produktio
 
 ---
 
-## En ærlig note om Mimir
+## En ærlig note om Kvasir
 
-Mimir er en træningscoach, ikke en læge. Han giver ikke kostråd, kommenterer
+Kvasir er en træningscoach, ikke en læge. Han giver ikke kostråd, kommenterer
 aldrig på krop eller vægt, og henviser til læge eller fysioterapeut ved smerte.
 Det er bygget ind i hans instruktioner og kan ikke slås fra — heller ikke med
 den "hårde" tone, som kun gør ham mere kontant, aldrig nedladende.

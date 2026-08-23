@@ -58,8 +58,15 @@ There is a walkthrough inside the app under **Me → Install app**.
 
 ### Choosing one
 
-**Train** shows what you can do today. Seven ready-made workouts ship with the
-app, from a 20-minute short one to a full-body starter programme.
+**Train** opens with today's workout. If you have a programme, that is the next
+one in the rotation — the workout you have gone longest without — with a line
+underneath saying how long it has been. If you have no programme yet, the same
+place offers to have Kvasir lay one out; see [Kvasir, the coach](#kvasir-the-coach)
+below.
+
+Underneath sits the full list. Seven ready-made workouts ship with the app, from
+a 20-minute short one to a full-body starter programme, and your own appear here
+too.
 
 Tapping a workout **shows you what is in it** — the exercises, sets, target reps
 and rest — and gives you a **Start** button. It does not begin immediately, so
@@ -67,7 +74,8 @@ you can look before you commit, or change your mind.
 
 **Free workout** starts an empty session instead: pick exercises as you go. Good
 for a day when you are improvising, or when the gym is busy and you take what is
-free.
+free. It sits below today's workout rather than at the top — it is always one
+tap away, but it is no longer the app's answer to what you should do.
 
 If you left a workout unfinished, **Resume** appears at the top.
 
@@ -160,6 +168,18 @@ useful about it, rather than congratulating you for existing.
 
 **Ask Kvasir** takes a question in your own words. "I only have 25 minutes today,
 what do I do?" is a good one.
+
+**He can lay out your programme.** From **Train**, or from `/coach/program`, he
+asks what you are after, how many days a week you can train, how long you have
+each time, and what equipment you have — then builds a plan of workouts from it.
+He uses only exercises that are actually in your library, so a plan never points
+at something you cannot do, and he allows for anything you have told him hurts.
+
+The plan is built from rules first and then handed to the model to improve, which
+is why it works with no model configured at all: without one you get the
+rule-built plan, and a model that fails or answers badly costs the plan its
+polish rather than its existence. Building a new plan retires the old one; it
+never touches the workouts themselves, or a single set you have logged.
 
 **Tell him about a niggle or a wish** — this is the part worth knowing about. A
 sore shoulder, a bad knee, "I want to focus on my back for a while". He adapts

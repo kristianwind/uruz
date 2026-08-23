@@ -79,7 +79,7 @@ function seedDatabase(): void {
 }
 
 /**
- * Put the demo account mid-workout, and give Mimir something to have said.
+ * Put the demo account mid-workout, and give Kvasir something to have said.
  *
  * An empty coach screen and an empty session screen are accurate pictures of a
  * brand-new install and useless pictures of the app. Returns the id of the

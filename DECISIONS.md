@@ -4,6 +4,37 @@ A running log of non-obvious choices and assumptions made while building
 Uruz, per the instruction in section 0 ("note the assumption in `DECISIONS.md`").
 Newest first within each phase.
 
+## Addition — the coach is Kvasir, and he lays out the programme
+
+- **The name is Kristian's call, and the objection is on the record.** The coach
+  was Mimir. Yggdrasil already has a Kvasir — its own AI assistant, 28 files and
+  a guide — and two assistants of the same name on one machine invites the wrong
+  kind of confusion. That was argued, and overruled: it is his app. Renamed on
+  20 August, everywhere it is read as a name.
+
+- **The dated entries below keep the old name.** This is a log, not a
+  description of the current system. Rewriting an August entry to say Kvasir
+  would make the record claim a decision had been made before it was. The
+  documents that describe *what is true now* — README, ARCHITECTURE, HANDOFF,
+  `.env.example`, the rune manifest, the website — all say Kvasir. The three
+  `*.da.md` snapshots are frozen at 30 July and are left as written.
+
+- **The rule-built programme is the floor, not the fallback.** Five questions
+  produce a plan from rules alone; the model is then asked to improve it. That
+  ordering is the whole point: a missing model, a timeout or a malformed answer
+  costs the plan its polish, never its existence. The model may only choose from
+  exercise ids the library actually has, and every id is validated afterwards —
+  a programme can never point at an exercise that does not exist.
+
+- **A programme owns nothing.** It points at workouts that already exist, and
+  retiring one marks it retired rather than deleting anything. Verified on the
+  real database at the time: 45 sessions, 640 sets and 310 records untouched.
+
+- **Train answers "what today?" instead of admitting it does not know.** The
+  page led with free training, which is the app confessing it has no opinion. It
+  now shows the next workout in the rotation — the one gone longest without —
+  and free training moved down to second.
+
 ## Addition — every exercise gets the numbers it actually has
 
 - **The record celebration was asking before the set had been saved.** Only the

@@ -12,7 +12,7 @@
 <meta property="og:url" content="https://uruz-training.com/docs/using-uruz.html">
 <link rel="icon" href="../img/favicon-32.png">
 <link rel="canonical" href="https://uruz-training.com/docs/using-uruz.html">
-<link rel="stylesheet" href="../styles.css?v=20260728b">
+<link rel="stylesheet" href="../styles.css?v=20260823a">
 <link rel="stylesheet" href="../docs.css?v=20260730c">
 <script>document.documentElement.classList.remove("no-js")</script>
 </head>
@@ -41,7 +41,7 @@
           <li><a href="#a-workout-start-to-finish">A workout, start to finish</a></li>
           <li><a href="#past-workouts">Past workouts</a></li>
           <li><a href="#making-a-workout-your-own">Making a workout your own</a></li>
-          <li><a href="#mimir-the-coach">Mimir, the coach</a></li>
+          <li><a href="#kvasir-the-coach">Kvasir, the coach</a></li>
           <li><a href="#valhalla">Valhalla</a></li>
           <li><a href="#the-ravens">The ravens</a></li>
           <li><a href="#training-without-signal">Training without signal</a></li>
@@ -92,14 +92,21 @@ the share icon at the bottom, scroll down, and choose <strong>Add to Home Screen
 <hr>
 <h2 id="a-workout-start-to-finish">A workout, start to finish</h2>
 <h3 id="choosing-one">Choosing one</h3>
-<p><strong>Train</strong> shows what you can do today. Seven ready-made workouts ship with the
-app, from a 20-minute short one to a full-body starter programme.</p>
+<p><strong>Train</strong> opens with today&#39;s workout. If you have a programme, that is the next
+one in the rotation — the workout you have gone longest without — with a line
+underneath saying how long it has been. If you have no programme yet, the same
+place offers to have Kvasir lay one out; see <a href="#kvasir-the-coach">Kvasir, the coach</a>
+below.</p>
+<p>Underneath sits the full list. Seven ready-made workouts ship with the app, from
+a 20-minute short one to a full-body starter programme, and your own appear here
+too.</p>
 <p>Tapping a workout <strong>shows you what is in it</strong> — the exercises, sets, target reps
 and rest — and gives you a <strong>Start</strong> button. It does not begin immediately, so
 you can look before you commit, or change your mind.</p>
 <p><strong>Free workout</strong> starts an empty session instead: pick exercises as you go. Good
 for a day when you are improvising, or when the gym is busy and you take what is
-free.</p>
+free. It sits below today&#39;s workout rather than at the top — it is always one
+tap away, but it is no longer the app&#39;s answer to what you should do.</p>
 <p>If you left a workout unfinished, <strong>Resume</strong> appears at the top.</p>
 <h3 id="logging-a-set">Logging a set</h3>
 <p>The logging screen shows one exercise at a time, with the drawing of it and
@@ -154,20 +161,30 @@ the hall.</p>
 and down, set target sets, reps and rest per exercise, and give the whole thing
 a new name before saving.</p>
 <hr>
-<h2 id="mimir-the-coach">Mimir, the coach</h2>
-<p>Mimir is the app&#39;s AI coach. He is optional: without a model configured, Uruz
+<h2 id="kvasir-the-coach">Kvasir, the coach</h2>
+<p>Kvasir is the app&#39;s AI coach. He is optional: without a model configured, Uruz
 still gives you concrete suggestions — they are just rule-based rather than
 written by a language model.</p>
 <p><strong>Weekly analysis</strong> looks at what you have actually done and says something
 useful about it, rather than congratulating you for existing.</p>
-<p><strong>Ask Mimir</strong> takes a question in your own words. &quot;I only have 25 minutes today,
+<p><strong>Ask Kvasir</strong> takes a question in your own words. &quot;I only have 25 minutes today,
 what do I do?&quot; is a good one.</p>
+<p><strong>He can lay out your programme.</strong> From <strong>Train</strong>, or from <code>/coach/program</code>, he
+asks what you are after, how many days a week you can train, how long you have
+each time, and what equipment you have — then builds a plan of workouts from it.
+He uses only exercises that are actually in your library, so a plan never points
+at something you cannot do, and he allows for anything you have told him hurts.</p>
+<p>The plan is built from rules first and then handed to the model to improve, which
+is why it works with no model configured at all: without one you get the
+rule-built plan, and a model that fails or answers badly costs the plan its
+polish rather than its existence. Building a new plan retires the old one; it
+never touches the workouts themselves, or a single set you have logged.</p>
 <p><strong>Tell him about a niggle or a wish</strong> — this is the part worth knowing about. A
 sore shoulder, a bad knee, &quot;I want to focus on my back for a while&quot;. He adapts
 the training around it, and he remembers: mention a shoulder today, and a
 question next week about something else still takes it into account.</p>
 <blockquote>
-<p>Mimir is a training coach, not a doctor. He gives no dietary advice, never
+<p>Kvasir is a training coach, not a doctor. He gives no dietary advice, never
 comments on your body or your weight, and points you to a doctor or
 physiotherapist when something hurts. That is built into his instructions and
 cannot be switched off — not even with the &quot;tough&quot; tone, which only makes him
@@ -202,7 +219,7 @@ you never get any, that is the first thing to ask about.</p>
 <p>Everything you log is saved on the device first and synced when the connection
 comes back. A banner tells you when you are offline and when it is catching up.
 Nothing is lost, and you do not have to think about it.</p>
-<p>The only things that need a connection are Mimir, the leaderboard, and anything
+<p>The only things that need a connection are Kvasir, the leaderboard, and anything
 that involves other people.</p>
 <hr>
 <h2 id="your-data">Your data</h2>
@@ -239,7 +256,7 @@ nothing.</p>
 <td>The address the app is reached on has to match its passkey domain, and it has to be HTTPS. Whoever runs the server can see both under <strong>Me → Admin → Passkey setup</strong>.</td>
 </tr>
 <tr>
-<td>Mimir does not answer</td>
+<td>Kvasir does not answer</td>
 <td>No model is configured, or it cannot be reached. The app falls back to rule-based suggestions — that is intended, not broken.</td>
 </tr>
 <tr>

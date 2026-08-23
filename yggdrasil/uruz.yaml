@@ -15,7 +15,7 @@ gameskill:
   id: uruz
   name: "Uruz"
   category: "Apps"
-  description: "Styrketræning med offline-logning, statistik og AI-coach (Mimir). PWA til iPhone og web."
+  description: "Styrketræning med offline-logning, statistik og AI-coach (Kvasir). PWA til iPhone og web."
   author: "kristianwind"
   version: 2
   icon: "app"
@@ -48,7 +48,7 @@ gameskill:
       # dele én passkey på tværs af underdomæner (fx "dit-domæne.dk"), og husk
       # at den så skal være et ægte overdomæne til adressen.
 
-    # ---- Mimir (AI-coach) — helt valgfrit --------------------------------
+    # ---- Kvasir (AI-coach) — helt valgfrit --------------------------------
     - key: AI_PROVIDER
       name: "AI-udbyder"
       type: select
