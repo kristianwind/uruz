@@ -155,7 +155,7 @@ function page(
 <meta property="og:url" content="https://uruz-training.com/docs/${meta.out}">
 <link rel="icon" href="../img/favicon-32.png">
 <link rel="canonical" href="https://uruz-training.com/docs/${meta.out}">
-<link rel="stylesheet" href="../styles.css?v=20260728b">
+<link rel="stylesheet" href="../styles.css?v=20260823a">
 <link rel="stylesheet" href="../docs.css?v=20260730c">
 <script>document.documentElement.classList.remove("no-js")</script>
 </head>

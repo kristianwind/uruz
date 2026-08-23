@@ -295,14 +295,14 @@ h2 .gold { color: var(--accent); }
   line-height: 1.5;
 }
 
-/* ------------------------------------------------------------ mimir ------ */
+/* ------------------------------------------------------------ kvasir ------ */
 .chat { display: flex; flex-direction: column; gap: 12px; max-width: 640px; }
 .msg { border-radius: 15px; padding: 14px 17px; font-size: .94rem; line-height: 1.62; }
 .msg.user {
   align-self: flex-end; background: var(--bg-elev-2);
   border: 1px solid var(--border-strong); max-width: 82%;
 }
-.msg.mimir {
+.msg.kvasir {
   background: var(--bg-elev); border: 1px solid var(--border); max-width: 92%;
 }
 .msg .who {

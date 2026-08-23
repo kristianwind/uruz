@@ -14,7 +14,7 @@ you skip the rest.
 ## What it is
 
 A training app (PWA) for iPhone and web. Lightning-fast set logging that works without
-internet, honest statistics, an AI coach (Mimir) that can adapt training to
+internet, honest statistics, an AI coach (Kvasir) that can adapt training to
 injuries and niggles, and a gamification layer in Norse dress.
 
 Runs as a **Rune** in Yggdrasil Panel. Free software under **AGPL-3.0**.
@@ -130,7 +130,7 @@ preserved as `README.da.md`.
   in time.
 - **The built-in scheduler runs in production.** The log says
   `scheduler: built-in, every 15 min` at boot, and a tick has since reported
-  `sent 0 notification(s), ran 3 weekly analysis/analyses` — Mimir's weekly
+  `sent 0 notification(s), ran 3 weekly analysis/analyses` — Kvasir's weekly
   analyses ran on their own, with nothing external calling anything.
 
 ### Not verified
@@ -196,14 +196,32 @@ decided. The first technical step is multiple gyms per installation: only six
 files assume there is one (`getAnyHall()`). The license, which was the most
 pressing part, is in place.
 
-**Kvasir.** Kristian has asked whether Mimir should be renamed. The case has been argued
-against: Kvasir is already Yggdrasil's AI assistant — 28 files and its own guide —
-and two projects on the same machine, each with its own assistant of the same name, gets
-confusing. Not settled.
+**Kvasir: settled and done.** The coach was called Mimir; on 20 August Kristian
+decided it is Kvasir. The objection was argued and overruled — Yggdrasil already
+has a Kvasir, and two assistants of the same name on the same machine can
+confuse — but it is his app. The rename went through the app, both languages and
+the guides in one commit (`9c4fa03`), and the rest of the surface — README, this
+file, ARCHITECTURE, `.env.example`, the rune manifest and the website — followed
+on 23 August. The three `*.da.md` snapshots are frozen and still say Mimir on
+purpose; so do the older entries in `DECISIONS.md`, which are dated records.
+
+**Kvasir plans the training** (`fe8fcd0`, live since 20 August). Five questions
+on `/coach/program` produce a programme built only from exercises the library
+actually has, allowing for the ailments recorded on the coach page. Without a
+model it is built from rules instead — the model is asked to improve that floor,
+so a bad answer costs polish, not a plan. **Train** now shows the next workout in
+the rotation instead of defaulting to a free session.
 
 ---
 
 ## Known warts
+
+- **The screenshots still show Mimir.** Both sets — `docs/screenshots/{en,da}/`
+  and the copies under `website/img/` — were captured on 29 July, so the coach
+  screen says the old name and the Train screen is the old one. Everything
+  around them says Kvasir. Fixing it is `npm run gen:screenshots` and
+  `npm run gen:screenshots:da` on the Mac: the script needs Chrome and Node 22,
+  and shooting them on Linux would render the type differently from the rest.
 
 - **`Startprogram.html` never existed.** The exercise content is written from
   the description in section 15 of the specification.

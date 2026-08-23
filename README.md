@@ -1,7 +1,7 @@
 # Uruz ᚢ
 
 > **The strength rune.** A training app for iPhone and web: log your sets fast,
-> get coached by **Mimir**, see honest statistics, and be kept at it by the
+> get coached by **Kvasir**, see honest statistics, and be kept at it by the
 > ravens **Huginn & Muninn**.
 
 Uruz is built mobile-first for use in a gym: big buttons, few taps per set, and
@@ -26,8 +26,8 @@ runs perfectly well on its own with `docker run`, or locally with `npm run dev`.
 |:--:|:--:|:--:|
 | ![Train](docs/screenshots/en/train.png) | ![Log a set](docs/screenshots/en/session.png) | ![Stats](docs/screenshots/en/stats.png) |
 | **Train** — today's workout, or pick freely | **Log a set** — prefilled, one tap | **Stats** — tonnage, progress, insights |
-| ![Valhalla](docs/screenshots/en/valhal.png) | ![Mimir](docs/screenshots/en/coach.png) | ![Library](docs/screenshots/en/library.png) |
-| **Valhalla** — leaderboard, runes and milestones | **Mimir** — the weekly analysis and "ask anything" | **Library** — exercises with steps and cues |
+| ![Valhalla](docs/screenshots/en/valhal.png) | ![Kvasir](docs/screenshots/en/coach.png) | ![Library](docs/screenshots/en/library.png) |
+| **Valhalla** — leaderboard, runes and milestones | **Kvasir** — the weekly analysis and "ask anything" | **Library** — exercises with steps and cues |
 
 <sub>Taken by `npm run gen:screenshots` against demo data — nobody's real
 training. `npm run gen:screenshots:da` renders the app in Danish.</sub>
@@ -94,7 +94,7 @@ statistics, Valhalla and the badges have something to show.
 | **Works offline** | Everything is logged locally first. No signal in the basement is not a problem: it syncs itself afterwards, and nothing is lost. |
 | **Library & builder** | 14 exercises with a drawing, steps and cues, plus 7 ready-made workouts. Build your own, or duplicate a template and adjust it. |
 | **Statistics** | Progress per exercise, tonnage, an attendance calendar, muscle balance, records — and fun insights ("you have lifted 9.8 × a city bus 🚌"). |
-| **Mimir (AI coach)** | A weekly analysis, "ask Mimir", and — most usefully — *tell him about a niggle or a wish*, and he adapts the training around it. Works with any AI provider, including a model on your own network. |
+| **Kvasir (AI coach)** | A weekly analysis, "ask Kvasir", a programme laid out from four questions — and, most usefully, *tell him about a niggle or a wish* and he adapts the training around it. Works with any AI provider, including a model on your own network. Without one, the plans and suggestions are built from rules instead. |
 | **Valhalla** | Friendly rivalry, runes and badges, ranks from Thrall to Einherjar, and milestones. |
 | **The ravens** | Reminders on your training days, praise after a good session, and a gentle push if you have been away. The tone can be set gentle or tough. |
 | **Admin** | Invite people, manage roles, edit the shared library, read the audit log, and see the status of AI, push and email. |
@@ -120,7 +120,7 @@ There is a walkthrough inside the app under **Me → Install app**.
 
 ## Optional: AI coach, notifications and email
 
-Everything below is optional. Uruz works without it — Mimir still gives
+Everything below is optional. Uruz works without it — Kvasir still gives
 concrete, data-driven suggestions; they are rule-based rather than written by a
 language model.
 
@@ -130,7 +130,7 @@ Copy `.env.example` to `.env.local` and fill in what you want:
 cp .env.example .env.local
 ```
 
-### Mimir (AI)
+### Kvasir (AI)
 
 Uruz is **not tied to one vendor**. Set `AI_PROVIDER` to `anthropic`, `openai`,
 `google`, `ollama` or `custom`.
@@ -285,7 +285,7 @@ Locally Uruz runs on a built-in SQLite file — zero setup. For production:
 
 - **[Using Uruz](docs/guides/using-uruz.md)** — for the person training. Signing
   in, putting it on your phone, logging a workout, correcting a set, the
-  archive, building your own workouts, Mimir, Valhalla, reminders, and getting
+  archive, building your own workouts, Kvasir, Valhalla, reminders, and getting
   your data out.
 - **[Hosting Uruz yourself](docs/guides/self-hosting.md)** — for whoever runs
   the server. Three ways to run it, email, AI, notifications, backup, updating,
@@ -307,9 +307,9 @@ Locally Uruz runs on a built-in SQLite file — zero setup. For production:
 
 ---
 
-## An honest note about Mimir
+## An honest note about Kvasir
 
-Mimir is a training coach, not a doctor. He gives no dietary advice, never
+Kvasir is a training coach, not a doctor. He gives no dietary advice, never
 comments on your body or your weight, and refers you to a doctor or a
 physiotherapist when something hurts. That is built into his instructions and
 cannot be switched off — not even with the "tough" tone, which only makes him
