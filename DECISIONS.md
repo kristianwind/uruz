@@ -4,6 +4,33 @@ A running log of non-obvious choices and assumptions made while building
 Uruz, per the instruction in section 0 ("note the assumption in `DECISIONS.md`").
 Newest first within each phase.
 
+## Addition — asking for a coffee, once
+
+- **The donate button is markup, not their script.** Buy Me a Coffee's generator
+  hands you a `<script>` from their CDN that also pulls the *Cookie* webfont from
+  Google. That is a third-party request on every page load for every user, in an
+  app whose whole promise is that it makes none — and it renders nothing at all
+  on a self-hosted box with no outbound internet. The link reproduces the button
+  it would have drawn: same yellow, same cup, an inline SVG and a system font.
+
+- **A drawn cup, not ☕.** The emoji is a different picture on every platform and
+  a hollow box on a machine with no emoji font. `CoffeeIcon` joins the rest of
+  the inline icon set.
+
+- **One place, and the quietest one.** Bottom of **Me**, between the data
+  section and signing out. Never a banner, never a modal, never on first run: a
+  donation prompt in front of the thing someone just installed reads as adware,
+  and Uruz has no paid tier to be a trial version of. The wording says what the
+  app gives away and that nothing changes if you do not pay — asked softly it
+  reads as confidence.
+
+- **Nothing counts the clicks.** There is nothing to learn from it worth an
+  analytics call.
+
+- **The handle is `kristianwind`.** It was `kristianwid` until 27 August and
+  that one now 404s. A donate link that 404s is worse than none — it makes the
+  project look abandoned. Verified 200.
+
 ## Addition — the coach is Kvasir, and he lays out the programme
 
 - **The name is Kristian's call, and the objection is on the record.** The coach
