@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/app/PageHeader";
 import { Card, CardTitle, CardMuted } from "@/components/ui/Card";
 import { PreferenceControls } from "@/components/app/PreferenceControls";
 import { RotationLock } from "@/components/app/RotationLock";
-import { ChevronRightIcon, CogIcon } from "@/components/ui/icons";
+import { ChevronRightIcon, CoffeeIcon, CogIcon } from "@/components/ui/icons";
 import { LogoutButtons } from "@/components/auth/LogoutButtons";
 import { PasswordSection } from "@/components/auth/PasswordSection";
 import { PasskeySection } from "@/components/auth/PasskeySection";
@@ -127,6 +127,28 @@ export default async function MePage() {
 
       <section className="mt-6">
         <DataSection displayName={user.displayName} />
+      </section>
+
+      {/* Support. Asked for once, in the quietest place it can live — never a
+          banner and never on first run, which would read as a trial version of
+          something that has no paid tier. The link is markup, not their script:
+          no third-party request on page load, and it works on a box with no
+          outbound internet. */}
+      <section aria-labelledby="support-h" className="mt-6">
+        <h2 id="support-h" className="mb-2 text-sm font-semibold uppercase tracking-wide text-faint">
+          {t("me.support")}
+        </h2>
+        <Card className="flex flex-col items-start gap-3">
+          <CardMuted>{t("me.supportBody")}</CardMuted>
+          <a
+            href="https://buymeacoffee.com/kristianwind"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-medium text-text opacity-80 transition-opacity hover:opacity-100"
+          >
+            <CoffeeIcon size={16} /> {t("me.supportButton")} ↗
+          </a>
+        </Card>
       </section>
 
       <section className="mt-4">
