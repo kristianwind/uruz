@@ -130,3 +130,16 @@ export const TrashIcon = (p: IconProps) => (
     <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" />
   </Svg>
 );
+
+/**
+ * Coffee — the one external link in the app, to Buy Me a Coffee. A drawn cup
+ * rather than ☕: the emoji is a different picture on every platform, and a
+ * hollow box on a machine with no emoji font.
+ */
+export const CoffeeIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 9h13v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V9Z" />
+    <path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17" />
+    <path d="M7.5 5.6c0-.9.8-1.1.8-2M11 5.6c0-.9.8-1.1.8-2M14.5 5.6c0-.9.8-1.1.8-2" />
+  </Svg>
+);

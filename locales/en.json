@@ -298,7 +298,10 @@
     "rotationLock": "Lock to portrait",
     "rotationLocked": "Locked",
     "rotationUnlocked": "Free",
-    "rotationUnsupported": "Your browser can't lock rotation. On an iPhone it's in Control Centre — swipe down from the top-right and tap the padlock with the arrow around it."
+    "rotationUnsupported": "Your browser can't lock rotation. On an iPhone it's in Control Centre — swipe down from the top-right and tap the padlock with the arrow around it.",
+    "support": "Support Uruz",
+    "supportBody": "Uruz is free software under the AGPL. There is no paid tier and nothing is held back. If it saved you an afternoon, you can buy the person who builds it a coffee — entirely optional, and nothing in the app changes either way.",
+    "supportButton": "Buy me a coffee"
   },
   "auth": {
     "welcome": "Welcome to Uruz",

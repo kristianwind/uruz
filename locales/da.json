@@ -298,7 +298,10 @@
     "rotationLock": "Lås til højformat",
     "rotationLocked": "Låst",
     "rotationUnlocked": "Fri",
-    "rotationUnsupported": "Din browser kan ikke låse rotationen. På iPhone gøres det i Kontrolcenter — træk ned fra øverste højre hjørne og tryk på hængelåsen med pilen om."
+    "rotationUnsupported": "Din browser kan ikke låse rotationen. På iPhone gøres det i Kontrolcenter — træk ned fra øverste højre hjørne og tryk på hængelåsen med pilen om.",
+    "support": "Støt Uruz",
+    "supportBody": "Uruz er fri software under AGPL. Der er ingen betalt udgave, og der er ikke holdt noget tilbage. Har den sparet dig for en eftermiddag, kan du give den der bygger den en kop kaffe — helt frivilligt, og der ændrer sig ikke noget i appen uanset hvad.",
+    "supportButton": "Buy me a coffee"
   },
   "auth": {
     "welcome": "Velkommen til Uruz",
