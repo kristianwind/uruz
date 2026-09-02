@@ -35,6 +35,20 @@ Newest first within each phase.
   the point of writing a plank down is to aim at it again, not at the set you
   cut short.
 
+- **The rowing machine is metres, and the exercise is the only thing that knows
+  it.** Reading whichever fields a set happens to have filled in was wrong: a
+  rowing set records metres, watts *and* seconds, so it came out of the
+  conversion as a plank with an eight-minute hold, which the logging screen
+  would then present as a time to beat. The shape of the target now comes from
+  the exercise's `unit`. Distance work gets a set count and nothing else —
+  there is nowhere on a workout row to put metres, and that is exactly what the
+  seeded "Cardio + Core" and every plan Kvasir builds already do. Its
+  progression is `none`; there is nothing to add 2.5 kg to.
+
+- **"1 × ?–? reps" was on a shipped template.** The workout screen assumed every
+  row had either a hold or a rep range, so the seeded cardio workout has been
+  rendering question marks since it shipped. A distance row now says what it is.
+
 - **The estimate is clamped.** A session left open overnight — phone locked, the
   workout never finished — would otherwise write "480 minutes" onto a plan.
   Outside 5–240 minutes it falls back to the default 45.

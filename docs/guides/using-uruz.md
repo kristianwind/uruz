@@ -144,7 +144,9 @@ named after the day. The training you logged is not touched, and you can rename
 or change the new workout like any other.
 
 Warm-up sets do not count towards the targets. An exercise you only ever warmed
-up on — the rower you start every session with — stays a warm-up row.
+up on — the rower you start every session with — stays a warm-up row. Rowing and
+cycling are measured in metres, so they come across as "do this once" with no
+time to beat; the distance and watts stay in the log where you did them.
 
 Your personal records survive a deleted workout. The weight was still lifted —
 it would be wrong to take a rank back because you tidied up a mis-logged day.
