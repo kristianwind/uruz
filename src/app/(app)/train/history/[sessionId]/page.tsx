@@ -3,13 +3,16 @@ import { redirect } from "next/navigation";
 import { localizedTitle } from "@/lib/i18n/metadata";
 import { PageHeader } from "@/components/app/PageHeader";
 import { ChevronLeftIcon } from "@/components/ui/icons";
+import { Button } from "@/components/ui/Button";
 import { SessionEditor } from "@/components/train/SessionEditor";
+import { SaveAsWorkoutButton } from "@/components/train/SaveAsWorkoutButton";
 import { requireContext } from "@/lib/auth/session";
 import { getSession, listSessionSets } from "@/lib/db/repo/sessions";
 import { getWorkout } from "@/lib/db/repo/workouts";
 import { getExercisesByIds } from "@/lib/db/repo/exercises";
 import { getT } from "@/lib/i18n/server";
 import { workoutName, exerciseName } from "@/lib/domain/localize";
+import { saveSessionAsWorkoutAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 export const generateMetadata = localizedTitle("train.history");
@@ -63,6 +66,21 @@ export default async function HistorySessionPage({
           { weekday: "long", day: "numeric", month: "long", year: "numeric" },
         )}
       />
+
+      {/* Do it again. A training in the archive was a record and nothing else:
+          the workout behind it was two screens away, and a free session had no
+          workout behind it at all. */}
+      <div className="mb-5">
+        {workout ? (
+          <Link href={`/library/workout/${workout.id}?from=history`}>
+            <Button variant="secondary" fullWidth>
+              {t("train.trainAgain")}
+            </Button>
+          </Link>
+        ) : (
+          <SaveAsWorkoutButton sessionId={session.id} action={saveSessionAsWorkoutAction} />
+        )}
+      </div>
 
       <SessionEditor sessionId={session.id} groups={groups} />
     </div>

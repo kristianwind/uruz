@@ -41,17 +41,20 @@ export default async function WorkoutDetailPage({
 
   const intensity = muscleIntensity(localized.map(({ ex }) => ex.primaryMuscles));
   const description = workoutDescription(workout, t.locale);
-  // Back where you came from: this page is reachable from both Train and the
-  // library, and an arrow that lands somewhere else is a small betrayal.
-  const cameFromTrain = (await searchParams)?.from === "train";
+  // Back where you came from: this page is reachable from Train, the library
+  // and the archive, and an arrow that lands somewhere else is a small betrayal.
+  const from = (await searchParams)?.from;
+  const back =
+    from === "train"
+      ? { href: "/train", label: t("nav.train") }
+      : from === "history"
+        ? { href: "/train/history", label: t("train.history") }
+        : { href: "/library", label: t("library.title") };
 
   return (
     <div>
-      <Link
-        href={cameFromTrain ? "/train" : "/library"}
-        className="mb-1 inline-flex items-center gap-1 text-sm text-muted"
-      >
-        <ChevronLeftIcon size={16} /> {cameFromTrain ? t("nav.train") : t("library.title")}
+      <Link href={back.href} className="mb-1 inline-flex items-center gap-1 text-sm text-muted">
+        <ChevronLeftIcon size={16} /> {back.label}
       </Link>
 
       <h1 className="pb-1 pt-2 text-2xl font-bold tracking-tight">

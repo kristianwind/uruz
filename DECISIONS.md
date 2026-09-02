@@ -4,6 +4,41 @@ A running log of non-obvious choices and assumptions made while building
 Uruz, per the instruction in section 0 ("note the assumption in `DECISIONS.md`").
 Newest first within each phase.
 
+## Addition — a training you have done is a workout you can do again
+
+- **The archive was a record with no way out of it.** You could read what you
+  did on 31 August and correct a set, and that was all. Repeating it meant
+  finding the workout again from Train or the library — and for a free session
+  there was nothing to find, so the only way to do it a second time was to
+  rebuild it by hand from the screen showing it.
+
+- **Two buttons, because there are two cases.** A session that came from a
+  workout gets **Train this again**, which goes to that workout — not into it.
+  The app's rule since the archive was built is that you see what is in a
+  workout before it starts, and repeating one is no reason to break it. A free
+  session has nothing to point at, so it gets **Save as a workout** instead.
+
+- **Saving copies, it never moves.** The session keeps its sets, its records and
+  its place in the archive; the new workout is an ordinary one of your own. The
+  alternative — turning the session into a workout — would take a thing that
+  happened and quietly convert it into a plan, and the record of the day would
+  be gone.
+
+- **Warm-ups do not become working sets.** Three sets after two warm-ups is a
+  three-set exercise. An exercise that was *only* warmed up becomes a warm-up
+  row, because the rower someone opens every session on must not turn into a
+  working set that pollutes their records and the weight the app suggests next
+  time — the same trap `warmup-row.test.ts` was written for.
+
+- **Reps keep a range, holds keep one number.** Reps become min–max, which is
+  how a rep target is written. A held set gets the longest hold you managed:
+  the point of writing a plank down is to aim at it again, not at the set you
+  cut short.
+
+- **The estimate is clamped.** A session left open overnight — phone locked, the
+  workout never finished — would otherwise write "480 minutes" onto a plan.
+  Outside 5–240 minutes it falls back to the default 45.
+
 ## Addition — asking for a coffee, once
 
 - **The donate button is markup, not their script.** Buy Me a Coffee's generator
