@@ -92,10 +92,16 @@ export default async function WorkoutDetailPage({
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-medium text-text">{ex.name}</span>
                 <span className="tabnum block text-xs text-faint">
-                  {item.targetSets} × {" "}
-                  {item.targetSeconds
-                    ? `${item.targetSeconds} ${t("common.sec")}`
-                    : `${item.targetRepsMin ?? "?"}–${item.targetRepsMax ?? "?"} ${t("common.reps")}`}
+                  {/* Distance work has no target on a workout row — there is
+                      nowhere to put metres — so it says what it is instead of
+                      "?–? reps", which is what the seeded cardio workout has
+                      been showing since it shipped. */}
+                  {item.targetSets} ×{" "}
+                  {ex.unit === "km"
+                    ? t("muscles.kondi")
+                    : item.targetSeconds
+                      ? `${item.targetSeconds} ${t("common.sec")}`
+                      : `${item.targetRepsMin ?? "?"}–${item.targetRepsMax ?? "?"} ${t("common.reps")}`}
                   {" · "}
                   {item.restSeconds} {t("common.sec")} {t("common.rest")}
                 </span>

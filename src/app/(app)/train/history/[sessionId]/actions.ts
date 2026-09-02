@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireContext } from "@/lib/auth/session";
 import { getSession, listSessionSets } from "@/lib/db/repo/sessions";
 import { createWorkout, setWorkoutExercises } from "@/lib/db/repo/workouts";
+import { getExercisesByIds } from "@/lib/db/repo/exercises";
 import { workoutExercisesFromSets, estimatedMinutesFromSession } from "@/lib/domain/reuse";
 import { getLocale } from "@/lib/i18n/server";
 import { createT } from "@/lib/i18n/core";
@@ -29,7 +30,11 @@ export async function saveSessionAsWorkoutAction(sessionId: string): Promise<str
   if (!session || session.userId !== ctx.user.id) throw new Error("NOT_FOUND");
 
   const sets = listSessionSets(session.id);
-  const items = workoutExercisesFromSets(sets);
+  // The unit decides the shape of each target: a rowing machine logs metres,
+  // watts and seconds, and only the exercise knows it is not a plank.
+  const exercises = getExercisesByIds(sets.map((s) => s.exerciseId));
+  const units = new Map([...exercises].map(([id, ex]) => [id, ex.unit]));
+  const items = workoutExercisesFromSets(sets, units);
   if (items.length === 0) throw new Error("EMPTY");
 
   const locale = await getLocale(ctx.user.localePref);
