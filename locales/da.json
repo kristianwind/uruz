@@ -107,7 +107,10 @@
     "programNever": "Ikke prøvet endnu — start her",
     "programDaysSince": "Sidst for {{days}} dage siden",
     "letKvasirPlan": "Lad Kvasir lægge et program",
-    "letKvasirPlanDesc": "Svar på fem spørgsmål, så er du i gang"
+    "letKvasirPlanDesc": "Svar på fem spørgsmål, så er du i gang",
+    "trainAgain": "Træn den igen",
+    "saveAsWorkout": "Gem som træning",
+    "savedWorkoutName": "Træning fra {{date}}"
   },
   "library": {
     "title": "Bibliotek",

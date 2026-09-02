@@ -135,6 +135,17 @@ Open one and you get the sets grouped by exercise, editable exactly as they were
 during the workout. At the bottom, **Delete workout** removes the whole session
 and every set in it, after asking once.
 
+**Train this again** sits at the top, and takes you to the workout you did that
+day so you can look at it and start it. If it was a free workout there is no
+workout behind it, so the button says **Save as a workout** instead: it keeps
+what you actually did — the exercises in the order you did them, the number of
+sets, the reps you hit as the target range — as an ordinary workout of your own,
+named after the day. The training you logged is not touched, and you can rename
+or change the new workout like any other.
+
+Warm-up sets do not count towards the targets. An exercise you only ever warmed
+up on — the rower you start every session with — stays a warm-up row.
+
 Your personal records survive a deleted workout. The weight was still lifted —
 it would be wrong to take a rank back because you tidied up a mis-logged day.
 

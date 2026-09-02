@@ -107,7 +107,10 @@
     "programNever": "Not tried yet — start here",
     "programDaysSince": "Last done {{days}} days ago",
     "letKvasirPlan": "Let Kvasir plan your training",
-    "letKvasirPlanDesc": "Answer five questions and you are set"
+    "letKvasirPlanDesc": "Answer five questions and you are set",
+    "trainAgain": "Train this again",
+    "saveAsWorkout": "Save as a workout",
+    "savedWorkoutName": "Training from {{date}}"
   },
   "library": {
     "title": "Library",
