@@ -2,6 +2,7 @@ import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { SCHEMA_SQL } from "./schema.sqlite";
+import { SEED_EXERCISES } from "./seed-data";
 
 /**
  * Local development data backend built on Node's built-in `node:sqlite`.
@@ -36,9 +37,57 @@ export function getDb(): DatabaseSync {
   // whole CREATE — which is what ADDED_COLUMNS below is for.
   db.exec(SCHEMA_SQL);
   applyColumnAdditions(db);
+  addMissingSeedExercises(db);
 
   instance = db;
   return db;
+}
+
+/**
+ * Exercises the catalogue has gained since this database was seeded.
+ *
+ * The full seed runs once, at first run, so an installation that has been
+ * training since before a machine was added to the catalogue would never see
+ * it — the library is data, but the data still has to arrive. Insert-only,
+ * by slug: an exercise an admin has edited in the shared library keeps every
+ * one of those edits, and a fresh database gets the same rows first-run would
+ * give it anyway.
+ */
+function addMissingSeedExercises(db: DatabaseSync): void {
+  const insert = db.prepare(
+    `INSERT INTO exercises
+      (id, slug, name_da, name_en, category, primary_muscles, equipment, unit,
+       is_bodyweight, instructions_steps, instructions_steps_en, cues, cues_en,
+       safer_variant, safer_variant_en, svg_key, image_url,
+       difficulty, demo_video_url, created_by, is_public)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+     ON CONFLICT(slug) DO NOTHING`,
+  );
+  for (const ex of SEED_EXERCISES) {
+    insert.run(
+      newId(),
+      ex.slug,
+      ex.nameDa,
+      ex.nameEn,
+      ex.category,
+      JSON.stringify(ex.primaryMuscles),
+      ex.equipment,
+      ex.unit,
+      ex.isBodyweight ? 1 : 0,
+      JSON.stringify(ex.instructionsSteps),
+      JSON.stringify(ex.instructionsStepsEn),
+      JSON.stringify(ex.cues),
+      JSON.stringify(ex.cuesEn),
+      ex.saferVariant,
+      ex.saferVariantEn,
+      ex.svgKey,
+      null,
+      ex.difficulty,
+      null,
+      null,
+      1,
+    );
+  }
 }
 
 /**
