@@ -241,6 +241,210 @@ function Bike() {
   );
 }
 
+/** Pec fly: seated, arms sweeping together in front of the chest. */
+function PecFly() {
+  return (
+    <Frame label="Pec fly">
+      <Head cx={60} cy={26} />
+      <path d="M60 33 L60 62" {...FIG} />
+      <path d="M60 62 L50 84 M60 62 L70 84" {...FIG} />
+      <path d="M60 42 L36 34 M60 42 L84 34" {...FIG} />
+      <rect x="28" y="26" width="6" height="18" rx="2" {...FIG} />
+      <rect x="86" y="26" width="6" height="18" rx="2" {...FIG} />
+      <path d="M36 52 A30 22 0 0 0 54 60" {...ARROW} markerEnd="url(#uruz-arrow)" />
+      <path d="M84 52 A30 22 0 0 1 66 60" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Reverse fly: chest on the pad, arms sweeping out and back. */
+function ReverseFly() {
+  return (
+    <Frame label="Omvendt fly">
+      <Head cx={60} cy={26} />
+      <path d="M60 33 L60 62" {...FIG} />
+      <path d="M60 62 L50 84 M60 62 L70 84" {...FIG} />
+      <rect x="54" y="36" width="12" height="22" rx="3" {...FIG} />
+      <path d="M60 42 L44 46 M60 42 L76 46" {...FIG} />
+      <path d="M44 56 A26 18 0 0 1 24 40" {...ARROW} markerEnd="url(#uruz-arrow)" />
+      <path d="M76 56 A26 18 0 0 0 96 40" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Incline chest press: reclined, pressing handles up and forward. */
+function Incline() {
+  return (
+    <Frame label="Skrå brystpres">
+      <path d="M22 80 L36 44" {...FIG} />
+      <Head cx={42} cy={36} />
+      <path d="M40 43 L34 66 L24 80" {...FIG} />
+      <path d="M38 52 L56 40" {...FIG} />
+      <rect x="58" y="26" width="7" height="24" rx="2" {...FIG} />
+      <path d="M70 40 L84 28" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Chest-supported row: chest on a pad, pulling handles in. */
+function MachineRow() {
+  return (
+    <Frame label="Roning med brystpude">
+      <path d="M30 80 L30 44" {...FIG} />
+      <Head cx={38} cy={36} />
+      <path d="M38 43 L38 66 L30 80" {...FIG} />
+      <rect x="42" y="44" width="6" height="22" rx="2" {...FIG} />
+      <path d="M38 50 L64 54" {...FIG} />
+      <path d="M86 54 L70 54" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Lateral raise: seated, elbows lifting out to shoulder height. */
+function Lateral() {
+  return (
+    <Frame label="Sideløft">
+      <Head cx={60} cy={26} />
+      <path d="M60 33 L60 62" {...FIG} />
+      <path d="M60 62 L50 84 M60 62 L70 84" {...FIG} />
+      <path d="M60 42 L44 56 M60 42 L76 56" {...FIG} />
+      <path d="M36 62 A24 20 0 0 1 30 40" {...ARROW} markerEnd="url(#uruz-arrow)" />
+      <path d="M84 62 A24 20 0 0 0 90 40" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Leg extension: seated, shins swinging up against a pad. */
+function LegExt() {
+  return (
+    <Frame label="Benstræk">
+      <path d="M30 78 L30 40" {...FIG} />
+      <Head cx={38} cy={32} />
+      <path d="M38 39 L38 62 L66 62 L70 82" {...FIG} />
+      <path d="M38 48 L52 58" {...FIG} />
+      <rect x="66" y="80" width="10" height="6" rx="2" {...FIG} />
+      <path d="M78 76 A18 18 0 0 0 86 58" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Hack squat: back on an angled pad, pushing up along it. */
+function HackSquat() {
+  return (
+    <Frame label="Hack squat">
+      <path d="M40 90 L76 20" {...FIG} />
+      <Head cx={64} cy={38} />
+      <path d="M62 45 L52 64 L40 66 L34 82" {...FIG} />
+      <path d="M58 52 L66 52" {...FIG} />
+      <rect x="20" y="82" width="28" height="6" rx="2" {...FIG} />
+      <path d="M78 66 L94 36" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Hip abduction: seated, knees pushing outward against pads. */
+function Abduction() {
+  return (
+    <Frame label="Hofte-abduktion">
+      <Head cx={60} cy={26} />
+      <path d="M60 33 L60 58" {...FIG} />
+      <path d="M60 58 L44 74 L44 90 M60 58 L76 74 L76 90" {...FIG} />
+      <rect x="34" y="70" width="6" height="12" rx="2" {...FIG} />
+      <rect x="80" y="70" width="6" height="12" rx="2" {...FIG} />
+      <path d="M30 76 L16 76" {...ARROW} markerEnd="url(#uruz-arrow)" />
+      <path d="M90 76 L104 76" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Hip adduction: seated, knees squeezing inward against pads. */
+function Adduction() {
+  return (
+    <Frame label="Hofte-adduktion">
+      <Head cx={60} cy={26} />
+      <path d="M60 33 L60 58" {...FIG} />
+      <path d="M60 58 L38 74 L38 90 M60 58 L82 74 L82 90" {...FIG} />
+      <rect x="42" y="70" width="6" height="12" rx="2" {...FIG} />
+      <rect x="72" y="70" width="6" height="12" rx="2" {...FIG} />
+      <path d="M24 76 L36 76" {...ARROW} markerEnd="url(#uruz-arrow)" />
+      <path d="M96 76 L84 76" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Calf raise: standing on the edge of a step, rising onto the toes. */
+function Calf() {
+  return (
+    <Frame label="Lægpres">
+      <path d="M40 84 L72 84 L72 92 L40 92 Z" {...FIG} />
+      <Head cx={58} cy={20} />
+      <path d="M58 27 L58 56" {...FIG} />
+      <path d="M58 36 L46 30 M58 36 L70 30" {...FIG} />
+      <path d="M58 56 L60 78 L66 84 M60 78 L54 84" {...FIG} />
+      <path d="M84 78 L84 56" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Back extension: seated, pressing the upper back against a pad. */
+function BackExt() {
+  return (
+    <Frame label="Rygstræk">
+      <Head cx={48} cy={36} />
+      <path d="M52 43 L60 64 L36 66 L34 82" {...FIG} />
+      <path d="M54 50 L46 54" {...FIG} />
+      <path d="M20 82 L46 82" {...FIG} />
+      <rect x="60" y="44" width="7" height="18" rx="2" {...FIG} />
+      <path d="M40 24 A30 24 0 0 0 26 44" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Ab crunch machine: seated, curling the trunk down toward the knees. */
+function AbMachine() {
+  return (
+    <Frame label="Mavebøjning">
+      <path d="M30 80 L30 40" {...FIG} />
+      <Head cx={44} cy={30} />
+      <path d="M40 37 L38 62 L58 64 L58 82" {...FIG} />
+      <path d="M40 44 L54 38" {...FIG} />
+      <rect x="54" y="30" width="6" height="14" rx="2" {...FIG} />
+      <path d="M62 18 A26 26 0 0 1 74 48" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Treadmill: running on a belt. */
+function Treadmill() {
+  return (
+    <Frame label="Løbebånd">
+      <path d="M16 84 L104 84" {...FIG} />
+      <path d="M20 84 L20 46" {...FIG} />
+      <Head cx={62} cy={26} />
+      <path d="M62 33 L58 58" {...FIG} />
+      <path d="M60 42 L48 48 M60 42 L74 34" {...FIG} />
+      <path d="M58 58 L46 70 L40 82 M58 58 L72 70 L78 62" {...FIG} />
+      <path d="M96 66 L82 66" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
+/** Elliptical: striding with moving handles. */
+function Elliptical() {
+  return (
+    <Frame label="Crosstrainer">
+      <path d="M20 84 L100 84" {...FIG} />
+      <path d="M60 84 L60 60" {...FIG} />
+      <path d="M46 60 L30 40 M74 60 L90 40" {...FIG} />
+      <Head cx={60} cy={26} />
+      <path d="M60 33 L60 56" {...FIG} />
+      <path d="M60 40 L36 42 M60 40 L84 42" {...FIG} />
+      <path d="M60 56 L44 70 L36 78 M60 56 L74 70 L84 78" {...FIG} />
+      <path d="M26 74 A14 8 0 0 0 44 78" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
 const REGISTRY: Record<string, () => React.JSX.Element> = {
   benpres: Benpres,
   brystpres: Brystpres,
@@ -256,6 +460,20 @@ const REGISTRY: Record<string, () => React.JSX.Element> = {
   crunch: Crunch,
   "row-machine": RowMachine,
   bike: Bike,
+  pecfly: PecFly,
+  reversefly: ReverseFly,
+  incline: Incline,
+  machinerow: MachineRow,
+  lateral: Lateral,
+  legext: LegExt,
+  hacksquat: HackSquat,
+  abduction: Abduction,
+  adduction: Adduction,
+  calf: Calf,
+  backext: BackExt,
+  abmachine: AbMachine,
+  treadmill: Treadmill,
+  elliptical: Elliptical,
 };
 
 /** Generic fallback so a new exercise without art still renders something. */

@@ -92,7 +92,7 @@ statistics, Valhalla and the badges have something to show.
 |---|---|
 | **Logging** | Pick a ready-made workout or train freely. Sets are prefilled with last time's weight × reps — usually you just confirm. The rest timer starts itself. Records are celebrated on the spot. |
 | **Works offline** | Everything is logged locally first. No signal in the basement is not a problem: it syncs itself afterwards, and nothing is lost. |
-| **Library & builder** | 14 exercises with a drawing, steps and cues, plus 7 ready-made workouts. Build your own, or duplicate a template and adjust it. |
+| **Library & builder** | 28 exercises with a drawing, steps and cues, plus 7 ready-made workouts. Build your own, or duplicate a template and adjust it. |
 | **Statistics** | Progress per exercise, tonnage, an attendance calendar, muscle balance, records — and fun insights ("you have lifted 9.8 × a city bus 🚌"). |
 | **Kvasir (AI coach)** | A weekly analysis, "ask Kvasir", a programme laid out from four questions — and, most usefully, *tell him about a niggle or a wish* and he adapts the training around it. Works with any AI provider, including a model on your own network. Without one, the plans and suggestions are built from rules instead. |
 | **Valhalla** | Friendly rivalry, runes and badges, ranks from Thrall to Einherjar, and milestones. |

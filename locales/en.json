@@ -499,7 +499,9 @@
     "baglaar": "Hamstrings",
     "forlaar": "Quads",
     "balder": "Glutes",
-    "mave": "Abs"
+    "mave": "Abs",
+    "laeg": "Calves",
+    "inderlaar": "Inner thighs"
   },
   "equipment": {
     "maskine": "Machine",

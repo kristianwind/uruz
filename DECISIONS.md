@@ -4,6 +4,49 @@ A running log of non-obvious choices and assumptions made while building
 Uruz, per the instruction in section 0 ("note the assumption in `DECISIONS.md`").
 Newest first within each phase.
 
+## Addition — the machines that were missing
+
+- **A gym has more machines than the start programme used.** The library was
+  the seven exercises of Kristian and Ib's first programme plus seven more, and
+  it had no pec fly, no leg extension, no reverse fly — the machines that stand
+  next to the ones it did have. Kristian said it on 8 September: "we are missing
+  some machines, e.g. pec fly". Fourteen came in, all things that are in an
+  ordinary commercial gym: pec fly, reverse fly, incline chest press,
+  chest-supported row, lateral raise, leg extension, hack squat, hip abduction
+  and adduction, calf raise, back extension, the ab crunch machine, and the
+  treadmill and elliptical for cardio. Each one is a full record — steps, cues
+  and a safer variant in both languages, and its own drawing — because a
+  machine without a drawing is the generic figure, and the README promises
+  a drawing for every exercise.
+
+- **Assisted pull-up and dip machines were left out on purpose.** On those the
+  number on the stack is the *help*, so less is harder — and everything in the
+  app that reads a weight (the suggestion for next time, the records, the
+  "add 2.5 kg" progression) would push the wrong way. They need a unit of
+  their own before they can be logged honestly; a wrong record is worse than
+  a missing exercise.
+
+- **The catalogue tops itself up when the database opens.** The full seed
+  runs once, at first run — so an installation that has been training since
+  before a machine was added would never see it. The seed being data does not
+  make it arrive. `getDb()` now inserts any seed exercise whose slug the
+  database lacks, and only those: an exercise an admin has edited in the
+  shared library is not touched, which is the difference from re-running the
+  seed (`upsertExercise` overwrites every field). There is no delete for
+  exercises, so nothing an admin removed can come back either.
+
+- **Two muscle labels were added, not folded in.** Calves and inner thighs are
+  what the calf raise and hip adduction train; calling them "legs" would have
+  made the muscle-balance chart lie about the quads. The body map does not
+  draw them — it lights up the groups it knows and ignores the rest — which is
+  fine for a schematic.
+
+- **The library now has a test.** Every seeded exercise must have a drawing
+  that exists, muscle keys both languages can label, a vocabulary the types
+  accept, and the same number of steps and cues in each language; the
+  templates must point at exercises that exist; and the README must state
+  the actual count. The catalogue is data, and data has no compiler.
+
 ## Addition — a training you have done is a workout you can do again
 
 - **The archive was a record with no way out of it.** You could read what you

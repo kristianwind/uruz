@@ -98,7 +98,7 @@ statistik, Valhal og badges har noget at vise.
 |---|---|
 | **Log træning** | Vælg en færdig træning eller træn frit. Sæt er forudfyldt med sidste gangs vægt × reps — som regel skal du bare bekræfte. Hviletimer starter selv. Rekorder fejres med det samme. |
 | **Virker offline** | Alt logges lokalt først. Er der intet net i kælderen, kommer det med op — appen synkroniserer selv bagefter. Intet går tabt. |
-| **Bibliotek & builder** | 14 øvelser med tegning, trin og cues + 7 færdige træninger. Byg din egen, eller dublér en skabelon og justér den. |
+| **Bibliotek & builder** | 28 øvelser med tegning, trin og cues + 7 færdige træninger. Byg din egen, eller dublér en skabelon og justér den. |
 | **Statistik** | Fremgang pr. øvelse, tonnage, fremmøde-kalender, muskelbalance, rekorder — og sjove indsigter ("Du har løftet 9,8 × bybus 🚌"). |
 | **Kvasir (AI-coach)** | Ugentlig analyse, "Spørg Kvasir", et program lagt ud fra fire spørgsmål — og, vigtigst, *fortæl om en skavank eller et ønske*, så tilpasser han træningen. Virker med enhver AI-udbyder, også en model på dit eget net. Uden en model bygges planer og forslag efter regler i stedet. |
 | **Valhal** | Venlig kappestrid, runer/badges, rangorden fra Thræl til Einherjer og milepæle. |
