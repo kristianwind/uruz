@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { PlusIcon, MinusIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
+import { asTyped, typedValue } from "@/lib/decimalfield";
 
 /**
  * Big +/- stepper with a tappable numeric field.
@@ -19,6 +20,13 @@ import { cn } from "@/lib/utils";
  * Half-kilo steps would be tedious on their own, so **holding a button repeats
  * it, faster the longer you hold**. Twenty to sixty is one long press, and the
  * field itself can still be tapped and typed into for a jump.
+ *
+ * **What you are typing is not the same as what has been entered.** The field
+ * used to show `String(value)` and nothing else, so every keystroke went through
+ * a number and came back. Type `85,` and it became `Number("85.")` — 85 — and the
+ * field redrew as `85`: the separator was gone before the next digit could be
+ * typed. You could not write 85,8 at all. A half-typed number is text, and it has
+ * to stay text until the person is done with it.
  */
 
 /** How long before a held button starts repeating, and how fast it then goes. */
@@ -50,6 +58,12 @@ export function Stepper({
   const clamp = useCallback((v: number) => Math.min(max, Math.max(min, v)), [min, max]);
   const round = (v: number) => Math.round(v * 100) / 100;
 
+  // What is in the field while somebody is typing in it. `null` means nobody is,
+  // and the field shows the value it was given — which is what the +/- buttons
+  // change, and what a new set prefills.
+  const [typing, setTyping] = useState<string | null>(null);
+
+
   // A held button reads the latest value from a ref. An interval started once
   // would otherwise keep adding to whatever the value was when it began.
   const valueRef = useRef(value);
@@ -69,7 +83,12 @@ export function Stepper({
   useEffect(() => stop, [stop]);
 
   const nudge = useCallback(
-    (direction: 1 | -1) => onChange(round(clamp(valueRef.current + direction * step))),
+    (direction: 1 | -1) => {
+      // A button press ends the typing: from here the value is what counts, and a
+      // half-written number left on screen would disagree with it.
+      setTyping(null);
+      onChange(round(clamp(valueRef.current + direction * step)));
+    },
     [onChange, clamp, step],
   );
 
@@ -125,13 +144,18 @@ export function Stepper({
             type="text"
             inputMode="decimal"
             aria-label={label}
-            value={String(value)}
+            value={typing ?? String(value)}
             onFocus={(e) => e.currentTarget.select()}
             onChange={(e) => {
-              const raw = e.target.value.replace(",", ".").replace(/[^0-9.]/g, "");
-              const next = raw === "" ? 0 : Number(raw);
-              if (!Number.isNaN(next)) onChange(clamp(next));
+              const text = asTyped(e.target.value);
+              setTyping(text);
+              // "85." and "" are on the way to a number without being one yet:
+              // they stay on screen, and nothing goes upwards until there is
+              // something to report.
+              const next = typedValue(text);
+              if (next !== null) onChange(clamp(next));
             }}
+            onBlur={() => setTyping(null)}
             className="tabnum h-12 w-full rounded-xl border border-border bg-elev-2 text-center text-lg font-bold text-text focus:border-accent focus:outline-none sm:text-xl"
           />
           {suffix && (
