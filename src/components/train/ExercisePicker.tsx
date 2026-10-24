@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { PlusIcon } from "@/components/ui/icons";
+import { ExerciseMedia } from "@/components/exercise/ExerciseMedia";
+import type { MediaPref } from "@/lib/domain/types";
 import { useT } from "@/components/app/I18nProvider";
 import type { ActiveExercise } from "./ActiveWorkout";
 
@@ -14,6 +16,7 @@ export interface LibraryEntry {
   unit: "kg" | "sek" | "reps" | "km";
   isBodyweight: boolean;
   category: string;
+  equipment: string;
   svgKey: string | null;
   imageUrl: string | null;
   steps: string[];
@@ -38,11 +41,13 @@ export function ExercisePicker({
   exclude,
   onPick,
   onCancel,
+  mediaPref = "illustration",
 }: {
   library: LibraryEntry[];
   exclude: string[];
   onPick: (entry: LibraryEntry) => void;
   onCancel?: () => void;
+  mediaPref?: MediaPref;
 }) {
   const t = useT();
   const [query, setQuery] = useState("");
@@ -69,10 +74,20 @@ export function ExercisePicker({
                 onPick(l);
                 setQuery("");
               }}
-              className="flex w-full items-center justify-between rounded-xl border border-border bg-elev px-4 py-3 text-left active:brightness-95"
+              className="flex w-full items-center gap-3 rounded-xl border border-border bg-elev p-3 text-left active:brightness-95"
             >
-              <span className="font-medium text-text">{l.name}</span>
-              <PlusIcon size={18} className="text-accent" />
+              {/* A name alone does not say which machine it is. The drawing
+                  does, so the picker shows it the same way the library does. */}
+              <span className="h-12 w-14 shrink-0 rounded-lg bg-elev-2 p-1">
+                <ExerciseMedia svgKey={l.svgKey} imageUrl={l.imageUrl} alt={l.name} pref={mediaPref} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-medium text-text">{l.name}</span>
+                <span className="block truncate text-xs text-faint">
+                  {t(`muscles.${l.category}`)} · {t(`equipment.${l.equipment}`)}
+                </span>
+              </span>
+              <PlusIcon size={18} className="shrink-0 text-accent" />
             </button>
           </li>
         ))}

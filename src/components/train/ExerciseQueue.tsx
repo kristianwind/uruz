@@ -3,6 +3,8 @@
 import { cn } from "@/lib/utils";
 import { useT } from "@/components/app/I18nProvider";
 import { CheckIcon } from "@/components/ui/icons";
+import { ExerciseMedia } from "@/components/exercise/ExerciseMedia";
+import type { MediaPref } from "@/lib/domain/types";
 import type { ActiveExercise, LoggedSet } from "./ActiveWorkout";
 
 /**
@@ -21,11 +23,13 @@ export function ExerciseQueue({
   index,
   sets,
   onPick,
+  mediaPref = "illustration",
 }: {
   exercises: ActiveExercise[];
   index: number;
   sets: LoggedSet[];
   onPick: (i: number) => void;
+  mediaPref?: MediaPref;
 }) {
   const t = useT();
   const loggedFor = (exerciseId: string) =>
@@ -65,6 +69,9 @@ export function ExerciseQueue({
                   )}
                 >
                   {complete ? <CheckIcon size={13} /> : i + 1}
+                </span>
+                <span className="h-9 w-11 shrink-0 rounded-md bg-elev-2 p-0.5">
+                  <ExerciseMedia svgKey={ex.svgKey} imageUrl={ex.imageUrl} alt={ex.name} pref={mediaPref} />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium">{ex.name}</span>

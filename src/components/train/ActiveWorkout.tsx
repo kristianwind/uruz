@@ -290,6 +290,7 @@ export function ActiveWorkout({
       <ExercisePicker
         library={library}
         exclude={queue.map((q) => q.exerciseId)}
+        mediaPref={mediaPref}
         onPick={(entry) => {
           setAdded((prev) => [...prev, toActive(entry)]);
           // Go straight to what was just added — you picked it to do it now.
@@ -562,6 +563,7 @@ export function ActiveWorkout({
         index={index}
         sets={sets}
         onPick={setIndex}
+        mediaPref={mediaPref}
       />
     </div>
   );

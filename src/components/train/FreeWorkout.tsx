@@ -41,6 +41,7 @@ export function FreeWorkout({
       <ExercisePicker
         library={library}
         exclude={[]}
+        mediaPref={mediaPref}
         onPick={(entry) => setChosen([toActive(entry)])}
       />
     );
