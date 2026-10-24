@@ -102,6 +102,7 @@ export function buildLibraryEntries(
       unit: ex.unit,
       isBodyweight: ex.isBodyweight,
       category: ex.category,
+      equipment: ex.equipment,
       svgKey: loc.svgKey,
       imageUrl: loc.imageUrl,
       steps: loc.steps,
