@@ -414,6 +414,20 @@ function AbMachine() {
   );
 }
 
+/** Ab wheel rollout: kneeling, arms out to the wheel, rolling it forward. */
+function AbWheel() {
+  return (
+    <Frame label="Mavehjul">
+      <path d="M12 82 L70 82" {...FIG} />
+      <Head cx={42} cy={32} />
+      <path d="M46 39 L38 62 L38 82 L16 82" {...FIG} />
+      <path d="M46 44 L80 66" {...FIG} />
+      <circle cx="86" cy="72" r="9" {...FIG} />
+      <path d="M86 90 L108 90" {...ARROW} markerEnd="url(#uruz-arrow)" />
+    </Frame>
+  );
+}
+
 /** Treadmill: running on a belt. */
 function Treadmill() {
   return (
@@ -472,6 +486,7 @@ const REGISTRY: Record<string, () => React.JSX.Element> = {
   calf: Calf,
   backext: BackExt,
   abmachine: AbMachine,
+  abwheel: AbWheel,
   treadmill: Treadmill,
   elliptical: Elliptical,
 };
