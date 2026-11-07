@@ -4,6 +4,21 @@ A running log of non-obvious choices and assumptions made while building
 Uruz, per the instruction in section 0 ("note the assumption in `DECISIONS.md`").
 Newest first within each phase.
 
+## Addition — a wheel for the abs
+
+- **The ab wheel is bodyweight, not a new kind of equipment.** Kristian asked
+  on 7 November for "a wheel exercise for the abs". The record is a rollout
+  from the knees, counted in reps, marked *erfaren* — it is the hardest core
+  exercise in the library, and the safer variant says so: roll halfway, or do
+  the plank until the abs can hold the whole way. Its equipment is
+  `kropsvaegt`, like the plank, which also needs a mat. The vocabulary
+  describes what loads you, not what you touch; a sixth equipment value for one
+  cheap wheel would have added a filter button, a wizard checkbox and a test
+  row to every tree, and the coach would have started refusing it to anyone
+  who did not tick the box. The name carries the tool instead: "Mavehjul (ab
+  wheel)". Reaches existing installations the same way the machines did — the
+  slug is missing, so getDb() inserts it.
+
 ## Addition — the machines that were missing
 
 - **A gym has more machines than the start programme used.** The library was
